@@ -16,6 +16,10 @@ public :
 	void removelistener(IActionAnimationEventListener*);
 	void start();
 	void elapseTime(float deltatime);
-	void update(float deltatime);
+	inline float getEllapsedTime()
+	{
+		return elseTime;
+	}
+	virtual void update(float deltatime) = 0;
 };
 

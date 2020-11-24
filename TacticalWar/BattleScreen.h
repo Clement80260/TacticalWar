@@ -8,7 +8,7 @@
 
 namespace tw
 {
-	class BattleScreen : public Screen
+	class BattleScreen : public Screen, RendererEventListener
 	{
 	private:
 		IsometricRenderer * renderer;
@@ -18,6 +18,7 @@ namespace tw
 		sf::Font font;
 		sf::Text FPS;
 
+		/*
 		bool testDirection;
 		bool XDirection;
 		bool YDirection;
@@ -58,6 +59,11 @@ namespace tw
 
 			testDirection = !testDirection;
 		}
+		*/
+
+		sf::RenderWindow * window;
+		tgui::Gui * gui;
+		std::vector<Point2D> pathZone;
 
 	public:
 		BattleScreen(tgui::Gui * gui);
@@ -65,6 +71,14 @@ namespace tw
 		virtual void handleEvents(sf::RenderWindow * window, tgui::Gui * gui);
 		virtual void update(float deltatime);
 		virtual void render(sf::RenderWindow * window);
+
+
+
+		// Renderer event listener :
+		virtual void onCellClicked(int cellX, int cellY);
+		virtual void onCellHover(int cellX, int cellY);
+		virtual void onCellMouseDown(int cellX, int cellY);
+		virtual void onEvent(void * e);
 	};
 }
 

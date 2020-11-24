@@ -9,6 +9,7 @@
 #include <EnvironmentManager.h>
 #include <Windows.h>
 #include "SelectablePanel.h"
+#include "EnvironmentEditorColorator.h"
 
 namespace EnvironmentEditor {
 
@@ -47,15 +48,7 @@ namespace EnvironmentEditor {
 	private: System::Windows::Forms::Button^  button3;
 	private: System::Windows::Forms::Button^  button2;
 	private: System::Windows::Forms::Button^  button1;
-
-
-
-
-
-
-
-
-
+	private: System::Windows::Forms::RadioButton^  SelectorCancelEquipe;
 
 			 std::vector<tw::BaseCharacterModel*> * characters;
 
@@ -87,6 +80,7 @@ namespace EnvironmentEditor {
 
 			eventListener = new EditorEventListener(this);
 			renderer->addEventListener(eventListener);
+			renderer->setColorator(new EnvironmentEditorColorator());
 		}
 		//Cellule & Equipe
 		void editCell(int x, int y)
@@ -113,6 +107,10 @@ namespace EnvironmentEditor {
 			else if (SelectorEquipe2->Checked)
 			{
 				environment->getMapData(x, y)->setTeamStartPoint(2);
+			}
+			else if (SelectorCancelEquipe->Checked)
+			{
+				environment->getMapData(x, y)->setTeamStartPoint(0);
 			}
 		}
 
@@ -159,6 +157,7 @@ namespace EnvironmentEditor {
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->SelectorCancelEquipe = (gcnew System::Windows::Forms::RadioButton());
 			this->actionsGroupBox->SuspendLayout();
 			this->groupBox1->SuspendLayout();
 			this->SuspendLayout();
@@ -197,6 +196,7 @@ namespace EnvironmentEditor {
 			// 
 			// groupBox1
 			// 
+			this->groupBox1->Controls->Add(this->SelectorCancelEquipe);
 			this->groupBox1->Controls->Add(this->SelectorEquipe2);
 			this->groupBox1->Controls->Add(this->SelectorObstacle);
 			this->groupBox1->Controls->Add(this->SelectorEquipe1);
@@ -204,7 +204,7 @@ namespace EnvironmentEditor {
 			this->groupBox1->Controls->Add(this->SelectorSol);
 			this->groupBox1->Location = System::Drawing::Point(12, 137);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(250, 176);
+			this->groupBox1->Size = System::Drawing::Size(250, 200);
 			this->groupBox1->TabIndex = 3;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Type de cellule";
@@ -294,6 +294,17 @@ namespace EnvironmentEditor {
 			this->button1->Text = L"Chargement";
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &EditorUI::button1_Click);
+			// 
+			// SelectorCancelEquipe
+			// 
+			this->SelectorCancelEquipe->AutoSize = true;
+			this->SelectorCancelEquipe->Location = System::Drawing::Point(25, 166);
+			this->SelectorCancelEquipe->Name = L"SelectorCancelEquipe";
+			this->SelectorCancelEquipe->Size = System::Drawing::Size(96, 17);
+			this->SelectorCancelEquipe->TabIndex = 3;
+			this->SelectorCancelEquipe->TabStop = true;
+			this->SelectorCancelEquipe->Text = L"Annuler équipe";
+			this->SelectorCancelEquipe->UseVisualStyleBackColor = true;
 			// 
 			// EditorUI
 			// 

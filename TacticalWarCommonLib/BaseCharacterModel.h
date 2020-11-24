@@ -1,5 +1,6 @@
 #pragma once
 #include "Environment.h"
+#include <vector>
 
 namespace tw
 {
@@ -20,9 +21,21 @@ namespace tw
 
 		int currentTargetX;
 		int currentTargetY;
+
+		std::vector<Point2D> path;
 		//---------------------------------
 
 		int currentLife;
+
+		void setNextPositionFromPath()
+		{
+			if (!hasTargetPosition() && path.size() > 0)
+			{
+				Point2D nextPosition = path.back();
+				path.pop_back();
+				setTargetPosition(nextPosition.getX(), nextPosition.getY());
+			}
+		}
 
 
 	public:
@@ -82,6 +95,8 @@ namespace tw
 		{
 			float speed = 3;
 			
+			setNextPositionFromPath();
+
 			if (currentTargetX >= 0 && currentTargetY >= 0)
 			{
 				// 1) Déterminer la direction
@@ -129,6 +144,8 @@ namespace tw
 					interpolatedY = currentY;
 					
 					setNoTargetPosition();
+
+					setNextPositionFromPath();
 				}
 			}
 			else
@@ -136,6 +153,11 @@ namespace tw
 				interpolatedX = currentX;
 				interpolatedY = currentY;
 			}
+		}
+
+		void setPath(std::vector<Point2D> path)
+		{
+			this->path = path;
 		}
 
 		inline void setTargetPosition(int x, int y)

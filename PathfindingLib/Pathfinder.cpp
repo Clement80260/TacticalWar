@@ -161,13 +161,27 @@ std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosit
 
 	CellData * currentCell = endCell;
 
-	while (currentCell != startCell)
+	if (currentCell != NULL)
 	{
-		path.push_back(tw::Point2D(currentCell->getX(), currentCell->getY()));
-		currentCell = Predecesseur[currentCell];
+		std::vector<Point2D> reversedPath;
+		while (currentCell != startCell)
+		{
+			//reversedPath.push_back(tw::Point2D(currentCell->getX(), currentCell->getY()));
+			path.push_back(tw::Point2D(currentCell->getX(), currentCell->getY()));
+			currentCell = Predecesseur[currentCell];
+
+			if (currentCell == NULL)
+				return std::vector<Point2D>();
+		}
+
+		// Remettre le chemin dans l'ordre :
+		//while(reversedPath.size() > 0)
+		//{
+		//	path.push_back(reversedPath.back());
+		//	reversedPath.pop_back();
+		//}
 	}
 
-	
 	// TODO : Implémenter un algorithme de recherche de plus court chemin entre startPosition et endPosition
 	// qui tient compte de la topologie de l'environnement (environment : case "non marchable"; obstacles, etc...)
 	// et des obstacles "dynamique" (les personnages, etc...)

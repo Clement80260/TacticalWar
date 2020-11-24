@@ -1,12 +1,17 @@
 #pragma once
 #include <stdio.h>
 #include "BattleActionToAnimation.h"
-#include <vector>
+#include <deque>
 class AnimationManager : public IActionAnimationEventListener 
 {
 	private :
-		std::vector<BattleActionToAnimation*> animationtime;
+		static AnimationManager * instance;
+
+		std::deque<BattleActionToAnimation*> animations;
+		float remainingTime;
+
 	public:
+		static AnimationManager * getInstance();
 		virtual void update(float datatime);
 		virtual void onAnimationFinished(float remainingTime);
 		virtual void clear();
