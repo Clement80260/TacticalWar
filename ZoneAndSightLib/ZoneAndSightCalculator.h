@@ -19,6 +19,9 @@ namespace tw
 		ZoneAndSightCalculator();
 		~ZoneAndSightCalculator();
 		static ZoneAndSightCalculator * instance;
+
+		bool isObstacle(int x, int y, std::vector<Obstacle*> obstacles);
+
 	public:
 		static ZoneAndSightCalculator * getInstance();
 
