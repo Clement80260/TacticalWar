@@ -133,7 +133,7 @@ sf::Sprite* CharacterView::getImageToDraw()
 
 void CharacterView::update(float deltatime)
 {
-	elsetime += deltatime * 5;
+	elsetime += deltatime * 2;
 
 	BaseCharacterModel * m = getModel();
 	if (m->hasTargetPosition())
