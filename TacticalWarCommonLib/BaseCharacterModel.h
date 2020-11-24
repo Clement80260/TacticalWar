@@ -4,6 +4,15 @@
 
 namespace tw
 {
+	class BaseCharacterModel;
+	
+	class CharacterEventListener
+	{
+	public:
+		virtual void onPositionChanged(BaseCharacterModel * c, int newPositionX, int newPositionY) = 0;
+	};
+
+
 	class BaseCharacterModel
 	{
 	private:
@@ -34,6 +43,17 @@ namespace tw
 				Point2D nextPosition = path.back();
 				path.pop_back();
 				setTargetPosition(nextPosition.getX(), nextPosition.getY());
+			}
+		}
+
+
+		std::vector<CharacterEventListener*> listeners;
+
+		void notifyPositionChanged(int newPositionX, int newPositionY)
+		{
+			for (int i = 0; i < listeners.size(); i++)
+			{
+				listeners[i]->onPositionChanged(this, newPositionX, newPositionY);
 			}
 		}
 
@@ -145,6 +165,11 @@ namespace tw
 					
 					setNoTargetPosition();
 
+					// On ne notifie qu'à la fin du déplacement (but : éviter les freeze à chaque
+					// changement de cellule).
+					if(path.size() == 0)
+						notifyPositionChanged(currentX, currentY);
+
 					setNextPositionFromPath();
 				}
 			}
@@ -185,6 +210,21 @@ namespace tw
 		inline int getTargetY()
 		{
 			return currentTargetY;
+		}
+
+		void addEventListener(CharacterEventListener * l)
+		{
+			listeners.push_back(l);
+			l->onPositionChanged(this, currentX, currentY);
+		}
+
+		void removeEventListener(CharacterEventListener * l)
+		{
+			std::vector<CharacterEventListener*>::iterator it = std::find(listeners.begin(), listeners.end(), l);
+			if (it != listeners.end())
+			{
+				listeners.erase(it);
+			}
 		}
 	};
 }
