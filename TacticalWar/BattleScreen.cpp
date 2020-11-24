@@ -2,6 +2,7 @@
 #include "TestCharacterModel.h"
 #include <Pathfinder.h>
 #include <ZoneAndSightCalculator.h>
+#include <EnvironmentManager.h>
 
 
 using namespace tw;
@@ -14,9 +15,10 @@ BattleScreen::BattleScreen(tgui::Gui * gui)
 	gui->removeAllWidgets();
 	
 	renderer = new IsometricRenderer(NULL);
-	environment = new Environment(15, 15, 0);
-	environment->getMapData(2, 2)->setIsObstacle(true);
-	environment->getMapData(1, 1)->setIsWalkable(false);
+	//environment = new Environment(15, 15, 0);
+	//environment->getMapData(2, 2)->setIsObstacle(true);
+	//environment->getMapData(1, 1)->setIsWalkable(false);
+	environment = EnvironmentManager::getInstance()->getRandomEnvironment();
 
 	colorator = new TWColorator(sf::Color(40, 200, 255), sf::Color(20, 100, 200));
 
