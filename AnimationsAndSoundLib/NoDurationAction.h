@@ -5,7 +5,7 @@ class NoDurationAction : public BattleActionToAnimation
 {
 
 public : 
-
+ virtual void update(float deltatime);
  virtual void update()=0;
 	
 };

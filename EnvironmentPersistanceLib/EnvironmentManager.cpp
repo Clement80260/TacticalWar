@@ -1,6 +1,16 @@
 #include "pch.h"
 #include "EnvironmentManager.h"
 #include <stdlib.h>
+#include <iostream>
+#include <stdio.h>
+//#include <fstream>
+#pragma warning(disable : 4996)
+#define TAILLE_MAX 1000 // Tableau de taille 1000
+
+
+using namespace std;
+
+
 
 tw::EnvironmentManager * tw::EnvironmentManager::instance = NULL;
 
@@ -47,5 +57,14 @@ void tw::EnvironmentManager::saveEnvironment(Environment * environment)
 	// Equipe éditeur de map : Il faudra enregistrer dans un fichier la map
 	// passée en paramètre dans le dossier /assets/map/.
 	// L'extension du fichier sera .txt
+	FILE* fichier = NULL;
+	fichier = fopen("C:\\assets\\map\\map.txt", "w+");
+
+	if (fichier != NULL)
+	{
+		fputc('A', fichier); // Écriture du caractère A
+		fclose(fichier);
+	}
+	
 
 }

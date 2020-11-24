@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ZoneAndSightLib;..\PathfindingLib;..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ZoneAndSightLib;..\PathfindingLib;..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,6 +170,9 @@
     <ProjectReference Include="..\MatchmakingLib\MatchmakingLib.vcxproj">
       <Project>{212f22a8-d95f-460e-bd47-346bffd85c9c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\PathfindingLib\PathfindingLib.vcxproj">
+      <Project>{f579ad13-4a80-40f5-aba4-88e8e8739a71}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TacticalWarClientCommonLib\TacticalWarClientCommonLib.vcxproj">
       <Project>{b62c37fc-cdbb-4c56-a9da-15c134509611}</Project>
     </ProjectReference>
@@ -178,6 +181,9 @@
     </ProjectReference>
     <ProjectReference Include="..\UtilsLib\UtilsLib.vcxproj">
       <Project>{1d67c839-b5d5-4a87-8fdb-0ff8f2aed605}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ZoneAndSightLib\ZoneAndSightLib.vcxproj">
+      <Project>{92a13653-9a4d-478b-96d5-414c0133b381}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -32,7 +32,6 @@ namespace tw
 
 		sf::Vector2i screenCoordinatesToIsoGridCoordinates(int screenX, int screenY);
 
-
 	public:
 		IsometricRenderer(sf::RenderWindow * window);
 		inline void modifyWindow(sf::RenderWindow * newWindow) { this->window = newWindow; }

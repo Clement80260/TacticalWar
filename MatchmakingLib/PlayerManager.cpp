@@ -58,9 +58,9 @@ tw::Match * tw::PlayerManager::getCurrentOrNextMatchForPlayer(tw::Player * p)
 	// TODO : Rechercher le match courant ou le prochain pour le joueur p et le retourner. Si aucun match à venir, retourner NULL.
 	createTestMatchIfNotExists();
 
-	if (testMatch->getStatus != FINISHED)
+	if (testMatch->getStatus() != FINISHED)
 	{
-		
+		return testMatch;
 	}
 
 	return NULL;

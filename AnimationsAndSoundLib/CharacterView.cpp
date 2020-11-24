@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CharacterView.h"
 #include <iostream>
 #include <string>
@@ -138,6 +138,7 @@ void CharacterView::update(float deltatime)
 	BaseCharacterModel * m = getModel();
 	if (m->hasTargetPosition())
 	{
+		setAnimation(Animation::RUN);
 		if (m->getTargetX() > m->getCurrentX())
 		{
 			orientation = Orientation::BOTTOM_RIGHT;
@@ -155,5 +156,9 @@ void CharacterView::update(float deltatime)
 		{
 			orientation = Orientation::TOP_RIGHT;
 		}
+	}
+	else
+	{
+		setAnimation(Animation::IDLE);
 	}
 }

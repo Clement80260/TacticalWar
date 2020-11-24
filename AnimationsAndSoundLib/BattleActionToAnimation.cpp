@@ -3,7 +3,12 @@
 
 void BattleActionToAnimation::notifyAnimationFinished(float remainingTime)
 {
+	for (int i = 0; i < Listener.size(); i++)
+	{
+		Listener[i]->onAnimationFinished(remainingTime);
+	}
 
+	Listener.clear();
 }
 void BattleActionToAnimation::addlistener(IActionAnimationEventListener* l) 
 {
@@ -22,8 +27,4 @@ void BattleActionToAnimation::start()
 void BattleActionToAnimation::elapseTime(float deltatime)
 {
 	elseTime += deltatime;
-}
-void BattleActionToAnimation::update(float deltatime)
-{
-
 }
