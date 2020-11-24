@@ -3,6 +3,7 @@
 #include <Pathfinder.h>
 #include <ZoneAndSightCalculator.h>
 
+
 using namespace tw;
 
 BattleScreen::BattleScreen(tgui::Gui * gui)
@@ -22,12 +23,17 @@ BattleScreen::BattleScreen(tgui::Gui * gui)
 	renderer->setColorator(colorator);
 	renderer->addEventListener(this);
 
-	activeCharacter = new TestCharacterModel(environment, 0, 0, 0);
-	characters.push_back(activeCharacter);
-	activeCharacter->addEventListener(this);
+	activeCharacter = NULL;
 
 	font.loadFromFile("./assets/font/arial.ttf");
 	FPS.setFont(font);
+
+	LinkToServer::getInstance()->addListener(this);
+}
+
+BattleScreen::~BattleScreen()
+{
+	LinkToServer::getInstance()->removeListener(this);
 }
 
 void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
@@ -39,6 +45,7 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 void BattleScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
+	LinkToServer::getInstance()->UpdateReceivedData();
 
 	for (int i = 0; i < characters.size(); i++)
 	{
@@ -54,8 +61,22 @@ void BattleScreen::update(float deltatime)
 void BattleScreen::render(sf::RenderWindow * window)
 {
 	renderer->modifyWindow(window);
-	renderer->render(environment, characters, getDeltatime());
+	std::vector<BaseCharacterModel*> aliveCharacters;
+	
+	for (std::map<int, BaseCharacterModel*>::iterator it = characters.begin(); it != characters.end(); it++)
+	{
+		aliveCharacters.push_back((*it).second);
+	}
+
+	renderer->render(environment, aliveCharacters, getDeltatime());
 	window->draw(FPS);
+}
+
+void BattleScreen::invalidatePathZone()
+{
+	colorator->setPathToHighlight(std::vector<Point2D>());
+	lastStartPosition.setX(-1);
+	lastStartPosition.setY(-1);
 }
 
 // Renderer Event Listener
@@ -114,9 +135,7 @@ void BattleScreen::onCellHover(int cellX, int cellY)
 
 		if (!isInPathZone)
 		{
-			colorator->setPathToHighlight(std::vector<Point2D>());
-			lastStartPosition.setX(-1);
-			lastStartPosition.setY(-1);
+			invalidatePathZone();
 		}
 
 		if (needToReprocess)
@@ -130,9 +149,7 @@ void BattleScreen::onCellHover(int cellX, int cellY)
 	}
 	else
 	{
-		colorator->setPathToHighlight(std::vector<Point2D>());
-		lastStartPosition.setX(-1);
-		lastStartPosition.setY(-1);
+		invalidatePathZone();
 	}
 }
 
@@ -174,7 +191,7 @@ void BattleScreen::onPositionChanged(BaseCharacterModel * c, int newPositionX, i
 {
 	sf::Clock test;
 	// Refresh the position :
-	if (c == activeCharacter)
+	if (c == activeCharacter && activeCharacter != NULL)
 	{
 		int x = c->getCurrentX();
 		int y = c->getCurrentY();
@@ -197,6 +214,30 @@ void BattleScreen::onPositionChanged(BaseCharacterModel * c, int newPositionX, i
 	}
 	sf::Time ellapsed = test.restart();
 	std::cout << "Time to reprocess path zone = " << ellapsed.asMilliseconds() << "ms" << std::endl;
+}
+
+//----------------------------------------------------------
+
+
+
+//----------------------------------------------------------
+// ServerMessageListener :
+//----------------------------------------------------------
+void BattleScreen::onMessageReceived(std::string msg)
+{
+	sf::String str = msg;
+	
+	if (str.substring(0, 2) == "CA")	// Add character
+	{
+		BaseCharacterModel * c = new TestCharacterModel(environment, 1, 0, 0);
+		characters[0] = c;
+		c->addEventListener(this);
+	}
+	else if (str.substring(0, 2) == "CS")	// Set active character
+	{
+		activeCharacter = characters[0];
+		onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
+	}
 }
 
 //----------------------------------------------------------

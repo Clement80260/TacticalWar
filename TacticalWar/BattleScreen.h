@@ -5,10 +5,11 @@
 #include <Environment.h>
 #include <BaseCharacterModel.h>
 #include "TWColorator.h"
+#include "LinkToServer.h"
 
 namespace tw
 {
-	class BattleScreen : public Screen, RendererEventListener, CharacterEventListener
+	class BattleScreen : public Screen, RendererEventListener, CharacterEventListener, ServerMessageListener
 	{
 	private:
 		IsometricRenderer * renderer;
@@ -17,7 +18,8 @@ namespace tw
 
 		BaseCharacterModel * activeCharacter;
 
-		std::vector<tw::BaseCharacterModel*> characters;
+		std::map<int, tw::BaseCharacterModel*> characters;
+		//std::vector<tw::BaseCharacterModel*> characters;
 		sf::Font font;
 		sf::Text FPS;
 
@@ -28,9 +30,11 @@ namespace tw
 
 		Point2D lastStartPosition;
 		Point2D lastTargetPosition;
+		void invalidatePathZone();
 
 	public:
 		BattleScreen(tgui::Gui * gui);
+		~BattleScreen();
 
 		virtual void handleEvents(sf::RenderWindow * window, tgui::Gui * gui);
 		virtual void update(float deltatime);
@@ -46,6 +50,9 @@ namespace tw
 
 		// CharacterEventListener :
 		virtual void onPositionChanged(BaseCharacterModel * c, int newPositionX, int newPositionY);
+
+		// ServerMessageListener :
+		virtual void onMessageReceived(std::string msg);
 	};
 }
 

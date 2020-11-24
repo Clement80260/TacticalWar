@@ -119,11 +119,15 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 								Battle * b = (Battle*)match->getBattlePayload();
 								// TODO : Notify that the player is back.
 								TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CA\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CS\n", 3);
 							}
 							else
 							{
 								// Détail du match à venir : proposer de rejoindre le match
 								TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CA\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CS\n", 3);
 								//match->setMatchStatus(tw::MatchStatus::STARTED);	// For test purpose
 							}
 						}
