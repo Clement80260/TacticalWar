@@ -6,7 +6,7 @@ sf::Color TestColorator::getColorForCell(tw::CellData * cell)
 	{
 		if ((*cell) == path[i])
 		{
-			return sf::Color(50, 200, 255);
+			return sf::Color(255, 0, 255);
 		}
 	}
 	
