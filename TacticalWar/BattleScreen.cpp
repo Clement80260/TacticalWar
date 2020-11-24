@@ -17,7 +17,7 @@ BattleScreen::BattleScreen(tgui::Gui * gui)
 	environment->getMapData(2, 2)->setIsObstacle(true);
 	environment->getMapData(1, 1)->setIsWalkable(false);
 
-	colorator = new TWColorator(sf::Color(40, 200, 255), sf::Color(60, 230, 255));
+	colorator = new TWColorator(sf::Color(40, 200, 255), sf::Color(20, 100, 200));
 
 	renderer->setColorator(colorator);
 	renderer->addEventListener(this);
@@ -68,8 +68,20 @@ void BattleScreen::update(float deltatime)
 		int x = characters[i]->getCurrentX();
 		int y = characters[i]->getCurrentY();
 		
+		Point2D startPoint(x, y);
+
 		std::vector<Point2D> zone = ZoneAndSightCalculator::getInstance()->generateZone(x, y, 1, 3, tw::TypeZoneLaunch::STAR);
-		pathZone = zone;
+		std::vector<Point2D> realZone;
+		for (int i = 0; i < zone.size(); i++)
+		{
+			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPoint, zone[i], environment, std::vector<Obstacle*>());
+			if (path.size() <= 2)
+			{
+				realZone.push_back(zone[i]);
+			}
+		}
+
+		pathZone = realZone;
 	}
 
 	colorator->setPathZone(pathZone);
@@ -120,6 +132,7 @@ void BattleScreen::onCellHover(int cellX, int cellY)
 	CellData * cell = environment->getMapData(cellX, cellY);
 	if (!cell->getIsObstacle() && cell->getIsWalkable())
 	{
+		colorator->setPathToHighlight(std::vector<Point2D>());
 		for (int i = 0; i < pathZone.size(); i++)
 		{
 			if (pathZone[i].getX() == cellX && pathZone[i].getY() == cellY)
@@ -127,7 +140,8 @@ void BattleScreen::onCellHover(int cellX, int cellY)
 				Point2D startPosition(characters[0]->getCurrentX(), characters[0]->getCurrentY());
 				Point2D targetPosition(cellX, cellY);
 				std::vector<Point2D> pathToHighlight = Pathfinder::getInstance()->getPath(startPosition, targetPosition, environment, std::vector<Obstacle*>());
-				colorator->setPathToHighlight(pathToHighlight);
+				if(pathToHighlight.size() <= 2)
+					colorator->setPathToHighlight(pathToHighlight);
 				break;
 			}
 		}
