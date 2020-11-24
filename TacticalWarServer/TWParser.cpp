@@ -18,6 +18,8 @@ TWParser::TWParser()
 		playersMap[players[i]->getPseudo()] = players[i];
 		teamIdToPlayerList[players[i]->getTeamNumber()].push_back(players[i]);
 	}
+
+	tw::PlayerManager::subscribeToAllMatchEvent(this);
 }
 
 
@@ -75,9 +77,12 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 	{
 		std::string toParse = extractCompleteMessageFromBuffer(client);
 
+		// Connexion d'un client (login joueur ou spectateur)
 		if (StringUtils::startsWith(toParse, "HG"))
 		{
 			std::string payload = toParse.substr(2);
+
+			bool wrongIds = false;
 
 			// Connexion joueur :
 			if (payload.length() > 0)
@@ -119,9 +124,17 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 							{
 								// Détail du match à venir : proposer de rejoindre le match
 								TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
+								//match->setMatchStatus(tw::MatchStatus::STARTED);	// For test purpose
 							}
 						}
+						else
+							wrongIds = true;
 					}
+					else wrongIds = true;
+				}
+				else if (data.size() >= 1)
+				{
+					wrongIds = true;
 				}
 				else
 					spectatorMode = true;
@@ -129,30 +142,54 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 			else // Connexion spectateur
 				spectatorMode = true;
 
-			if (spectatorMode)
+			if (wrongIds)
+			{
+				TcpServer<TWParser, ClientState>::Send(client, (char*)"HK\n", 3);	// Kick
+			}
+			else if (spectatorMode)
 			{
 				spectatorModeClientDiffusionList.push_back(client);
-
-				std::vector<tw::Match*> playingMatch = tw::PlayerManager::getCurrentlyPlayingMatchs();
-				// TODO : Envoi de la liste des matchs en cours
-				TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
+				TcpServer<TWParser, ClientState>::Send(client, (char*)"HS\n", 3);
+				
+				notifyPlayingMatchList();
 			}
-			//TcpServer<TWParser, ClientState>::Send(client, (char*)"Hello\n", 6);
 		}
-
-		/*
-		long sentenceLength = buffer.size();
-		unsigned char * sentence = new unsigned char[sentenceLength];
-
-		for (int i = 0; i < sentenceLength; i++)
+		// Demande de la liste des matchs en cours :
+		else if (StringUtils::startsWith(toParse, "ML"))
 		{
-			sentence[i] = buffer[i];
+			notifyPlayingMatchList(client);
 		}
+	}
+}
 
-		TcpServer<TWParser, ClientState>::Send(client, (char*)sentence, sentenceLength);
-		delete sentence;
-		buffer.clear();
-		*/
+void TWParser::notifyPlayingMatchList(ClientState * c)
+{
+	// Envoi de la liste des matchs en cours
+	std::vector<tw::Match*> playingMatch = tw::PlayerManager::getCurrentlyPlayingMatchs();
+	
+	std::string matchData = "";
+
+	for (int i = 0; i < playingMatch.size(); i++)
+	{
+		if (i != 0)
+			matchData += ';';
+		matchData += playingMatch[i]->serialize();
+	}
+
+	matchData = "ML" + matchData + '\n';
+
+	// Si envoi à un client spécifique, envoi uniquement au client passé en paramètre
+	if (c != NULL)
+	{
+		TcpServer<TWParser, ClientState>::Send(c, (char*)matchData.c_str(), matchData.size());
+	}
+	// Envoi à tout le monde (mise à jour de la liste suite à une modif)
+	else
+	{
+		for (int i = 0; i < spectatorModeClientDiffusionList.size(); i++)
+		{
+			TcpServer<TWParser, ClientState>::Send(spectatorModeClientDiffusionList[i], (char*)matchData.c_str(), matchData.size());
+		}
 	}
 }
 
@@ -180,6 +217,13 @@ void TWParser::onClientDisconnected(SOCKET sock)
 
 void TWParser::onClientDisconnected(ClientState * client)
 {
+	// If spectator, clear it from the spectator diffusion list :
+	std::vector<ClientState*>::iterator it = std::find(spectatorModeClientDiffusionList.begin(), spectatorModeClientDiffusionList.end(), client);
+	if (it != spectatorModeClientDiffusionList.end())
+	{
+		spectatorModeClientDiffusionList.erase(it);
+	}
+	
 	// Clear connected player map :
 	if (client->getPseudo().length() > 0 && playersMap.find(client->getPseudo()) != playersMap.end())
 	{
@@ -203,9 +247,5 @@ void TWParser::onClientDisconnected(ClientState * client)
 void TWParser::onMatchStatusChanged(tw::Match * match, tw::MatchStatus oldStatus, tw::MatchStatus newStatus)
 {
 	// Notify spectator mode clients
-	for (int i = 0; i < spectatorModeClientDiffusionList.size(); i++)
-	{
-		ClientState * c = spectatorModeClientDiffusionList[i];
-		// TODO : Notify status changed (send data to clients)
-	}
+	notifyPlayingMatchList();
 }

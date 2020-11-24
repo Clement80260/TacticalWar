@@ -153,12 +153,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationManager.h" />
+    <ClInclude Include="BattleActionToAnimation.h" />
+    <ClInclude Include="CharacterMoveAction.h" />
     <ClInclude Include="CharacterView.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="IActionAnimationEventListener.h" />
+    <ClInclude Include="IScreenActionCallback.h" />
+    <ClInclude Include="NoDurationAction.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationManager.cpp" />
+    <ClCompile Include="BattleActionToAnimation.cpp" />
+    <ClCompile Include="CharacterMoveAction.cpp" />
     <ClCompile Include="CharacterView.cpp" />
+    <ClCompile Include="IActionAnimationEventListener.cpp" />
+    <ClCompile Include="IScreenActionCallback.cpp" />
+    <ClCompile Include="NoDurationAction.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

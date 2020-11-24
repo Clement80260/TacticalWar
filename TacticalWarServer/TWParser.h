@@ -23,6 +23,8 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener
 	// Liste des clients en mode spectateur (pour mettre à jour la liste des match en cours) :
 	std::vector<ClientState*> spectatorModeClientDiffusionList;
 
+	void notifyPlayingMatchList(ClientState * c = NULL);
+
 public:
 	TWParser();
 	~TWParser();

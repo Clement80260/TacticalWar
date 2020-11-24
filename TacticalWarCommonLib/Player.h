@@ -34,5 +34,10 @@ namespace tw
 		{
 			return hasJoinBattle;
 		}
+
+		inline void setHasJoinBattle(bool hasJoin)
+		{
+			this->hasJoinBattle = hasJoin;
+		}
 	};
 }

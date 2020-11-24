@@ -86,3 +86,10 @@ std::vector<tw::Match*> tw::PlayerManager::getCurrentlyPlayingMatchs()
 
 	return result;
 }
+
+void tw::PlayerManager::subscribeToAllMatchEvent(MatchEventListener * l)
+{
+	createTestMatchIfNotExists();
+
+	testMatch->addEventListener(l);
+}

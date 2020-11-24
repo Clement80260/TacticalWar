@@ -2,6 +2,7 @@
 #include "ScreenManager.h"
 #include "BattleScreen.h"
 #include "LinkToServer.h"
+#include "SpectatorModeScreen.h"
 
 using namespace tw;
 
@@ -12,6 +13,7 @@ float formElementHeight = 25;
 LoginScreen::LoginScreen(tgui::Gui * gui)
 {
 	readyForConnect = false;
+	this->gui = gui;
 	gui->removeAllWidgets();
 	
 	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
@@ -70,6 +72,13 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	gui->add(button, "connectBtn");
 
 	gui->add(errorMsg, "errorMsg");
+
+	LinkToServer::getInstance()->addListener(this);
+}
+
+LoginScreen::~LoginScreen()
+{
+	LinkToServer::getInstance()->removeListener(this);
 }
 
 void LoginScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
@@ -102,6 +111,14 @@ void LoginScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 	{
 		if (event.type == sf::Event::Closed)
 			window->close();
+		else if (event.type == sf::Event::Resized)
+		{
+			int sizeX = event.size.width;
+			int sizeY = event.size.height;
+			sf::View view = window->getView();
+			view.setSize(event.size.width, event.size.height);
+			window->setView(view);
+		}
 
 		gui->handleEvent(event);
 	}
@@ -111,21 +128,7 @@ void LoginScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 		if (LinkToServer::getInstance()->Connect())
 		{
 			LinkToServer::getInstance()->Send("HG" + login->getText() + ";" + password->getText());
-			sf::String sentence = LinkToServer::getInstance()->Receive();
-
-			if (sentence.substring(0, 2) == "HG")
-			{
-				readyForConnect = false;
-				gui->removeAllWidgets();
-				ScreenManager::getInstance()->setCurrentScreen(new BattleScreen(gui));
-				delete this;
-			}
-			else
-			{
-				LinkToServer::getInstance()->Disconnect();
-				messageDuration = 5;
-				errorMsg->setText("Login ou mot de passe incorrect ...");
-			}
+			// The sentence will be treated in onMessageReceived callback.
 		}
 		else
 		{
@@ -140,6 +143,7 @@ void LoginScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 void LoginScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
+	LinkToServer::getInstance()->UpdateReceivedData();
 
 	// Reset du message d'erreur :
 	if (messageDuration > 0)
@@ -157,4 +161,30 @@ void LoginScreen::update(float deltatime)
 void LoginScreen::render(sf::RenderWindow * window)
 {
 	window->draw(title);
+}
+
+void LoginScreen::onMessageReceived(std::string msg)
+{
+	sf::String sentence = msg;
+
+	if (sentence.substring(0, 2) == "HG")
+	{
+		readyForConnect = false;
+		gui->removeAllWidgets();
+		ScreenManager::getInstance()->setCurrentScreen(new BattleScreen(gui));
+		delete this;
+	}
+	else if (sentence.substring(0, 2) == "HS")
+	{
+		readyForConnect = false;
+		gui->removeAllWidgets();
+		ScreenManager::getInstance()->setCurrentScreen(new SpectatorModeScreen(gui));
+		delete this;
+	}
+	else
+	{
+		LinkToServer::getInstance()->Disconnect();
+		messageDuration = 5;
+		errorMsg->setText("Login ou mot de passe incorrect ...");
+	}
 }

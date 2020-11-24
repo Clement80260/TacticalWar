@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="EditorEventListener.cpp" />
     <ClCompile Include="EditorUI.cpp" />
+    <ClCompile Include="EnvironmentEditorColorator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SelectablePanel.cpp" />
   </ItemGroup>
@@ -155,6 +156,7 @@
     <ClInclude Include="EditorUI.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="EnvironmentEditorColorator.h" />
     <ClInclude Include="SelectablePanel.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Player.h"
+#include <Player.h>
 #include <vector>
 #include "Match.h"
 #include <StringUtils.h>
@@ -25,5 +25,7 @@ namespace tw
 				testMatch->setTeam2Players(players[2], players[3]);
 			}
 		}
+
+		static void subscribeToAllMatchEvent(MatchEventListener * l);
 	};
 }
