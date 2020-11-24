@@ -50,24 +50,17 @@ std::vector<tw::Player*> tw::PlayerManager::loadPlayers()
 		cout << "Pas reussi\n" << endl;
 	}
 
-	//result.push_back(new Player("J1", "P1", 1));
-	//result.push_back(new Player("J2", "P2", 1));
-	//result.push_back(new Player("J3", "P3", 2));
-	//result.push_back(new Player("J4", "P4", 2));
-
 	return result;
 }
 
 tw::Match * tw::PlayerManager::getCurrentOrNextMatchForPlayer(tw::Player * p)
 {
+	// TODO : Rechercher le match courant ou le prochain pour le joueur p et le retourner. Si aucun match à venir, retourner NULL.
 	createTestMatchIfNotExists();
 
-	// TODO : Rechercher le match courant ou le prochain pour le joueur p 
-	// et le retourner. Si aucun match à venir, retourner NULL.
-
-	if (testMatch->getStatus() != FINISHED)
+	if (testMatch->getStatus != FINISHED)
 	{
-		return testMatch;
+		
 	}
 
 	return NULL;
