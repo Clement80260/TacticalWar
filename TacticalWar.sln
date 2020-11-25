@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ColorisationTestModule", "C
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnvironmentPersistanceLib", "EnvironmentPersistanceLib\EnvironmentPersistanceLib.vcxproj", "{FAD2F01A-A414-4665-88B2-1191EAC5F5C1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PathfindingTestModule", "PathfindingTestModule\PathfindingTestModule.vcxproj", "{AA769065-09C8-4B28-80C5-AD2822EF7499}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MatchmakingTestModule", "MatchmakingTestModule\MatchmakingTestModule.vcxproj", "{F4EF5AE4-9DCA-4C07-BAA0-53DEFB29A10C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UtilsLib", "UtilsLib\UtilsLib.vcxproj", "{1D67C839-B5D5-4A87-8FDB-0FF8F2AED605}"
