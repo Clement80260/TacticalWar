@@ -1,6 +1,7 @@
 #include "SpectatorModeScreen.h"
 #include "LinkToServer.h"
 #include <Match.h>
+#include "MatchView.h"
 
 SpectatorModeScreen::SpectatorModeScreen(tgui::Gui * gui)
 	: Screen()
@@ -99,7 +100,18 @@ void SpectatorModeScreen::onMessageReceived(std::string msg)
 			matchs.push_back(tw::Match::deserialize(str[i]));
 		}
 		
+		m_matchListpanel->removeAllWidgets();
 
-		// TODO : Afficher les matchs
+		// Afficher les matchs
+		for (int i = 0; i < matchs.size(); i++)
+		{
+			std::shared_ptr<MatchView> m = std::make_shared<MatchView>(*matchs[i]);
+			m->setSize(tgui::Layout("97%"), 120);
+			m->setPosition(tgui::Layout("1.5%"), 10 * (i + 1) + (120 * i));
+
+			m_matchListpanel->add(m);
+		}
+
+		m_matchListpanel->getRenderer()->setScrollbarWidth(10);
 	}
 }

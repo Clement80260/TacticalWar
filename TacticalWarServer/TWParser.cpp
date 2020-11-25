@@ -119,11 +119,17 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 								Battle * b = (Battle*)match->getBattlePayload();
 								// TODO : Notify that the player is back.
 								TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CA\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CS\n", 3);
 							}
 							else
 							{
 								// Détail du match à venir : proposer de rejoindre le match
 								TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CA\n", 3);
+								TcpServer<TWParser, ClientState>::Send(client, (char*)"CS\n", 3);
+								p->setHasJoinBattle(true);
+								notifyMatchConnectedPlayerChanged(match);
 								//match->setMatchStatus(tw::MatchStatus::STARTED);	// For test purpose
 							}
 						}
@@ -229,6 +235,8 @@ void TWParser::onClientDisconnected(ClientState * client)
 	{
 		tw::Player * p = playersMap[client->getPseudo()];
 		
+		p->setHasJoinBattle(false);
+
 		if (playerToBattleMap.find(p) != playerToBattleMap.end())
 		{
 			std::cout << "Notify battle that connection is lost with " << p->getPseudo().c_str() << std::endl;
@@ -248,4 +256,50 @@ void TWParser::onMatchStatusChanged(tw::Match * match, tw::MatchStatus oldStatus
 {
 	// Notify spectator mode clients
 	notifyPlayingMatchList();
+}
+
+
+void TWParser::notifyMatchConnectedPlayerChanged(tw::Match * match)
+{
+	std::vector<tw::Player*> team1 = match->getTeam1();
+	std::vector<tw::Player*> team2 = match->getTeam2();
+
+	std::string playerStatus;
+	std::vector<tw::Player*> diffusionList;
+
+	for (int i = 0; i < team1.size(); i++)
+	{
+		if (i > 0)
+			playerStatus += ";";
+		tw::Player * p = team1[i];
+		playerStatus += p->getPseudo() + "," + std::to_string((p->getHasJoinBattle() ? 1 : 0));
+
+		if (p->getHasJoinBattle())
+			diffusionList.push_back(p);
+	}
+
+	playerStatus += ";";
+
+	for (int i = 0; i < team2.size(); i++)
+	{
+		if (i > 0)
+			playerStatus += ";";
+		tw::Player * p = team2[i];
+		playerStatus += p->getPseudo() + "," + std::to_string((p->getHasJoinBattle() ? 1 : 0));
+
+		if (p->getHasJoinBattle())
+			diffusionList.push_back(p);
+	}
+
+	playerStatus = "PS" + playerStatus + "\n";
+
+	// Notify online players :
+	for (int i = 0; i < diffusionList.size(); i++)
+	{
+		ClientState * c = connectedPlayerMap[diffusionList[i]];
+		if (c != NULL)
+		{
+			TcpServer<TWParser, ClientState>::Send(c, (char*)playerStatus.c_str(), playerStatus.size());
+		}
+	}
 }

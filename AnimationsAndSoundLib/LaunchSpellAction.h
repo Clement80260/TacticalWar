@@ -1,23 +1,24 @@
 #pragma once
-
 #include <MoveActionAnimationEventListener.h>
 #include "BattleActionToAnimation.h"
 #include "IScreenActionCallback.h"
 
-class CharacterMoveAction : public BattleActionToAnimation, MoveActionAnimationEventListener
+class LaunchSpellAction : public BattleActionToAnimation, MoveActionAnimationEventListener
 {
 private:
 	int persoId;
-	std::vector<tw::Point2D> path;
+	int spellId;
+	int x, y;
 	bool moveAnimationFinished;
 	IScreenActionCallback * screen;
 	bool firstUpdate;
 public:
-	CharacterMoveAction(IScreenActionCallback * screen, int persoId, std::vector<tw::Point2D> path)
+	LaunchSpellAction(IScreenActionCallback * screen, int persoId,int x,int y)
 	{
 		this->persoId = persoId;
 		this->screen = screen;
-		this->path = path;
+		this->x = x;
+		this->y = y;
 		moveAnimationFinished = false;
 		firstUpdate = true;
 	}
@@ -26,7 +27,7 @@ public:
 	{
 		if (firstUpdate)
 		{
-			screen->applyCharacterMove(persoId, path, this);
+			screen->applyCharacterLaunchSpell(persoId,x,y,spellId);
 			firstUpdate = false;
 		}
 	}
@@ -37,4 +38,3 @@ public:
 		notifyAnimationFinished(0);
 	}
 };
-

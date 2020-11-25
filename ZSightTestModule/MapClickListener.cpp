@@ -26,6 +26,10 @@ void MapClickListener::onCellClicked(int x, int y)
 		startCell.setY(y);
 		startPointSelected = true;
 	}
+	//colorator->setPathToHighlight();
+	colorator->setPathToHighlight(tw::ZoneAndSightCalculator::getInstance()->generateZone(x, y, 0, 8, tw::TypeZoneLaunch::LINE));
+
+	/*
 	else if (!endPointSelected)
 	{
 		std::cout << "Set endCell" << std::endl;
@@ -33,7 +37,7 @@ void MapClickListener::onCellClicked(int x, int y)
 		endCell.setY(y);
 		endPointSelected = true;
 
-		//processedPath = tw::Pathfinder::getInstance()->getPath(startCell, endCell, environment, std::vector<tw::Obstacle*>());
+		processedPath = tw::Pathfinder::getInstance()->getPath(startCell, endCell, environment, std::vector<tw::Obstacle*>());
 		colorator->setPathToHighlight(processedPath);
 	}
 	else
@@ -43,7 +47,7 @@ void MapClickListener::onCellClicked(int x, int y)
 		endPointSelected = false;
 		processedPath.clear();
 		colorator->setPathToHighlight(processedPath);
-	}
+	}*/
 }
 
 void MapClickListener::onCellHover(int x, int y)

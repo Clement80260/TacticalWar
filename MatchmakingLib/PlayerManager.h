@@ -10,6 +10,7 @@ namespace tw
 	class PlayerManager
 	{
 		static Match * testMatch;
+		static std::vector<Player*> playersCache;
 	public:
 		static std::vector<Player*> loadPlayers();
 		static Match * getCurrentOrNextMatchForPlayer(Player * p);

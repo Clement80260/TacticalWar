@@ -24,6 +24,7 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener
 	std::vector<ClientState*> spectatorModeClientDiffusionList;
 
 	void notifyPlayingMatchList(ClientState * c = NULL);
+	void notifyMatchConnectedPlayerChanged(tw::Match * match);
 
 public:
 	TWParser();
