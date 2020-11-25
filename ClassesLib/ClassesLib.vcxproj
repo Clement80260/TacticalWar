@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Archer.h" />
+    <ClInclude Include="CharacterFactory.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Guerrier.h" />
     <ClInclude Include="Mage.h" />
@@ -164,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archer.cpp" />
+    <ClCompile Include="CharacterFactory.cpp" />
     <ClCompile Include="ClassesLib.cpp" />
     <ClCompile Include="Guerrier.cpp" />
     <ClCompile Include="Mage.cpp" />

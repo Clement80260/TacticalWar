@@ -23,24 +23,24 @@ namespace tw
 			return 500;
 		}
 
-		virtual int getBasePhysicalAttack()
+		virtual int getBaseAttack()
 		{
 			return 100;
 		}
 
-		virtual int getBaseMagicalAttack()
-		{
-			return 20;
-		}
-
-		virtual int getBasePhysicalDefense()
+		virtual int getBaseDefense()
 		{
 			return 5;
 		}
 
-		virtual int getBaseMagicalDefense()
+		virtual int getBasePa()
 		{
-			return 15;
+			return 6;
+		}
+
+		virtual int getBasePm()
+		{
+			return 4;
 		}
 
 		virtual bool doAttack1(int targetX, int targetY)
@@ -59,6 +59,11 @@ namespace tw
 		}
 
 		virtual bool doAttack4(int targetX, int targetY)
+		{
+			return true;
+		}
+
+		virtual bool doAttack5(int targetX, int targetY)
 		{
 			return true;
 		}
