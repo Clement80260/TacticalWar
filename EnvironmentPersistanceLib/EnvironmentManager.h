@@ -32,8 +32,13 @@ namespace tw
 
 		Environment * getRandomEnvironment()
 		{
-			createTestEnvironmentIfNotExists();
-			return testEnvironment;
+			//createTestEnvironmentIfNotExists();
+			std::vector<int> ids = getAlreadyExistingIds();
+			if (ids.size() > 0)
+			{
+				return loadEnvironment(ids[0]);
+			}
+			return NULL;
 		}
 
 		std::vector<int> getAlreadyExistingIds()
