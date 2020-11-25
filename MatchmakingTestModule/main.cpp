@@ -70,7 +70,6 @@ int main(int argc, char ** argv)
 						cout << "equipe " << TeamRest[indexTeam][0]->getTeamNumber() << " sur le banc ! ;)" << endl;
 						TeamWinMatch[i+1] = TeamRest[indexTeam];
 						TeamRest = TeamWinMatch;
-						
 					}
 					else
 					{
@@ -85,21 +84,50 @@ int main(int argc, char ** argv)
 				}
 				else
 				{
-					cout << "coucou "<< endl;
+					if (teamIdToPlayers.size() <= indexTeam) {
+						indexTeam = 1;
+					}
+						
 					if(TeamRest.size() & 1)
 					{
 						cout << "impaire" << endl;
 					}
 					else
 					{
-						indexTeam = 1;
+						TeamWinMatch.clear();
+						int idmax = TeamRest.size();
+						int copyindexTeam = 1, xy =0;
 						for (int y = 0; y < i; y++) {
-							cout << "pair" << endl;
-							cout << "Tour " << indexTour << " - ";
-							cout << "equipe " << TeamRest[indexTeam][0]->getTeamNumber() << " vs " << "equipe " << TeamRest[indexTeam + 1][0]->getTeamNumber() << endl;
-							TeamWinMatch[i + 1] = TeamRest[indexTeam];
-							TeamLosMatch[i + 1] = TeamRest[indexTeam + 1];
-							indexTeam += 2;
+							if (TeamRest.size() & 1)
+							{
+								idmax = 1;
+							}
+							
+							if (TeamRest.size() == 1) {
+								indexTeam = 1;
+								cout << "Win de l'equipe " << TeamRest[indexTeam][0]->getTeamNumber() << endl;
+								y = i;
+							}
+							else
+							{
+								cout << "Tour " << indexTour << " - ";
+								cout << "equipe " << TeamRest[idmax][0]->getTeamNumber() << " vs " << "equipe " << TeamRest[indexTeam][0]->getTeamNumber() << endl;
+								TeamWinMatch[xy + 1] = TeamRest[idmax];
+								TeamLosMatch[i + 1] = TeamRest[indexTeam];
+								indexTeam += 1;
+								idmax = TeamRest.size() - indexTeam  +1;
+								xy += 1;
+								copyindexTeam = indexTeam + 1;
+								if (TeamRest.size() <= copyindexTeam) {
+									xy = 0;
+									indexTeam = 1;
+									TeamRest = TeamWinMatch;
+									if (TeamWinMatch.size() != 1) {
+										TeamWinMatch.clear();
+									}
+								}
+							}
+
 						}
 						i = equipe;
 						x = equipe - 1;
