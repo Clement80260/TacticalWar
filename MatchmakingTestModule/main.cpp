@@ -17,6 +17,7 @@ int main(int argc, char ** argv)
 	int indexMatch = 1;
 	int indexTour = 1;
 	int equipe = players.size() / 2;
+	int matchPlay;
 	
 
 	cout << "Liste des joueurs : \n" << endl;
@@ -50,32 +51,64 @@ int main(int argc, char ** argv)
 		indexTeam += 1;
 	}
 	cout << "---------------------------------" << endl;
-
 	indexTeam = 1;
-
-	for (int i = 0; i < equipe - 1; i++)
+	map<int, vector<Player*>> TeamRest;
+	map<int, vector<Player*>> TeamWinMatch;
+	map<int, vector<Player*>> TeamLosMatch;
+	TeamRest = teamIdToPlayers;
+	//Nombre de tour !!
+	for (int x = 0; x < equipe - 1; x++)
 	{
-		for (int i = 0; i < equipe; i++)
-		{
-			// Format = Tour 1 - Eq 1 VS Eq 2
-			cout << "Tour " << indexTour << " - ";
-			// Faire l'arbre de tournoi automatique.
-			cout << "equipe " << teamIdToPlayers[indexTeam]->getTeamNumber() << " vs " << "equipe " << teamIdToPlayers[indexTeam + 1]->getTeamNumber() << endl;
-		}
-		cout << "---------------------------------" << endl;
-		indexTour += 1;
+		//Nombtre de match
+			for (int i = 0; i < equipe; i++)
+			{
+				if (teamIdToPlayers == TeamRest) {
+					
+					if (TeamRest.find(indexTeam + 1) == TeamRest.end())
+					{
+						cout << "Tour " << indexTour << " - ";
+						cout << "equipe " << TeamRest[indexTeam][0]->getTeamNumber() << " sur le banc ! ;)" << endl;
+						TeamWinMatch[i+1] = TeamRest[indexTeam];
+						TeamRest = TeamWinMatch;
+						
+					}
+					else
+					{
+					
+						cout << "Tour " << indexTour << " - ";
+						cout << "equipe " << TeamRest[indexTeam][0]->getTeamNumber() << " vs " << "equipe " << TeamRest[indexTeam + 1][0]->getTeamNumber() << endl;
+						TeamWinMatch[i+1] = TeamRest[indexTeam];
+						TeamLosMatch[i+1] = TeamRest[indexTeam + 1];
+						indexTeam += 2;
+					}
+					
+				}
+				else
+				{
+					cout << "coucou "<< endl;
+					if(TeamRest.size() & 1)
+					{
+						cout << "impaire" << endl;
+					}
+					else
+					{
+						indexTeam = 1;
+						for (int y = 0; y < i; y++) {
+							cout << "pair" << endl;
+							cout << "Tour " << indexTour << " - ";
+							cout << "equipe " << TeamRest[indexTeam][0]->getTeamNumber() << " vs " << "equipe " << TeamRest[indexTeam + 1][0]->getTeamNumber() << endl;
+							TeamWinMatch[i + 1] = TeamRest[indexTeam];
+							TeamLosMatch[i + 1] = TeamRest[indexTeam + 1];
+							indexTeam += 2;
+						}
+						i = equipe;
+						x = equipe - 1;
+					}
+				}
+			}
+			cout << "---------------------------------" << endl;
+			indexTour += 1;
 	}
-
-	//Match * testMatch = PlayerManager::getCurrentOrNextMatchForPlayer(players[i]);
-
-	//if (testMatch != NULL)
-	//{
-	//	cout << "match trouve" << endl;
-	//}
-	//else
-	//{
-	//	cout << "aucun match a venir" << endl;
-	//}
 
 	return 0;
 }

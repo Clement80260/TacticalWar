@@ -9,6 +9,7 @@ namespace tw
 		std::string pseudo;
 		std::string password;
 		int teamNumber;
+		int winnerTour;
 
 		bool hasJoinBattle;
 
@@ -38,6 +39,10 @@ namespace tw
 		inline void setHasJoinBattle(bool hasJoin)
 		{
 			this->hasJoinBattle = hasJoin;
+		}
+		inline void getWinTour(bool etat)
+		{
+			this->winnerTour = etat;
 		}
 	};
 }
