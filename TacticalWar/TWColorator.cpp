@@ -7,7 +7,7 @@ sf::Color TWColorator::getColorForCell(tw::CellData * cell)
 	{
 		for (int i = 0; i < pathToHighlight.size(); i++)
 		{
-			if ((*cell) == pathZone[i])
+			if ((*cell) == pathToHighlight[i])
 			{
 				return getPathHighlightColor();
 			}
