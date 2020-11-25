@@ -35,6 +35,7 @@ void MapClickListener::onCellClicked(int x, int y)
 
 		processedPath = tw::Pathfinder::getInstance()->getPath(startCell, endCell, environment, std::vector<tw::Obstacle*>());
 		colorator->setPathToHighlight(processedPath);
+
 	}
 	else
 	{

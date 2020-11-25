@@ -32,5 +32,10 @@ namespace tw
 		{
 			return (x == p.getX() && y == p.getY());
 		}
+
+		bool operator!=(Point2D &p) const
+		{
+			return !((*this) == p);
+		}
 	};
 }

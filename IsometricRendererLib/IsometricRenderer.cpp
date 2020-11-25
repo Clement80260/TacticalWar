@@ -184,7 +184,6 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			}
 			else if (cell->getIsWalkable())
 			{
-
 				spriteToDraw = spriteGrass;
 				borderX = -128 * 0.05;
 				borderY = -310 * 0.05;
