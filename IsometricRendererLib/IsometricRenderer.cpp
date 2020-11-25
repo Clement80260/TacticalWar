@@ -194,6 +194,7 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 				borderX = -194 * 0.05;
 				borderY = -260 * 0.05;
 				spriteToDraw = spriteWater;
+				borderY += 10;
 			}
 
 			int isoX = (i*120 - j*120)/2; // Cordonnées
