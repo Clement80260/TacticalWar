@@ -384,6 +384,7 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 	if (mapList->Text->Length > 0 && Int32::TryParse(mapList->Text, mapId))
 	{
 		tw::Environment * env = tw::EnvironmentManager::getInstance()->loadEnvironment(mapId);
+		delete environment;
 		this->environment = env;
 	}
 }
@@ -409,7 +410,7 @@ private: System::Void backgroundWorker1_DoWork(System::Object^  sender, System::
 }
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
 	int nextId = tw::EnvironmentManager::getInstance()->getAvailableId();
-	//delete environment;
+	delete environment;
 	this->environment = new tw::Environment(15, 15, nextId);
 }
 private: System::Void updateMapListTimer_Tick(System::Object^  sender, System::EventArgs^  e) {

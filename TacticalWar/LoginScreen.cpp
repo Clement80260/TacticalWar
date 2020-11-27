@@ -3,6 +3,7 @@
 #include "BattleScreen.h"
 #include "LinkToServer.h"
 #include "SpectatorModeScreen.h"
+#include "ClassSelectionScreen.h"
 
 using namespace tw;
 
@@ -172,6 +173,13 @@ void LoginScreen::onMessageReceived(std::string msg)
 		readyForConnect = false;
 		gui->removeAllWidgets();
 		ScreenManager::getInstance()->setCurrentScreen(new BattleScreen(gui));
+		delete this;
+	}
+	else if (sentence.substring(0, 2) == "HC")
+	{
+		readyForConnect = false;
+		gui->removeAllWidgets();
+		ScreenManager::getInstance()->setCurrentScreen(new ClassSelectionScreen(gui));
 		delete this;
 	}
 	else if (sentence.substring(0, 2) == "HS")

@@ -155,10 +155,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BattleScreen.cpp" />
+    <ClCompile Include="ClassSelectionScreen.cpp" />
     <ClCompile Include="LinkToServer.cpp" />
     <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatchView.cpp" />
+    <ClCompile Include="PlayerStatusView.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenManager.cpp" />
     <ClCompile Include="ServerMessageListener.cpp" />
@@ -194,9 +196,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BattleScreen.h" />
+    <ClInclude Include="ClassSelectionScreen.h" />
     <ClInclude Include="LinkToServer.h" />
     <ClInclude Include="LoginScreen.h" />
     <ClInclude Include="MatchView.h" />
+    <ClInclude Include="PlayerStatusView.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenManager.h" />
     <ClInclude Include="ServerMessageListener.h" />
