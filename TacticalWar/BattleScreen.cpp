@@ -20,6 +20,7 @@ BattleScreen::BattleScreen(tgui::Gui * gui)
 	//environment->getMapData(1, 1)->setIsWalkable(false);
 	environment = EnvironmentManager::getInstance()->getRandomEnvironment();
 
+	
 	colorator = new TWColorator(sf::Color(40, 200, 255), sf::Color(20, 100, 200));
 
 	renderer->setColorator(colorator);
@@ -205,7 +206,7 @@ void BattleScreen::onPositionChanged(BaseCharacterModel * c, int newPositionX, i
 		for (int i = 0; i < zone.size(); i++)
 		{
 			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPoint, zone[i], environment, std::vector<Obstacle*>());
-			if (path.size() <= 4)
+			if (path.size() <= 2)
 			{
 				realZone.push_back(zone[i]);
 			}
