@@ -119,10 +119,187 @@ std::vector<Point2D> ZoneAndSightCalculator::generateZone(int x, int y, int minP
 	return targettableCells;
 }
 
+bool ZoneAndSightCalculator::isObstacle(int x, int y, std::vector<Obstacle*> obstacles)
+{
+	bool bObstacle = false;
+	for (int i = 0; i < obstacles.size(); i++)
+	{
+		if (obstacles[i]->getX() == x && obstacles[i]->getY() == y)
+		{
+			bObstacle = true;
+			break;
+		}
+	}
+
+	return bObstacle;
+}
+
 std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, int launcherY, std::vector<Point2D> cellsToTest, std::vector<Obstacle*> obstacles)
 {
 	std::vector<Point2D> targettableCells;
 
+	/*int targetX, targetY = 0;
+	int screenSizeX, screenSizeY, a, b, y;
+	for (targetX = 0; targetX < screenSizeX; targetX++) {
+		a = (targetY - launcherY) / (targetX - launcherX);
+		b = launcherY - (launcherX * a);
+		if (targetX > launcherX) {
+			for (int i = launcherX; i < targetX; i++) {
+				y = a * i + b;
+				if (this->isObstacle(i,y,obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+		if (targetX < launcherX) {
+			for (int i = launcherX; i > targetX; i--) {
+				y = a * i + b;
+				if (this->isObstacle(i, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+	}
+	targetY = screenSizeY;
+	for (targetX = 0; targetX < screenSizeX; targetX++) {
+		a = (targetY - launcherY) / (targetX - launcherX);
+		b = launcherY - (launcherX * a);
+		if (targetX > launcherX) {
+			for (int i = launcherX; i < targetX; i++) {
+				y = a * i + b;
+				if (this->isObstacle(i, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+		if (targetX < launcherX) {
+			for (int i = launcherX; i > targetX; i--) {
+				y = a * i + b;
+				if (this->isObstacle(i, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+	}
+	targetX = 0;
+	for (targetY = 0; targetY < screenSizeY; targetY++) {
+		a = (targetY - launcherY) / (targetX - launcherX);
+		b = launcherY - (launcherX * a);
+		if (targetY > launcherY) {
+			for (int i = launcherY; i < targetY; i++) {
+				y = a * i + b;
+				if (this->isObstacle(i, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+		if (targetY < launcherY) {
+			for (int i = launcherY; i > targetY; i--) {
+				y = a * i + b;
+				if (this->isObstacle(i, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+	}
+	targetX = screenSizeX;
+	for (targetY = 0; targetY < screenSizeY; targetY++) {
+		a = (targetY - launcherY) / (targetX - launcherX);
+		b = launcherY - (launcherX * a);
+		if (targetY > launcherY) {
+			for (int i = launcherY; i < targetY; i++) {
+				y = a * i + b;
+				if (this->isObstacle(i, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+		if (targetY < launcherY) {
+			for (int i = launcherY; i > targetY; i--) {
+				y = a * i + b;
+				if (this->isObstacle(i, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(i, y));
+				}
+			}
+		}
+	}*/
+
+	for (int i = 0; i < cellsToTest.size(); i++) {
+		int targetX = cellsToTest[i].getX();
+		int targetY = cellsToTest[i].getY();
+		float a = (targetY - launcherY) / (targetX - launcherX);
+		float b = launcherY - (launcherX * a);
+		int y;
+
+		if (targetX > launcherX) {
+			for (int x = launcherX; x < targetX; x++) {
+				y = ceil(a * x + b);
+				if (this->isObstacle(x, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(x, y));
+				}
+			}
+		}
+		else if (targetX < launcherX) {
+			for (int x = launcherX; x > targetX; x--) {
+				y = ceil(a * x + b);
+				if (this->isObstacle(x, y, obstacles) == true) {
+					break;
+				}
+				else {
+					targettableCells.push_back(Point2D(x, y));
+				}
+			}
+		}
+		 else if (targetX == launcherX) {
+			if (targetY > launcherY) {
+				for (int y = launcherY; y < targetY; y++) {
+					if (this->isObstacle(targetX, y, obstacles) == true) {
+						break;
+					}
+					else {
+						targettableCells.push_back(Point2D(targetX, y));
+					}
+				}
+			}
+			else if (targetY < launcherY) {
+				for (int y = launcherY; y > targetY; y--) {
+					if (this->isObstacle(targetX, y, obstacles) == true) {
+						break;
+					}
+					else {
+						targettableCells.push_back(Point2D(targetX, y));
+					}
+				}
+			}
+		}
+	}
 
 	return targettableCells;
 }

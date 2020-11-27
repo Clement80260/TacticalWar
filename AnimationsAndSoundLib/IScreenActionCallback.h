@@ -8,6 +8,7 @@
 
 class IScreenActionCallback
 {
+public:
 	virtual void applyEndOfBattle() = 0;
 	virtual void applyChangeTurn(float remaining, int idPerso, std::string message) = 0;
 	virtual void applyCharacterDie(int idPerso) = 0;

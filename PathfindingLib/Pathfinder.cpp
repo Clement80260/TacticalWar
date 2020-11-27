@@ -112,7 +112,7 @@ std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosit
 				}
 			}
 
-			if (a->getX() -1 >= 0) //adjacent gauche
+			if (a->getX() - 1 >= 0) //adjacent gauche
 			{
 				CellData * voisinDroite = environment->getMapData(a->getX() - 1, a->getY());
 				if (voisinDroite != NULL && voisinDroite->getIsWalkable() && !voisinDroite->getIsObstacle() && isNotDynamicObstacle(voisinDroite, obstacles))
@@ -120,10 +120,10 @@ std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosit
 					Voisins.push_back(voisinDroite);
 				}
 			}
-			
+
 			if (a->getY() + 1 < environment->getHeight()) //adjacent bas
 			{
-				CellData * voisinDroite = environment->getMapData(a->getX(), a->getY()+1);
+				CellData * voisinDroite = environment->getMapData(a->getX(), a->getY() + 1);
 				if (voisinDroite != NULL && voisinDroite->getIsWalkable() && !voisinDroite->getIsObstacle() && isNotDynamicObstacle(voisinDroite, obstacles))
 				{
 					Voisins.push_back(voisinDroite);
@@ -146,7 +146,7 @@ std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosit
 			float temp;
 
 			for (int i = 0; i < Voisins.size(); i++)
-			{				
+			{
 				if (d[Voisins[i]] > d[a] + 1)
 				{
 					d[Voisins[i]] = d[a] + 1; //formule pour calculer une distance entre deux cellules	adjacentes
@@ -154,6 +154,8 @@ std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosit
 				}
 			}
 		}
+		else
+			break;
 	}
 
 	CellData * endCell = environment->getMapData(endPosition.getX(), endPosition.getY());

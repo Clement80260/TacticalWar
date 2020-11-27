@@ -117,7 +117,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\ZoneAndSightLib;..\PathfindingLib;..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\EnvironmentPersistanceLib;..\ZoneAndSightLib;..\PathfindingLib;..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +138,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\ZoneAndSightLib;..\PathfindingLib;..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\EnvironmentPersistanceLib;..\ZoneAndSightLib;..\PathfindingLib;..\MatchmakingLib;..\UtilsLib;..\IsometricRendererLib;..\TacticalWarClientCommonLib;..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\lib\TGUI-0.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +158,7 @@
     <ClCompile Include="LinkToServer.cpp" />
     <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MatchView.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenManager.cpp" />
     <ClCompile Include="ServerMessageListener.cpp" />
@@ -164,6 +167,9 @@
     <ClCompile Include="TWColorator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EnvironmentPersistanceLib\EnvironmentPersistanceLib.vcxproj">
+      <Project>{fad2f01a-a414-4665-88b2-1191eac5f5c1}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\IsometricRendererLib\IsometricRendererLib.vcxproj">
       <Project>{616dd023-6d4b-4e87-9f8a-a548a3e691ab}</Project>
     </ProjectReference>
@@ -190,6 +196,7 @@
     <ClInclude Include="BattleScreen.h" />
     <ClInclude Include="LinkToServer.h" />
     <ClInclude Include="LoginScreen.h" />
+    <ClInclude Include="MatchView.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenManager.h" />
     <ClInclude Include="ServerMessageListener.h" />

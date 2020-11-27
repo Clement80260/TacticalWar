@@ -76,7 +76,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\lib\SFML-2.5.1\include;..\ZoneAndSightLib;..\PathfindingLib;..\IsometricRendererLib;..\EnvironmentPersistanceLib;..\ClassesLib;..\AnimationAndSoundLib;..\UtilsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\ZoneAndSightLib;..\PathfindingLib;..\IsometricRendererLib;..\EnvironmentPersistanceLib;..\ClassesLib;..\AnimationAndSoundLib;..\UtilsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,7 +119,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\lib\SFML-2.5.1\include;..\ZoneAndSightLib;..\PathfindingLib;..\IsometricRendererLib;..\EnvironmentPersistanceLib;..\ClassesLib;..\AnimationAndSoundLib;..\UtilsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TacticalWarCommonLib;..\lib\SFML-2.5.1\include;..\ZoneAndSightLib;..\PathfindingLib;..\IsometricRendererLib;..\EnvironmentPersistanceLib;..\ClassesLib;..\AnimationAndSoundLib;..\UtilsLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +145,9 @@
     </ProjectReference>
     <ProjectReference Include="..\PathfindingLib\PathfindingLib.vcxproj">
       <Project>{f579ad13-4a80-40f5-aba4-88e8e8739a71}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TacticalWarCommonLib\TacticalWarCommonLib.vcxproj">
+      <Project>{22afcd2a-5058-44cf-8264-ad1a26272a58}</Project>
     </ProjectReference>
     <ProjectReference Include="..\UtilsLib\UtilsLib.vcxproj">
       <Project>{1d67c839-b5d5-4a87-8fdb-0ff8f2aed605}</Project>

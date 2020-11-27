@@ -36,7 +36,7 @@ namespace tw
 		{
 			team2Client = team;
 		}
-
+	public:
 		std::vector<Player> clientGetTeam1()
 		{
 			return team1Client;
@@ -64,6 +64,7 @@ namespace tw
 		void * battlePayload;
 
 		std::vector<MatchEventListener*> listeners;
+
 
 		bool playerIsInTeam(Player * p, std::vector<Player*> & team)
 		{
@@ -136,6 +137,11 @@ namespace tw
 		int getId()
 		{
 			return id;
+		}
+
+		std::string getMatchName()
+		{
+			return name;
 		}
 
 		void setTeam1Players(Player * p1, Player * p2)

@@ -13,16 +13,13 @@ using namespace tw;
 int main(int argc, char** argv)
 {
 	int *textureLoad = 0;
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Pathfinding test module");
+	sf::RenderWindow window(sf::VideoMode(800, 600), "SightTestModule test module");
 	sf::Clock deltaClock;
 
 	IsometricRenderer renderer(&window);
 	Environment environment(20, 20, 0);
 	std::vector<BaseCharacterModel*> characters;
 
-
-
-	
 
 	environment.getMapData(5, 7)->setIsObstacle(true);
 	environment.getMapData(6, 7)->setIsWalkable(false);
@@ -34,6 +31,8 @@ int main(int argc, char** argv)
 	environment.getMapData(11, 11)->setIsObstacle(true);
 	environment.getMapData(12, 12)->setIsWalkable(false);
 	environment.getMapData(13, 13)->setIsObstacle(true);
+
+
 
 	TestColorator * colorator = new TestColorator();
 

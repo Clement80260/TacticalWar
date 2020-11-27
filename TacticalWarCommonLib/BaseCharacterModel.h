@@ -4,6 +4,15 @@
 
 namespace tw
 {
+	class BaseCharacterModel;
+	
+	class CharacterEventListener
+	{
+	public:
+		virtual void onPositionChanged(BaseCharacterModel * c, int newPositionX, int newPositionY) = 0;
+	};
+
+
 	class BaseCharacterModel
 	{
 	private:
@@ -38,6 +47,17 @@ namespace tw
 		}
 
 
+		std::vector<CharacterEventListener*> listeners;
+
+		void notifyPositionChanged(int newPositionX, int newPositionY)
+		{
+			for (int i = 0; i < listeners.size(); i++)
+			{
+				listeners[i]->onPositionChanged(this, newPositionX, newPositionY);
+			}
+		}
+
+
 	public:
 		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY);
 		virtual ~BaseCharacterModel();
@@ -48,14 +68,16 @@ namespace tw
 
 		// Retourne la valeur du maximum de point de vie de base (sans altération d'effet). C'est une caractéristique de base de la classe.
 		virtual int getBaseMaxLife() = 0;
-		virtual int getBasePhysicalAttack() = 0;
-		virtual int getBaseMagicalAttack() = 0;
-		virtual int getBasePhysicalDefense() = 0;
-		virtual int getBaseMagicalDefense() = 0;
+		virtual int getBaseAttack() = 0;
+		virtual int getBaseDefense() = 0;
+		virtual int getBasePa() = 0;
+		virtual int getBasePm() = 0;
+
 		virtual bool doAttack1(int targetX, int targetY) = 0;
 		virtual bool doAttack2(int targetX, int targetY) = 0;
 		virtual bool doAttack3(int targetX, int targetY) = 0;
 		virtual bool doAttack4(int targetX, int targetY) = 0;
+		virtual bool doAttack5(int targetX, int targetY) = 0;
 
 		inline int getTeamId() {
 			return teamId;
@@ -145,6 +167,11 @@ namespace tw
 					
 					setNoTargetPosition();
 
+					// On ne notifie qu'à la fin du déplacement (but : éviter les freeze à chaque
+					// changement de cellule).
+					if(path.size() == 0)
+						notifyPositionChanged(currentX, currentY);
+
 					setNextPositionFromPath();
 				}
 			}
@@ -185,6 +212,21 @@ namespace tw
 		inline int getTargetY()
 		{
 			return currentTargetY;
+		}
+
+		void addEventListener(CharacterEventListener * l)
+		{
+			listeners.push_back(l);
+			l->onPositionChanged(this, currentX, currentY);
+		}
+
+		void removeEventListener(CharacterEventListener * l)
+		{
+			std::vector<CharacterEventListener*>::iterator it = std::find(listeners.begin(), listeners.end(), l);
+			if (it != listeners.end())
+			{
+				listeners.erase(it);
+			}
 		}
 	};
 }
