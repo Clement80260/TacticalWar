@@ -167,8 +167,6 @@ namespace tw
 			return team2;
 		}
 
-		
-
 		bool playerIsInTeam1(Player * p)
 		{
 			return playerIsInTeam(p, team1);
