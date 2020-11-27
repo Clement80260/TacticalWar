@@ -5,9 +5,13 @@
 #include <StringUtils.h>
 #include <PlayerManager.h>
 #include <Match.h>
+#include <CharacterFactory.h>
+#include <EnvironmentManager.h>
 
 TWParser::TWParser()
 {
+	loadEnvironments();
+	
 	players = tw::PlayerManager::loadPlayers();
 	std::cout << players.size() << " joueurs charges :" << std::endl;
 
@@ -22,6 +26,18 @@ TWParser::TWParser()
 	tw::PlayerManager::subscribeToAllMatchEvent(this);
 }
 
+void TWParser::loadEnvironments()
+{
+	std::vector<int> envIds = tw::EnvironmentManager::getInstance()->getAlreadyExistingIds();
+	for (int i = 0; i < envIds.size(); i++)
+	{
+		tw::Environment * e = tw::EnvironmentManager::getInstance()->loadEnvironment(envIds[i]);
+		if (e != NULL)
+		{
+			environments.push_back(e);
+		}
+	}
+}
 
 TWParser::~TWParser()
 {

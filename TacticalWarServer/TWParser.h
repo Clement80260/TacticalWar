@@ -7,11 +7,16 @@
 #include <map>
 #include <Battle.h>
 #include <Match.h>
+#include <Environment.h>
 
 class ModbusOperation;
 
 class TWParser : public Parser<ClientState>, tw::MatchEventListener
 {
+	std::vector<tw::Environment*> environments;
+
+	void loadEnvironments();
+
 	bool hasCompleteMessage(ClientState * client);
 	std::string extractCompleteMessageFromBuffer(ClientState * client);
 	std::vector<tw::Player*> players;

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "BaseCharacterModel.h"
 
 namespace tw
 {
@@ -12,6 +13,8 @@ namespace tw
 		int winnerTour;
 
 		bool hasJoinBattle;
+
+		BaseCharacterModel * character;
 
 	public:
 		Player(std::string pseudo, std::string password, int teamId);
@@ -43,6 +46,16 @@ namespace tw
 		inline void getWinTour(bool etat)
 		{
 			this->winnerTour = etat;
+		}
+
+		inline void setCharacter(BaseCharacterModel * m)
+		{
+			this->character = m;
+		}
+
+		inline BaseCharacterModel * getCharacter()
+		{
+			return character;
 		}
 	};
 }
