@@ -200,12 +200,12 @@ void BattleScreen::onPositionChanged(BaseCharacterModel * c, int newPositionX, i
 
 		Point2D startPoint(x, y);
 
-		std::vector<Point2D> zone = ZoneAndSightCalculator::getInstance()->generateZone(x, y, 1, 3, tw::TypeZoneLaunch::STAR);
+		std::vector<Point2D> zone = ZoneAndSightCalculator::getInstance()->generateZone(x, y, 1, 4, tw::TypeZoneLaunch::STAR);
 		std::vector<Point2D> realZone;
 		for (int i = 0; i < zone.size(); i++)
 		{
 			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPoint, zone[i], environment, std::vector<Obstacle*>());
-			if (path.size() <= 2)
+			if (path.size() <= 4)
 			{
 				realZone.push_back(zone[i]);
 			}
@@ -231,7 +231,7 @@ void BattleScreen::onMessageReceived(std::string msg)
 	
 	if (str.substring(0, 2) == "CA")	// Add character
 	{
-		BaseCharacterModel * c = new TestCharacterModel(environment, 1, 0, 0);
+		BaseCharacterModel * c = new TestCharacterModel(environment, 1, 9, 9);
 		characters[0] = c;
 		c->addEventListener(this);
 	}
