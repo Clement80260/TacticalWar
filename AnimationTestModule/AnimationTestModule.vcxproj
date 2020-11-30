@@ -78,7 +78,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\IsometricRendererLib;..\lib\SFML-2.5.1\include;..\UtilsLib;..\TacticalWarCommonLib;..\TacticalWarClientCommonLib;..\PathfindingLib;..\AnimationsAndSoundLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ClassesLib;..\IsometricRendererLib;..\lib\SFML-2.5.1\include;..\UtilsLib;..\TacticalWarCommonLib;..\TacticalWarClientCommonLib;..\PathfindingLib;..\AnimationsAndSoundLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -108,7 +108,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\lib\SFML-2.5.1\include;..\UtilsLib;..\TacticalWarCommonLib;..\TacticalWarClientCommonLib;..\PathfindingLib;..\AnimationsAndSoundLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ClassesLib;..\IsometricRendererLib;..\lib\SFML-2.5.1\include;..\UtilsLib;..\TacticalWarCommonLib;..\TacticalWarClientCommonLib;..\PathfindingLib;..\AnimationsAndSoundLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,10 +133,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ScreenCallbackTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AnimationsAndSoundLib\AnimationsAndSoundLib.vcxproj">
       <Project>{2978aeb2-241e-4795-9480-a715e4213640}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ClassesLib\ClassesLib.vcxproj">
+      <Project>{2ec46bdc-a3bb-4af9-bdfb-519e2974822e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\IsometricRendererLib\IsometricRendererLib.vcxproj">
       <Project>{616dd023-6d4b-4e87-9f8a-a548a3e691ab}</Project>
@@ -153,6 +157,9 @@
     <ProjectReference Include="..\UtilsLib\UtilsLib.vcxproj">
       <Project>{1d67c839-b5d5-4a87-8fdb-0ff8f2aed605}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ScreenCallbackTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

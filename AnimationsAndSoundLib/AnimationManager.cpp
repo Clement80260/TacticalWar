@@ -29,6 +29,7 @@ void AnimationManager::onAnimationFinished(float remainingTime)
 {
 	this->remainingTime = remainingTime;
 	animations.pop_front();
+
 	if (animations.size() > 0)
 		animations[0]->start();
 }

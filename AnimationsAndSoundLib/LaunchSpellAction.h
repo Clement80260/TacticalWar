@@ -12,6 +12,8 @@ private:
 	bool moveAnimationFinished;
 	IScreenActionCallback * screen;
 	bool firstUpdate;
+
+	bool hasResetAttackAnimation;
 public:
 	LaunchSpellAction(IScreenActionCallback * screen, int persoId,int x,int y)
 	{
@@ -21,15 +23,36 @@ public:
 		this->y = y;
 		moveAnimationFinished = false;
 		firstUpdate = true;
+		hasResetAttackAnimation = false;
 	}
 
 	virtual void update(float deltatime)
 	{
+		elapseTime(deltatime);
 		if (firstUpdate)
 		{
-			screen->applyCharacterLaunchSpell(persoId,x,y,spellId);
+			tw::Player * srcPlayer = screen->getCharacter(persoId);
+			srcPlayer->getCharacter()->startAttack1Animation(1);
 			firstUpdate = false;
 		}
+
+		if (getEllapsedTime() > 1000 && !hasResetAttackAnimation)
+		{
+			tw::Player * srcPlayer = screen->getCharacter(persoId);
+			srcPlayer->getCharacter()->resetAnimation();
+			hasResetAttackAnimation = true;
+
+			screen->applyCharacterLaunchSpell(persoId, x, y, spellId);
+			notifyAnimationFinished(0);
+			delete this;
+		}
+
+		/*
+		if (hasResetAttackAnimation && !? ? ? ? )
+		{
+
+		}
+		*/
 	}
 
 	virtual void onMoveFinished()
