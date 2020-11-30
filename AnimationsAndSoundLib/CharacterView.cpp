@@ -102,7 +102,7 @@ std::vector<sf::Sprite*> CharacterView::loadAnimation(std::string filename, bool
 			/*testOffsetX = std::atof(result[4].c_str());
 			testOffsetY = std::atof(result[5].c_str());*/
 
-			s->setOrigin(atoi(result[4].c_str()), atoi(result[5].c_str()));
+			s->setOrigin(atoi(result[4].c_str()), atoi(result[3].c_str()) - atoi(result[5].c_str()));
 			if(flip)
 				s->setScale(-1, 1);
 			anim.push_back(s);

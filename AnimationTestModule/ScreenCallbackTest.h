@@ -72,6 +72,15 @@ public:
 
 	virtual void applyCharacterMove(int persoId, std::vector<tw::Point2D> path, MoveActionAnimationEventListener * callback)
 	{
+		if (persoId == 1)
+		{
+			c1->setPath(path, callback);
+		}
+		else if (persoId == 2)
+		{
+			c2->setPath(path, callback);
+		}
+
 		cout << "applyCharacterMove()" << endl;
 	}
 	

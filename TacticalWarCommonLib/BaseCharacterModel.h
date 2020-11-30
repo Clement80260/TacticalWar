@@ -1,6 +1,7 @@
 #pragma once
 #include "Environment.h"
 #include <vector>
+#include "MoveActionAnimationEventListener.h"
 
 namespace tw
 {
@@ -58,6 +59,14 @@ namespace tw
 				path.pop_back();
 				setTargetPosition(nextPosition.getX(), nextPosition.getY());
 			}
+			else if (!hasTargetPosition() && path.size() == 0)
+			{
+				if (currentMoveCallback != NULL)
+				{
+					currentMoveCallback->onMoveFinished();
+					currentMoveCallback = NULL;
+				}
+			}
 		}
 
 
@@ -71,6 +80,7 @@ namespace tw
 			}
 		}
 
+		MoveActionAnimationEventListener * currentMoveCallback;
 
 	public:
 		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY);
@@ -196,9 +206,12 @@ namespace tw
 			}
 		}
 
-		void setPath(std::vector<Point2D> path)
+
+
+		void setPath(std::vector<Point2D> path, MoveActionAnimationEventListener * callback = NULL)
 		{
 			this->path = path;
+			this->currentMoveCallback = callback;
 		}
 
 		inline void setTargetPosition(int x, int y)

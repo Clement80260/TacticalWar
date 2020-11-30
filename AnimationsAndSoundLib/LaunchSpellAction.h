@@ -15,9 +15,10 @@ private:
 
 	bool hasResetAttackAnimation;
 public:
-	LaunchSpellAction(IScreenActionCallback * screen, int persoId,int x,int y)
+	LaunchSpellAction(IScreenActionCallback * screen, int persoId, int spellId, int x,int y)
 	{
 		this->persoId = persoId;
+		this->spellId = spellId;
 		this->screen = screen;
 		this->x = x;
 		this->y = y;

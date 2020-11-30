@@ -9,6 +9,8 @@ BaseCharacterModel::BaseCharacterModel(Environment* environment, int teamId, int
 	this->animationDuration = -1;
 	this->reinitViewTime = false;
 
+	this->currentMoveCallback = NULL;
+
 	this->teamId = teamId;
 	this->environment = environment;
 	this->currentX = currentX;

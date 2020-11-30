@@ -222,7 +222,7 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 		int isoX = (m->getInterpolatedX() * 120 - m->getInterpolatedY() * 120) / 2;
 		int isoY = (m->getInterpolatedX() * 60 + m->getInterpolatedY() * 60) / 2;
 
-		s->setPosition(isoX + 60, isoY - 30 + 10);
+		s->setPosition(isoX + 60, isoY + 30);
 	
 
 		sf::IntRect rect = s->getTextureRect();
