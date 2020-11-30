@@ -26,6 +26,7 @@ public:
 	{
 		if (firstUpdate)
 		{
+			//screen->getCharacter(persoId)->getCharacter()->DECREMENT_COOLDOWN();
 			screen->applyChangeTurn(Remaining,persoId,message);
 			firstUpdate = false;
 		}

@@ -7,8 +7,6 @@ void BattleActionToAnimation::notifyAnimationFinished(float remainingTime)
 	{
 		Listener[i]->onAnimationFinished(remainingTime);
 	}
-
-	Listener.clear();
 }
 void BattleActionToAnimation::addlistener(IActionAnimationEventListener* l) 
 {
