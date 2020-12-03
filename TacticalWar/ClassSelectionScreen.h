@@ -9,6 +9,7 @@ private:
 	sf::Font font;
 	sf::Text title;
 	sf::Text subtitle;
+	sf::Text subsubtitle;
 
 	tgui::Label::Ptr matchPanelTitle;
 	tgui::ScrollablePanel::Ptr m_matchListpanel;

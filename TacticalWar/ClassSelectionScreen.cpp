@@ -7,6 +7,12 @@
 ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	: Screen()
 {
+
+	float formFontSize = 16;
+	float formElementWidth = 200;
+	float formElementHeight = 25;
+
+
 	this->gui = gui;
 	gui->removeAllWidgets();
 	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
@@ -26,7 +32,23 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	subtitle.setOutlineColor(sf::Color(255, 215, 0));
 	subtitle.setOutlineThickness(1.5);
 
-	/*
+	tgui::Button::Ptr buttonSuivant = tgui::Button::create();
+	buttonSuivant->setInheritedFont(font);
+	buttonSuivant->setTextSize(formFontSize);
+	buttonSuivant->setText("suivant");
+	buttonSuivant->setSize(200, 100);
+
+	gui->add(buttonSuivant, "buttonSuivant");
+
+	tgui::Button::Ptr buttonPrecedent = tgui::Button::create();
+	buttonPrecedent->setInheritedFont(font);
+	buttonPrecedent->setTextSize(formFontSize);
+	buttonPrecedent->setText("precedent");
+	buttonPrecedent->setSize(200, 100);
+
+	gui->add(buttonPrecedent, "buttonPrecedent");
+
+/*
 	matchPanelTitle = tgui::Label::create();
 	matchPanelTitle->setInheritedFont(font);
 	matchPanelTitle->setTextSize(20);
@@ -84,8 +106,16 @@ void ClassSelectionScreen::update(float deltatime)
 
 void ClassSelectionScreen::render(sf::RenderWindow * window)
 {
+
 	window->draw(title);
 	window->draw(subtitle);
+
+	tgui::Button::Ptr btn1 = gui->get<tgui::Button>("buttonSuivant");
+	btn1->setPosition(1250, 400);
+
+	tgui::Button::Ptr btn2 = gui->get<tgui::Button>("buttonPrecedent");
+	btn2->setPosition(400, 400);
+
 }
 
 void ClassSelectionScreen::onMessageReceived(std::string msg)
