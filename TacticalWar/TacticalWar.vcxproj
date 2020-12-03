@@ -154,6 +154,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AdminScreen.cpp" />
     <ClCompile Include="BattleScreen.cpp" />
     <ClCompile Include="ClassSelectionScreen.cpp" />
     <ClCompile Include="LinkToServer.cpp" />
@@ -195,6 +196,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdminScreen.h" />
     <ClInclude Include="BattleScreen.h" />
     <ClInclude Include="ClassSelectionScreen.h" />
     <ClInclude Include="LinkToServer.h" />

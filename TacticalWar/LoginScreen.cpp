@@ -4,6 +4,7 @@
 #include "LinkToServer.h"
 #include "SpectatorModeScreen.h"
 #include "ClassSelectionScreen.h"
+#include "AdminScreen.h"
 
 using namespace tw;
 
@@ -187,6 +188,13 @@ void LoginScreen::onMessageReceived(std::string msg)
 		readyForConnect = false;
 		gui->removeAllWidgets();
 		ScreenManager::getInstance()->setCurrentScreen(new SpectatorModeScreen(gui));
+		delete this;
+	}
+	else if (sentence.substring(0, 2) == "AD")
+	{
+		readyForConnect = false;
+		gui->removeAllWidgets();
+		ScreenManager::getInstance()->setCurrentScreen(new AdminScreen(gui));
 		delete this;
 	}
 	else

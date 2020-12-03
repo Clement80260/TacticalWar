@@ -2,6 +2,8 @@
 #include "Environment.h"
 #include <vector>
 #include "MoveActionAnimationEventListener.h"
+#include "Effect.h"
+#include "TypeZoneLaunch.h"
 
 namespace tw
 {
@@ -82,13 +84,90 @@ namespace tw
 
 		MoveActionAnimationEventListener * currentMoveCallback;
 
+
+		// Liste des effets appliqués sur le personnage :
+		std::vector<Effect *> appliedEffects;
+
 	public:
 		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY);
 		virtual ~BaseCharacterModel();
 
+		std::vector<Effect *> getAppliedEffects()
+		{
+			return appliedEffects;
+		}
+
+		// Méthode permettant d'appliquer des effets sur le personnage
+		void addEffects(std::vector<Effect*> effects)
+		{
+			// TODO ...
+		}
+
 
 		virtual int getClassId() = 0;
 		virtual std::string getGraphicsPath() = 0;
+
+		// Méthodes rajoutées :
+		virtual std::string getClassName() = 0;
+		virtual std::string getClassDescription() = 0;
+		virtual std::string getClassIconPath() = 0;
+
+
+		virtual std::string getSpell1Name() = 0;
+		virtual std::string getSpell2Name() = 0;
+		virtual std::string getSpell3Name() = 0;
+		virtual std::string getSpell4Name() = 0;
+
+		virtual std::string getSpell1Description() = 0;
+		virtual std::string getSpell2Description() = 0;
+		virtual std::string getSpell3Description() = 0;
+		virtual std::string getSpell4Description() = 0;
+
+		virtual std::string getSpell1IconPath() = 0;
+		virtual std::string getSpell2IconPath() = 0;
+		virtual std::string getSpell3IconPath() = 0;
+		virtual std::string getSpell4IconPath() = 0;
+
+		virtual std::vector<Effect> getSpell1Effects() = 0;
+		virtual std::vector<Effect> getSpell2Effects() = 0;
+		virtual std::vector<Effect> getSpell3Effects() = 0;
+		virtual std::vector<Effect> getSpell4Effects() = 0;
+
+		virtual int getSpell1ManaCost() = 0;
+		virtual int getSpell2ManaCost() = 0;
+		virtual int getSpell3ManaCost() = 0;
+		virtual int getSpell4ManaCost() = 0;
+
+		virtual int getSpell1MinPO() = 0;
+		virtual int getSpell2MinPO() = 0;
+		virtual int getSpell3MinPO() = 0;
+		virtual int getSpell4MinPO() = 0;
+
+		virtual int getSpell1MaxPO() = 0;
+		virtual int getSpell2MaxPO() = 0;
+		virtual int getSpell3MaxPO() = 0;
+		virtual int getSpell4MaxPO() = 0;
+
+		virtual TypeZoneLaunch getSpell1LaunchZoneType() = 0;
+		virtual TypeZoneLaunch getSpell2LaunchZoneType() = 0;
+		virtual TypeZoneLaunch getSpell3LaunchZoneType() = 0;
+		virtual TypeZoneLaunch getSpell4LaunchZoneType() = 0;
+
+		virtual TypeZoneLaunch getSpell1ImpactZoneType() = 0;
+		virtual TypeZoneLaunch getSpell2ImpactZoneType() = 0;
+		virtual TypeZoneLaunch getSpell3ImpactZoneType() = 0;
+		virtual TypeZoneLaunch getSpell4ImpactZoneType() = 0;
+
+		virtual int getSpell1ImpactZoneMinPO() = 0;
+		virtual int getSpell2ImpactZoneMinPO() = 0;
+		virtual int getSpell3ImpactZoneMinPO() = 0;
+		virtual int getSpell4ImpactZoneMinPO() = 0;
+
+		virtual int getSpell1ImpactZoneMaxPO() = 0;
+		virtual int getSpell2ImpactZoneMaxPO() = 0;
+		virtual int getSpell3ImpactZoneMaxPO() = 0;
+		virtual int getSpell4ImpactZoneMaxPO() = 0;
+		//----------------------------------------------------------
 
 		// Retourne la valeur du maximum de point de vie de base (sans altération d'effet). C'est une caractéristique de base de la classe.
 		virtual int getBaseMaxLife() = 0;

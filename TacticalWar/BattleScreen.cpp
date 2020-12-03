@@ -3,6 +3,7 @@
 #include <Pathfinder.h>
 #include <ZoneAndSightCalculator.h>
 #include <EnvironmentManager.h>
+#include <TypeZoneLaunch.h>
 
 
 using namespace tw;
@@ -201,7 +202,7 @@ void BattleScreen::onPositionChanged(BaseCharacterModel * c, int newPositionX, i
 
 		Point2D startPoint(x, y);
 
-		std::vector<Point2D> zone = ZoneAndSightCalculator::getInstance()->generateZone(x, y, 1, 4, tw::TypeZoneLaunch::STAR);
+		std::vector<Point2D> zone = ZoneAndSightCalculator::getInstance()->generateZone(x, y, 1, 4, TypeZoneLaunch::STAR);
 		std::vector<Point2D> realZone;
 		for (int i = 0; i < zone.size(); i++)
 		{
