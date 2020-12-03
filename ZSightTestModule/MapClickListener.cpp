@@ -27,7 +27,7 @@ void MapClickListener::onCellClicked(int x, int y)
 		startPointSelected = true;
 	}
 	//colorator->setPathToHighlight();
-	colorator->setPathToHighlight(tw::ZoneAndSightCalculator::getInstance()->generateZone(x, y, 0, 8, tw::TypeZoneLaunch::LINE));
+	colorator->setPathToHighlight(tw::ZoneAndSightCalculator::getInstance()->generateZone(x, y, 0, 8, TypeZoneLaunch::LINE));
 
 	/*
 	else if (!endPointSelected)
