@@ -85,5 +85,275 @@ public:
 	{
 
 	}
+
+
+	// Méthodes rajoutées :
+
+	virtual std::string getClassName()
+	{
+		return "Mage";
+	}
+
+	virtual std::string getClassDescription()
+	{
+		return "Description mage ...";
+	}
+
+	virtual std::string getClassIconPath()
+	{
+		return "./assets/classicons/Mage.png";
+	}
+
+
+	//------------------------------------
+
+	virtual std::string getSpell1Name()
+	{
+		return "Mage sort 1";
+	}
+
+	virtual std::string getSpell2Name()
+	{
+		return "Mage sort 2";
+	}
+
+	virtual std::string getSpell3Name()
+	{
+		return "Mage sort 3";
+	}
+
+	virtual std::string getSpell4Name()
+	{
+		return "Mage sort 4";
+	}
+
+
+	//------------------------------------
+	virtual std::string getSpell1Description()
+	{
+		return "Mage, description sort 1 ...";
+	}
+
+	virtual std::string getSpell2Description()
+	{
+		return "Mage, description sort 2 ...";
+	}
+
+	virtual std::string getSpell3Description()
+	{
+		return "Mage, description sort 3 ...";
+	}
+
+	virtual std::string getSpell4Description()
+	{
+		return "Mage, description sort 4 ...";
+	}
+
+
+	//------------------------------------
+	virtual std::string getSpell1IconPath()
+	{
+		return "./assets/spellicons/101.png";
+	}
+
+	virtual std::string getSpell2IconPath()
+	{
+		return "./assets/spellicons/515.png";
+	}
+
+	virtual std::string getSpell3IconPath()
+	{
+		return "./assets/spellicons/516.png";
+	}
+
+	virtual std::string getSpell4IconPath()
+	{
+		return "./assets/spellicons/700.png";
+	}
+
+
+	//------------------------------------
+	virtual std::vector<Effect> getSpell1Effects()
+	{
+		std::vector<Effect> effects;
+
+		return effects;
+	}
+
+	virtual std::vector<Effect> getSpell2Effects()
+	{
+		std::vector<Effect> effects;
+
+		return effects;
+	}
+
+	virtual std::vector<Effect> getSpell3Effects()
+	{
+		std::vector<Effect> effects;
+
+		return effects;
+	}
+
+	virtual std::vector<Effect> getSpell4Effects()
+	{
+		std::vector<Effect> effects;
+
+		return effects;
+	}
+
+
+	//------------------------------------
+	virtual int getSpell1ManaCost()
+	{
+		return 4;
+	}
+
+	virtual int getSpell2ManaCost()
+	{
+		return 3;
+	}
+
+	virtual int getSpell3ManaCost()
+	{
+		return 2;
+	}
+
+	virtual int getSpell4ManaCost()
+	{
+		return 1;
+	}
+
+	//------------------------------------
+	virtual int getSpell1MinPO()
+	{
+		return 2;
+	}
+
+	virtual int getSpell2MinPO()
+	{
+		return 1;
+	}
+
+	virtual int getSpell3MinPO()
+	{
+		return 3;
+	}
+
+	virtual int getSpell4MinPO()
+	{
+		return 4;
+	}
+
+	//------------------------------------
+
+	virtual int getSpell1MaxPO()
+	{
+		return 5;
+	}
+
+	virtual int getSpell2MaxPO()
+	{
+		return 3;
+	}
+
+	virtual int getSpell3MaxPO()
+	{
+		return 8;
+	}
+
+	virtual int getSpell4MaxPO()
+	{
+		return 12;
+	}
+
+	//------------------------------------
+
+	virtual TypeZoneLaunch getSpell1LaunchZoneType()
+	{
+		return TypeZoneLaunch::LINE;
+	}
+
+	virtual TypeZoneLaunch getSpell2LaunchZoneType()
+	{
+		return TypeZoneLaunch::NORMAL;
+	}
+
+	virtual TypeZoneLaunch getSpell3LaunchZoneType()
+	{
+		return TypeZoneLaunch::DIAGONAL;
+	}
+
+	virtual TypeZoneLaunch getSpell4LaunchZoneType()
+	{
+		return TypeZoneLaunch::STAR;
+	}
+
+	//------------------------------------
+
+	virtual TypeZoneLaunch getSpell1ImpactZoneType()
+	{
+		return TypeZoneLaunch::NORMAL;
+	}
+
+	virtual TypeZoneLaunch getSpell2ImpactZoneType()
+	{
+		return TypeZoneLaunch::NORMAL;
+	}
+
+	virtual TypeZoneLaunch getSpell3ImpactZoneType()
+	{
+		return TypeZoneLaunch::NORMAL;
+	}
+
+	virtual TypeZoneLaunch getSpell4ImpactZoneType()
+	{
+		return TypeZoneLaunch::NORMAL;
+	}
+
+	//------------------------------------
+
+	virtual int getSpell1ImpactZoneMinPO()
+	{
+		return 0;
+	}
+
+	virtual int getSpell2ImpactZoneMinPO()
+	{
+		return 0;
+	}
+
+	virtual int getSpell3ImpactZoneMinPO()
+	{
+		return 0;
+	}
+
+	virtual int getSpell4ImpactZoneMinPO()
+	{
+		return 0;
+	}
+
+	//------------------------------------
+
+	virtual int getSpell1ImpactZoneMaxPO()
+	{
+		return 0;
+	}
+
+	virtual int getSpell2ImpactZoneMaxPO()
+	{
+		return 0;
+	}
+
+	virtual int getSpell3ImpactZoneMaxPO()
+	{
+		return 0;
+	}
+
+	virtual int getSpell4ImpactZoneMaxPO()
+	{
+		return 0;
+	}
+
+	//--------------------------------------------------------------------
 };
 
