@@ -1,11 +1,22 @@
 #pragma once
 #include "Environment.h"
 #include <vector>
+#include "MoveActionAnimationEventListener.h"
 
 namespace tw
 {
 	class BaseCharacterModel;
 	
+	enum class Animation
+	{
+		IDLE,
+		RUN,
+		ATTACK1,
+		ATTACK2,
+		DIE,
+		TAKE_DAMAGE
+	};
+
 	class CharacterEventListener
 	{
 	public:
@@ -16,6 +27,10 @@ namespace tw
 	class BaseCharacterModel
 	{
 	private:
+		Animation neededAnimation;
+		float animationDuration;
+		bool reinitViewTime;
+
 		Environment* environment;
 
 		int teamId;
@@ -44,6 +59,14 @@ namespace tw
 				path.pop_back();
 				setTargetPosition(nextPosition.getX(), nextPosition.getY());
 			}
+			else if (!hasTargetPosition() && path.size() == 0)
+			{
+				if (currentMoveCallback != NULL)
+				{
+					currentMoveCallback->onMoveFinished();
+					currentMoveCallback = NULL;
+				}
+			}
 		}
 
 
@@ -57,6 +80,7 @@ namespace tw
 			}
 		}
 
+		MoveActionAnimationEventListener * currentMoveCallback;
 
 	public:
 		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY);
@@ -182,9 +206,12 @@ namespace tw
 			}
 		}
 
-		void setPath(std::vector<Point2D> path)
+
+
+		void setPath(std::vector<Point2D> path, MoveActionAnimationEventListener * callback = NULL)
 		{
 			this->path = path;
+			this->currentMoveCallback = callback;
 		}
 
 		inline void setTargetPosition(int x, int y)
@@ -227,6 +254,39 @@ namespace tw
 			{
 				listeners.erase(it);
 			}
+		}
+
+		
+
+
+		Animation getNeededAnimation()
+		{
+			return neededAnimation;
+		}
+
+		float getAnimationDuration()
+		{
+			return animationDuration;
+		}
+
+		bool getReinitViewTime()
+		{
+			bool result = reinitViewTime;
+			reinitViewTime = false;
+			return result;
+		}
+
+		void startAttack1Animation(float duration)
+		{
+			neededAnimation = Animation::ATTACK1;
+			animationDuration = duration;
+			reinitViewTime = true;
+		}
+
+		void resetAnimation()
+		{
+			neededAnimation = Animation::IDLE;
+			animationDuration = -1;
 		}
 	};
 }

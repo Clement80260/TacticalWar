@@ -102,7 +102,7 @@ std::vector<sf::Sprite*> CharacterView::loadAnimation(std::string filename, bool
 			/*testOffsetX = std::atof(result[4].c_str());
 			testOffsetY = std::atof(result[5].c_str());*/
 
-			s->setOrigin(atoi(result[4].c_str()), atoi(result[5].c_str()));
+			s->setOrigin(atoi(result[4].c_str()), atoi(result[3].c_str()) - atoi(result[5].c_str()));
 			if(flip)
 				s->setScale(-1, 1);
 			anim.push_back(s);
@@ -122,7 +122,27 @@ sf::Sprite* CharacterView::getImageToDraw()
 	// Cette méthode (getImageToDraw) doit retourner l'image qui devra être dessinée à l'écran (en fonction de où en est l'animation)
 	// Vous devrez également utiliser les services de la team "Colorisation" pour obtenir un personnage coloré (personnalisation des couleurs en fonction de l'équipe).
 	
-	double p = 1, time = elsetime;
+	double p = 0.5, time = elsetime;
+
+	tw::Animation neededAnimation = getModel()->getNeededAnimation();
+	float animationDuration = getModel()->getAnimationDuration();
+	bool reinit = getModel()->getReinitViewTime();
+
+	if (animationDuration > 0 && neededAnimation != Animation::IDLE && neededAnimation != Animation::RUN && reinit)
+	{
+		setAnimation(neededAnimation);
+		elsetime = 0;
+	}
+
+	if (neededAnimation != Animation::IDLE && neededAnimation != Animation::RUN && animationDuration - time <= 0)
+	{
+		setAnimation(Animation::IDLE);
+	}
+	else if (neededAnimation != Animation::IDLE && neededAnimation != Animation::RUN)
+	{
+		p = animationDuration;
+		setAnimation(neededAnimation);
+	}
 
 	int nbImg = animationsMap[orientation][animation].size();
 	p /= nbImg;
@@ -133,7 +153,7 @@ sf::Sprite* CharacterView::getImageToDraw()
 
 void CharacterView::update(float deltatime)
 {
-	elsetime += deltatime * 2;
+	elsetime += deltatime;
 
 	BaseCharacterModel * m = getModel();
 	if (m->hasTargetPosition())

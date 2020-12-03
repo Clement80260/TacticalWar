@@ -15,5 +15,11 @@ class AnimationManager : public IActionAnimationEventListener
 		virtual void update(float datatime);
 		virtual void onAnimationFinished(float remainingTime);
 		virtual void clear();
+
+		void addAnimation(BattleActionToAnimation* anim)
+		{
+			animations.push_back(anim);
+			anim->addlistener(this);
+		}
 };
 
