@@ -5,6 +5,11 @@
 
 class Guerrier : public tw::BaseCharacterModel
 {
+private:
+
+	int tour = 1;
+	int compt1, compt2, compt3;
+
 public:
 	virtual int getClassId()
 	{
@@ -49,6 +54,28 @@ public:
 		return 0;
 	}
 
+	virtual int getAttack1()
+	{
+		return compt1;
+	}
+
+	virtual int getAttack2()
+	{
+		return compt2;
+	}
+
+	virtual int getAttack3()
+	{
+		return compt3;
+	}
+
+	virtual void turnStart()
+	{
+		// Décrémentation des cooldowns :
+		if (compt1 > 0)
+			compt1--;
+	}
+
 	//Passif : -50% d'HP -> +15% de dégâts ; -35% d'HP -> +25% de dégâts
 	virtual bool doAttack1(int targetX, int targetY)
 	{
@@ -83,7 +110,9 @@ public:
 	Guerrier(tw::Environment * environment, int teamId, int currentX, int currentY)
 		: BaseCharacterModel(environment, teamId, currentX, currentY)
 	{
-
+		compt1 = 3;
+		compt2 = 4;
+		compt3 = 1;
 	}
 
 	// Méthodes rajoutées :
