@@ -5,6 +5,7 @@
 #include "SpectatorModeScreen.h"
 #include "ClassSelectionScreen.h"
 #include "AdminScreen.h"
+#include "WaitMatchScreen.h"
 
 using namespace tw;
 
@@ -76,6 +77,9 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	gui->add(errorMsg, "errorMsg");
 
 	LinkToServer::getInstance()->addListener(this);
+
+	ellapsedTime = 0;
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/test.glsl");
 }
 
 LoginScreen::~LoginScreen()
@@ -147,6 +151,8 @@ void LoginScreen::update(float deltatime)
 	Screen::update(deltatime);
 	LinkToServer::getInstance()->UpdateReceivedData();
 
+	ellapsedTime += deltatime;
+
 	// Reset du message d'erreur :
 	if (messageDuration > 0)
 	{
@@ -162,7 +168,19 @@ void LoginScreen::update(float deltatime)
 
 void LoginScreen::render(sf::RenderWindow * window)
 {
+	shader.setUniform("time", ellapsedTime);
+	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
+	
+	sf::Shader::bind(&shader);
+	sf::RectangleShape rect;
+	rect.setPosition(0, 0);
+	rect.setSize(sf::Vector2f(window->getSize()));
+	rect.setFillColor(sf::Color::Black);
+	window->draw(rect);
+	sf::Shader::bind(NULL);
+	
 	window->draw(title);
+	
 }
 
 void LoginScreen::onMessageReceived(std::string msg)
@@ -195,6 +213,13 @@ void LoginScreen::onMessageReceived(std::string msg)
 		readyForConnect = false;
 		gui->removeAllWidgets();
 		ScreenManager::getInstance()->setCurrentScreen(new AdminScreen(gui));
+		delete this;
+	}
+	else if (sentence.substring(0, 2) == "HW")
+	{
+		readyForConnect = false;
+		gui->removeAllWidgets();
+		ScreenManager::getInstance()->setCurrentScreen(new WaitMatchScreen(gui));
 		delete this;
 	}
 	else

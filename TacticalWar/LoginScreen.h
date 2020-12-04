@@ -14,6 +14,8 @@ namespace tw
 		float messageDuration;
 		tgui::Label::Ptr errorMsg;
 		tgui::Gui * gui;
+		sf::Shader shader;
+		float ellapsedTime;
 
 	public:
 		LoginScreen(tgui::Gui * gui);
