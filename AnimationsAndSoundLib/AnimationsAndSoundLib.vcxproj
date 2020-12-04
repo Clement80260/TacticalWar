@@ -170,6 +170,7 @@
     <ClInclude Include="LaunchSpellAction.h" />
     <ClInclude Include="NoDurationAction.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SpellView.h" />
     <ClInclude Include="TakeDamage.h" />
     <ClInclude Include="TeleportAction.h" />
   </ItemGroup>
@@ -193,6 +194,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SpellView.cpp" />
     <ClCompile Include="TakeDamage.cpp" />
     <ClCompile Include="TeleportAction.cpp" />
   </ItemGroup>
