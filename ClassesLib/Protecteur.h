@@ -5,6 +5,11 @@
 
 class Protecteur : public tw::BaseCharacterModel
 {
+private:
+
+	int tour = 1;
+	int compt1, compt2, compt3;
+
 public:
 	virtual int getClassId()
 	{
@@ -49,6 +54,28 @@ public:
 		return 0;
 	}
 
+	virtual int getAttack1()
+	{
+		return compt1;
+	}
+
+	virtual int getAttack2()
+	{
+		return compt2;
+	}
+
+	virtual int getAttack3()
+	{
+		return compt3;
+	}
+
+	virtual void turnStart()
+	{
+		// Décrémentation des cooldowns :
+		if (compt1 > 0)
+			compt1--;
+	}
+
 	//Passif : +3 HP sur soi-même pour chaque auto attaque
 	virtual bool doAttack1(int targetX, int targetY)
 	{
@@ -83,7 +110,9 @@ public:
 	Protecteur(tw::Environment * environment, int teamId, int currentX, int currentY)
 		: BaseCharacterModel(environment, teamId, currentX, currentY)
 	{
-
+		compt1 = 99;
+		compt2 = 3;
+		compt3 = 2;
 	}
 
 

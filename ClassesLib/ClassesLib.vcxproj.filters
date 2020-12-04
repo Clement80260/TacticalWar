@@ -36,6 +36,12 @@
     <ClInclude Include="CharacterFactory.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Effet.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+=======
+>>>>>>> e99ed120482e791e261323efd36e769f20c82204
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClassesLib.cpp">
@@ -59,5 +65,11 @@
     <ClCompile Include="CharacterFactory.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="Effet.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+=======
+>>>>>>> e99ed120482e791e261323efd36e769f20c82204
   </ItemGroup>
 </Project>
