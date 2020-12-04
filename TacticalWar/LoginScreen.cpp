@@ -5,6 +5,7 @@
 #include "SpectatorModeScreen.h"
 #include "ClassSelectionScreen.h"
 #include "AdminScreen.h"
+#include "WaitMatchScreen.h"
 
 using namespace tw;
 
@@ -212,6 +213,13 @@ void LoginScreen::onMessageReceived(std::string msg)
 		readyForConnect = false;
 		gui->removeAllWidgets();
 		ScreenManager::getInstance()->setCurrentScreen(new AdminScreen(gui));
+		delete this;
+	}
+	else if (sentence.substring(0, 2) == "HW")
+	{
+		readyForConnect = false;
+		gui->removeAllWidgets();
+		ScreenManager::getInstance()->setCurrentScreen(new WaitMatchScreen(gui));
 		delete this;
 	}
 	else

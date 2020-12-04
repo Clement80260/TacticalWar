@@ -168,6 +168,7 @@
     <ClCompile Include="SpectatorModeScreen.cpp" />
     <ClCompile Include="TestCharacterModel.cpp" />
     <ClCompile Include="TWColorator.cpp" />
+    <ClCompile Include="WaitMatchScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EnvironmentPersistanceLib\EnvironmentPersistanceLib.vcxproj">
@@ -209,6 +210,7 @@
     <ClInclude Include="SpectatorModeScreen.h" />
     <ClInclude Include="TestCharacterModel.h" />
     <ClInclude Include="TWColorator.h" />
+    <ClInclude Include="WaitMatchScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

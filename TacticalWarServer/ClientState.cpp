@@ -6,7 +6,7 @@ ClientState::ClientState(SOCKET sock)
 {
 	this->sock = sock;
 	this->pseudo = "";
-	this->isAdmin = false;
+	this->isAdm = false;
 }
 
 ClientState::~ClientState()

@@ -9,28 +9,18 @@ namespace tw
 {
 	class PlayerManager
 	{
-		static Match * testMatch;
 		static std::vector<Player*> playersCache;
-
 		static std::vector<Match*> matchList;
 
 	public:
 		static std::vector<Player*> loadPlayers();
+
+		static std::vector<Match*> getAllMatchsForPlayer(Player * p);
 		static Match * getCurrentOrNextMatchForPlayer(Player * p);
 		static std::vector<Match*> getCurrentlyPlayingMatchs();
 
-		static void createTestMatchIfNotExists()
-		{
-			if (testMatch == NULL)
-			{
-				testMatch = new tw::Match("Tour 1 - Eq 1 VS Eq 2");
-				std::vector<tw::Player*> players = loadPlayers();
-				testMatch->setTeam1Players(players[0], players[1]);
-				testMatch->setTeam2Players(players[2], players[3]);
-			}
-		}
 
-		static void subscribeToAllMatchEvent(MatchEventListener * l);
+		//static void subscribeToAllMatchEvent(MatchEventListener * l);
 
 		static void addMatch(Match * m);
 	};
