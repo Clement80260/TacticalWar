@@ -16,6 +16,9 @@ private:
 	//static int previousScrollbarValue;
 
 
+	sf::Shader shader;
+	float ellapsedTime;
+
 	tgui::Gui * gui;
 
 public:

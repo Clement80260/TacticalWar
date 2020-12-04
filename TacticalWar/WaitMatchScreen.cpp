@@ -44,6 +44,8 @@ WaitMatchScreen::WaitMatchScreen(tgui::Gui * gui)
 	*/
 
 	LinkToServer::getInstance()->addListener(this);
+	ellapsedTime = 0;
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground.glsl");
 }
 
 WaitMatchScreen::~WaitMatchScreen()
@@ -78,12 +80,24 @@ void WaitMatchScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 
 void WaitMatchScreen::update(float deltatime)
 {
+	ellapsedTime += deltatime;
 	Screen::update(deltatime);
 	LinkToServer::getInstance()->UpdateReceivedData();
 }
 
 void WaitMatchScreen::render(sf::RenderWindow * window)
 {
+	shader.setUniform("time", ellapsedTime);
+	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
+
+	sf::Shader::bind(&shader);
+	sf::RectangleShape rect;
+	rect.setPosition(0, 0);
+	rect.setSize(sf::Vector2f(window->getSize()));
+	rect.setFillColor(sf::Color::Black);
+	window->draw(rect);
+	sf::Shader::bind(NULL);
+
 	window->draw(title);
 	window->draw(subtitle);
 }

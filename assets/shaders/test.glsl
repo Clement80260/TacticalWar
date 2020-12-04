@@ -169,10 +169,10 @@ void main( void ) {
     
  
     scale = scale * 0.8;
-    t = line( vec2(0.0, -v * 0.105), vec2(0.0, -v * 0.8), signedUV * scale );
+    t = line( vec2(0.0, -v * 0.105 + 10.), vec2(0.0, -v * 0.8 + 10.), signedUV * scale );
     finalColor += vec3( 10.0 * t, 1.0 * t, 0.50 * t) * (multiplier * 4.);
     
-    t = line( vec2(-v * 0.3, -v*0.1), vec2(v * 0.3, -v*0.1), signedUV * scale );
+    t = line( vec2(-v * 0.3, -v*0.1 + 10.), vec2(v * 0.3, -v*0.1 + 10.), signedUV * scale );
     finalColor += vec3( 14.0 * t, 4.0 * t, 10.0 * t) * multiplier;
    
     gl_FragColor = vec4( finalColor, 1.0 );
