@@ -157,10 +157,7 @@
   <ItemGroup>
     <ClInclude Include="Archer.h" />
     <ClInclude Include="CharacterFactory.h" />
-<<<<<<< HEAD
     <ClInclude Include="Effet.h" />
-=======
->>>>>>> e99ed120482e791e261323efd36e769f20c82204
     <ClInclude Include="framework.h" />
     <ClInclude Include="Guerrier.h" />
     <ClInclude Include="Mage.h" />
