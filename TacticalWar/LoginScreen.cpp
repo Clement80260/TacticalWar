@@ -23,7 +23,7 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	
 	title.setFont(font);
 	title.setCharacterSize(128);
-	title.setString("Tactical War");
+	title.setString("");
 	title.setFillColor(sf::Color::White);
 	//title.setStyle(sf::Text::Bold);
 	title.setOutlineColor(sf::Color(255, 215, 0));
@@ -79,7 +79,7 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	LinkToServer::getInstance()->addListener(this);
 
 	ellapsedTime = 0;
-	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/test.glsl");
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/intro2.glsl");
 }
 
 LoginScreen::~LoginScreen()
