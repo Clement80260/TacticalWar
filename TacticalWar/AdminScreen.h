@@ -11,7 +11,11 @@ private:
 	sf::Text subtitle;
 
 	tgui::Label::Ptr matchPanelTitle;
+	tgui::Label::Ptr versus;
 	tgui::ScrollablePanel::Ptr m_matchListpanel;
+	tgui::ListBox::Ptr listTeam1;
+	tgui::ListBox::Ptr listTeam2;
+	tgui::Button::Ptr createMatch;
 	//static void scrollPanel(tgui::Panel::Ptr panel, int value);
 	//static int previousScrollbarValue;
 
