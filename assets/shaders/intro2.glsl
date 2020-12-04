@@ -310,10 +310,10 @@ void main( void ) {
     
     finalColor = (particles( sin( abs(signedUV) ) ) * length(signedUV)) * 0.20;
    
-    float t = line( vec2(0.0, v * 0.175 - 12.), vec2(0.0, -v * 0.8 + 10.), signedUV * scale );
+    float t = line( vec2(0.0, v * 0.175 - 22.), vec2(0.0, -v * 0.8 + 0.), signedUV * scale );
     finalColor += vec3( 8.0 * t, 4.0 * t, 1.50 * t) * 0.3;
     
-    t = line( vec2(-v * 0.3, -v*0.1 + 10.), vec2(v * 0.3, -v*0.1 + 10.), signedUV * scale );
+    t = line( vec2(-v * 0.3, -v*0.1 + 0.), vec2(v * 0.3, -v*0.1 + 0.), signedUV * scale );
     finalColor += vec3( 13.0 * t, 4.0 * t, 1.50 * t) * 0.3;
     
     
