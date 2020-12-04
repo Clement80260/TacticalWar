@@ -111,6 +111,7 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 
 					if (pseudo == "admin" && password == "admin")
 					{
+						client->setIsAdmin(true);
 						TcpServer<TWParser, ClientState>::Send(client, (char*)"AD\n", 3);
 					}
 					else if (playersMap.find(pseudo) != playersMap.end())
@@ -183,7 +184,85 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 		{
 			notifyPlayingMatchList(client);
 		}
+		// Demande de la liste des équipes :
+		else if (StringUtils::startsWith(toParse, "TL"))
+		{
+			notifyTeamList(client);
+		}
+		// Demande la création d'un match :
+		else if (StringUtils::startsWith(toParse, "CM"))
+		{
+			// Seul un administrateur est autorisé à réaliser cette opération :
+			if (client->isAdmin())
+			{
+				std::string payload = toParse.substr(2);
+
+				std::vector<std::string> matchData = StringUtils::explode(payload, ';');
+
+				std::string name = matchData[0];
+				int team1 = std::atoi(matchData[1].c_str());
+				int team2 = std::atoi(matchData[2].c_str());
+
+				tw::Match * m = new tw::Match(name);
+
+				std::vector<tw::Player*> teamA = teamIdToPlayerList[team1];
+				std::vector<tw::Player*> teamB = teamIdToPlayerList[team2];
+
+				m->setTeam1Players(teamA[0], teamA[1]);
+				m->setTeam2Players(teamB[0], teamB[1]);
+
+				m->addEventListener(this);
+				tw::PlayerManager::addMatch(m);
+				notifyMatchCreated(m);
+			}
+		}
 	}
+}
+
+void TWParser::notifyMatchCreated(tw::Match * m)
+{
+	notifyPlayingMatchList();
+	
+	std::vector<ClientState *> diffusionList;
+	for (int i = 0; i < m->getTeam1().size(); i++)
+	{
+		tw::Player * p = m->getTeam1()[i];
+		// TODO : Terminer la notification des clients déjà connectés (entrée en mode choix de classe)
+		//p->
+		//m->getTeam1()[]
+	}
+}
+
+void TWParser::notifyTeamList(ClientState * c)
+{
+	std::string data = "TL";
+	int i = 0;
+	for (std::map<int, std::vector<tw::Player*>>::iterator it = teamIdToPlayerList.begin(); it != teamIdToPlayerList.end(); it++)
+	{
+		if (i > 0)
+		{
+			data += ";";
+		}
+
+		int teamId = (*it).first;
+		std::vector<tw::Player*> team = (*it).second;
+
+		data += std::to_string(teamId) + ",";
+		
+		for (int j = 0; j < team.size(); j++)
+		{
+			if (j > 0)
+				data += "^";
+
+			data += team[j]->getPseudo();
+		}
+
+		i++;
+	}
+
+	data += "\n";
+
+	TcpServer<TWParser, ClientState>::Send(c, (char*)data.c_str(), data.length());
 }
 
 void TWParser::notifyPlayingMatchList(ClientState * c)

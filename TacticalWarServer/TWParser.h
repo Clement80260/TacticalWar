@@ -30,6 +30,8 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener
 
 	void notifyPlayingMatchList(ClientState * c = NULL);
 	void notifyMatchConnectedPlayerChanged(tw::Match * match);
+	void notifyTeamList(ClientState * c);
+	void notifyMatchCreated(tw::Match * m);
 
 public:
 	TWParser();

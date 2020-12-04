@@ -10,6 +10,14 @@ using namespace std;
 tw::Match * tw::PlayerManager::testMatch = NULL;
 std::vector<tw::Player*> tw::PlayerManager::playersCache;
 
+std::vector<tw::Match*> tw::PlayerManager::matchList;
+
+void tw::PlayerManager::addMatch(Match * m)
+{
+	matchList.push_back(m);
+}
+
+
 std::vector<tw::Player*> tw::PlayerManager::loadPlayers()
 {
 	int index = 1;
