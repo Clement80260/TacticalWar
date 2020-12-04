@@ -117,7 +117,7 @@ public:
 	}
 
 
-	// Méthodes rajoutées :
+	// Méthodes rajoutées :	TYPE DE CLASSE
 
 	virtual std::string getClassName()
 	{
@@ -126,7 +126,7 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description archer ...";
+		return " Personnage distance avec des attaques de malus";
 	}
 
 	virtual std::string getClassIconPath()
@@ -135,52 +135,52 @@ public:
 	}
 
 
-	//------------------------------------
+	//------------------------------------	NOM SPELL
 
 	virtual std::string getSpell1Name()
 	{
-		return "Archer sort 1";
+		return "Flèche toxique";
 	}
 
 	virtual std::string getSpell2Name()
 	{
-		return "Archer sort 2";
+		return "Flèche repousse";
 	}
 
 	virtual std::string getSpell3Name()
 	{
-		return "Archer sort 3";
+		return "Tir précis";
 	}
 
 	virtual std::string getSpell4Name()
 	{
-		return "Archer sort 4";
+		return " Attaque de base";
 	}
 
 
-	//------------------------------------
+	//------------------------------------	DESCRIPTION SPELL
 	virtual std::string getSpell1Description()
 	{
-		return "Archer, description sort 1 ...";
+		return "Archer, inflige 10 de dégâts et empoisonne sur 2 tours";
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Archer, description sort 2 ...";
+		return "Archer, inflige 4 de dégâts et repousse la cible de 2 cases";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Archer, description sort 3 ...";
+		return "Archer, inflige 6 de dégâts et ignore les obstacles";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Archer, description sort 4 ...";
+		return "Archer, inflige 5 de dégâts";
 	}
 
 
-	//------------------------------------
+	//------------------------------------	ICON SPELL
 	virtual std::string getSpell1IconPath()
 	{
 		return "./assets/spellicons/101.png";
@@ -202,7 +202,7 @@ public:
 	}
 
 
-	//------------------------------------
+	//------------------------------------	EFFET DES SPELLS
 	virtual std::vector<Effect> getSpell1Effects()
 	{
 		std::vector<Effect> effects;
@@ -232,7 +232,7 @@ public:
 	}
 
 
-	//------------------------------------
+	//------------------------------------ NOMBRE DE MANA PAR SPELL (PA)
 	virtual int getSpell1ManaCost()
 	{
 		return 4;
@@ -253,7 +253,7 @@ public:
 		return 1;
 	}
 
-	//------------------------------------
+	//------------------------------------ PORTÉE MAX D'UNE SPELL
 	virtual int getSpell1MinPO()
 	{
 		return 2;
@@ -274,7 +274,7 @@ public:
 		return 4;
 	}
 
-	//------------------------------------
+	//------------------------------------ PORTÉE MAX D'UN SPELL
 
 	virtual int getSpell1MaxPO()
 	{
@@ -296,7 +296,7 @@ public:
 		return 12;
 	}
 
-	//------------------------------------
+	//------------------------------------ JE SAIS PAS X)
 
 	virtual TypeZoneLaunch getSpell1LaunchZoneType()
 	{
@@ -318,7 +318,7 @@ public:
 		return TypeZoneLaunch::STAR;
 	}
 
-	//------------------------------------
+	//------------------------------------ // TYPE SPELLS IMPACT ZONE
 
 	virtual TypeZoneLaunch getSpell1ImpactZoneType()
 	{
@@ -340,7 +340,7 @@ public:
 		return TypeZoneLaunch::NORMAL;
 	}
 
-	//------------------------------------
+	//------------------------------------ // ZONE D'IMPACT MIN PO SORTS
 
 	virtual int getSpell1ImpactZoneMinPO()
 	{
@@ -362,7 +362,7 @@ public:
 		return 0;
 	}
 
-	//------------------------------------
+	//------------------------------------  // ZONE D'IMPACT MAX PO SORTS
 
 	virtual int getSpell1ImpactZoneMaxPO()
 	{

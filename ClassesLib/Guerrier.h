@@ -115,7 +115,7 @@ public:
 		compt3 = 1;
 	}
 
-	// Méthodes rajoutées :
+	// Méthodes rajoutées : 
 
 	virtual std::string getClassName()
 	{
@@ -124,7 +124,7 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description guerrier ...";
+		return " Personnage de combat rapproché avec des boost de résistance et d'attaque";
 	}
 
 	virtual std::string getClassIconPath()
