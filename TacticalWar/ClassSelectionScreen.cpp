@@ -57,9 +57,9 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Picture::Ptr IconMage = tgui::Picture::create(TextureMage);
 		
 	IconMage->setPosition(830, 350);
-	gui->add(IconMage);
+	gui->add(IconMage, "mageIcon");
 
-
+/*
 	tw::BaseCharacterModel * archer = CharacterFactory::getInstance()->constructCharacter(NULL, 2, 1, 0, 0);
 	std::string pathArcher = archer->getClassIconPath();
 	sf::Texture TextureArcher;
@@ -67,7 +67,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Picture::Ptr IconArcher = tgui::Picture::create(TextureArcher);
 
 	IconArcher->setPosition(830, 350);
-	gui->add(IconArcher);
+	gui->add(IconArcher, "archerIcon");
 
 	
 	tw::BaseCharacterModel * protecteur = CharacterFactory::getInstance()->constructCharacter(NULL, 3, 1, 0, 0);
@@ -77,7 +77,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Picture::Ptr IconProtecteur = tgui::Picture::create(TextureProtecteur);
 
 	IconProtecteur->setPosition(830, 350);
-	gui->add(IconProtecteur);
+	gui->add(IconProtecteur, "protecteurIcon");
 
 	tw::BaseCharacterModel * barbare = CharacterFactory::getInstance()->constructCharacter(NULL, 4, 1, 0, 0);
 	std::string pathBarbare = barbare->getClassIconPath();
@@ -86,8 +86,22 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Picture::Ptr IconBarbare = tgui::Picture::create(TextureBarbare);
 
 	IconBarbare->setPosition(830, 350);
-	gui->add(IconBarbare);
-	
+	gui->add(IconBarbare, "barbareIcon");
+	*/
+	tgui::Button::Ptr buttonSuivant = tgui::Button::create();
+	buttonSuivant->setInheritedFont(font);
+	buttonSuivant->setText("suivant");
+	buttonSuivant->setSize(200, 100);
+
+	gui->add(buttonSuivant, "buttonSuivant");
+
+	tgui::Button::Ptr buttonPrecedent = tgui::Button::create();
+	buttonPrecedent->setInheritedFont(font);
+	buttonPrecedent->setText("precedent");
+	buttonPrecedent->setSize(200, 100);
+
+	gui->add(buttonPrecedent, "buttonPrecedent");
+
 }
 
 ClassSelectionScreen::~ClassSelectionScreen()
@@ -141,6 +155,33 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 
 	window->draw(title);
 	window->draw(subtitle);
+
+	tgui::Button::Ptr btn1 = gui->get<tgui::Button>("buttonSuivant");
+	btn1->setPosition(1250, 800);
+
+	tgui::Button::Ptr btn2 = gui->get<tgui::Button>("buttonPrecedent");
+	btn2->setPosition(400, 800);
+
+
+	btn1->connect("pressed", [&]() {
+
+			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("mageIcon");
+			mage->setPosition(0,0);
+			/*
+			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("archerIcon");
+			mage->setEnabled(true);
+
+			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("protecteurIcon");
+			mage->setEnabled(true);
+
+			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("barbareIcon");
+			mage->setEnabled(true);*/
+	});
+	
+
+
+
+	
 }
 
 void ClassSelectionScreen::onMessageReceived(std::string msg)
