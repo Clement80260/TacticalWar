@@ -39,6 +39,7 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	login->setInheritedFont(font);
 	login->setTextSize(formFontSize);
 	login->setSize(formElementWidth, formElementHeight);
+	login->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 180));
 
 	tgui::Label::Ptr passwordLabel = tgui::Label::create();
 	passwordLabel->setInheritedFont(font);
@@ -51,12 +52,14 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	password->setPasswordCharacter('*');
 	password->setTextSize(formFontSize);
 	password->setSize(formElementWidth, formElementHeight);
+	password->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 180));
 
 	tgui::Button::Ptr button = tgui::Button::create();
 	button->setInheritedFont(font);
 	button->setTextSize(formFontSize);
 	button->setText("Connexion");
 	button->setSize(login->getSize().x, button->getSize().y);
+	button->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 180));
 
 	button->connect("pressed", [&]() { 
 		readyForConnect = true;
@@ -78,7 +81,6 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 
 	LinkToServer::getInstance()->addListener(this);
 
-	ellapsedTime = 0;
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/intro2.glsl");
 }
 
@@ -149,8 +151,6 @@ void LoginScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 void LoginScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
-	
-	ellapsedTime += deltatime;
 
 	// Reset du message d'erreur :
 	if (messageDuration > 0)
@@ -169,7 +169,7 @@ void LoginScreen::update(float deltatime)
 
 void LoginScreen::render(sf::RenderWindow * window)
 {
-	shader.setUniform("time", ellapsedTime);
+	shader.setUniform("time", getShaderEllapsedTime());
 	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
 	
 	sf::Shader::bind(&shader);

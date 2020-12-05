@@ -18,6 +18,8 @@ private:
 
 	tgui::Gui * gui;
 
+	sf::Shader shader;
+
 public:
 	SpectatorModeScreen(tgui::Gui * gui);
 	~SpectatorModeScreen();

@@ -15,6 +15,7 @@ private:
 	//static void scrollPanel(tgui::Panel::Ptr panel, int value);
 	//static int previousScrollbarValue;
 
+	sf::Shader shader;
 
 	tgui::Gui * gui;
 

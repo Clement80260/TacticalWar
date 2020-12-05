@@ -30,19 +30,21 @@ SpectatorModeScreen::SpectatorModeScreen(tgui::Gui * gui)
 	matchPanelTitle = tgui::Label::create();
 	matchPanelTitle->setInheritedFont(font);
 	matchPanelTitle->setTextSize(20);
-	//matchPanelTitle->getRenderer()->setTextColor(sf::Color::White);
+	matchPanelTitle->getRenderer()->setTextColor(sf::Color::White);
 	matchPanelTitle->setText("Match(s) en cours :");
 
 	m_matchListpanel = tgui::ScrollablePanel::create();
 	m_matchListpanel->setSize(1000, 600);
 	m_matchListpanel->setInheritedFont(font);
-	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128));
+	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
 	
 	//m_matchListpanel->setBackgroundColor(sf::Color(128, 128, 128, 0));
 	gui->add(matchPanelTitle);
 	gui->add(m_matchListpanel);
 
 	LinkToServer::getInstance()->addListener(this);
+
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 }
 
 SpectatorModeScreen::~SpectatorModeScreen()
@@ -83,6 +85,17 @@ void SpectatorModeScreen::update(float deltatime)
 
 void SpectatorModeScreen::render(sf::RenderWindow * window)
 {
+	shader.setUniform("time", getShaderEllapsedTime());
+	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
+
+	sf::Shader::bind(&shader);
+	sf::RectangleShape rect;
+	rect.setPosition(0, 0);
+	rect.setSize(sf::Vector2f(window->getSize()));
+	rect.setFillColor(sf::Color::Black);
+	window->draw(rect);
+	sf::Shader::bind(NULL);
+
 	window->draw(title);
 	window->draw(subtitle);
 }

@@ -39,22 +39,22 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	m_matchListpanel = tgui::ScrollablePanel::create();
 	m_matchListpanel->setSize(1000, 600);
 	m_matchListpanel->setInheritedFont(font);
-	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128));
+	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
 
 	m_matchListCreate = tgui::ScrollablePanel::create();
 	m_matchListCreate->setSize(300, 600);
 	m_matchListCreate->setInheritedFont(font);
-	m_matchListCreate->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128));
+	m_matchListCreate->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
 
 	listTeam1 = tgui::ListBox::create();
 	listTeam1->setSize(200, 150);
 	listTeam1->setInheritedFont(font);
-	listTeam1->getRenderer()->setBackgroundColor(sf::Color::White);
+	listTeam1->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 200));
 
 	listTeam2 = tgui::ListBox::create();
 	listTeam2->setSize(200, 150);
 	listTeam2->setInheritedFont(font);
-	listTeam2->getRenderer()->setBackgroundColor(sf::Color::White);
+	listTeam2->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 200));
 
 	versus = tgui::Label::create();
 	versus->setInheritedFont(font);
@@ -89,7 +89,7 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	createMatch = tgui::Button::create();
 	createMatch->setSize(150, 75);
 	createMatch->setInheritedFont(font);
-	createMatch->getRenderer()->setBackgroundColor(sf::Color(90, 182, 96)); // couleur verte
+	createMatch->getRenderer()->setBackgroundColor(sf::Color(90, 182, 96, 200)); // couleur verte
 	
 	//createMatch->getRenderer()->setBackgroundColor(sf::Color(226, 82, 32)); // couleur rouge
 	//createMatch->getRenderer()->setBackgroundColor(sf::Color(90, 182, 96)); // couleur verte
@@ -101,7 +101,7 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	matchName = tgui::EditBox::create();
 	matchName->setSize(250, 30);
 	matchName->setInheritedFont(font);
-	matchName->getRenderer()->setBackgroundColor(sf::Color::White);
+	matchName->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 200));
 
 
 
@@ -119,6 +119,8 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	gui->add(team2Choice);
 
 	LinkToServer::getInstance()->addListener(this);
+
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 }
 
 AdminScreen::~AdminScreen()
@@ -184,6 +186,17 @@ void AdminScreen::update(float deltatime)
 
 void AdminScreen::render(sf::RenderWindow * window)
 {
+	shader.setUniform("time", getShaderEllapsedTime());
+	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
+
+	sf::Shader::bind(&shader);
+	sf::RectangleShape rect;
+	rect.setPosition(0, 0);
+	rect.setSize(sf::Vector2f(window->getSize()));
+	rect.setFillColor(sf::Color::Black);
+	window->draw(rect);
+	sf::Shader::bind(NULL);
+
 	window->draw(title);
 	window->draw(subtitle);
 }
@@ -211,6 +224,7 @@ void AdminScreen::onMessageReceived(std::string msg)
 			std::shared_ptr<MatchView> m = std::make_shared<MatchView>(*matchs[i], false);
 			m->setSize(tgui::Layout("97%"), 120);
 			m->setPosition(tgui::Layout("1.5%"), 10 * (i + 1) + (120 * i));
+			m->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 200));
 
 			m_matchListCreate->add(m);
 		}

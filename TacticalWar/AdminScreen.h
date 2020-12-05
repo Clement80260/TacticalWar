@@ -10,6 +10,7 @@ private:
 	std::map<int, std::vector<tw::Player> > teamIdToPlayer;
 	bool readyForCreate;
 
+	sf::Shader shader;
 
 	sf::Font font;
 	sf::Text title;

@@ -46,6 +46,8 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	gui->add(PlayerStatusView::getInstance());
 
 	LinkToServer::getInstance()->addListener(this);
+
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 }
 
 ClassSelectionScreen::~ClassSelectionScreen()
@@ -86,6 +88,17 @@ void ClassSelectionScreen::update(float deltatime)
 
 void ClassSelectionScreen::render(sf::RenderWindow * window)
 {
+	shader.setUniform("time", getShaderEllapsedTime());
+	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
+
+	sf::Shader::bind(&shader);
+	sf::RectangleShape rect;
+	rect.setPosition(0, 0);
+	rect.setSize(sf::Vector2f(window->getSize()));
+	rect.setFillColor(sf::Color::Black);
+	window->draw(rect);
+	sf::Shader::bind(NULL);
+
 	window->draw(title);
 	window->draw(subtitle);
 }

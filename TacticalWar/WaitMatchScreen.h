@@ -17,7 +17,6 @@ private:
 
 
 	sf::Shader shader;
-	float ellapsedTime;
 
 	tgui::Gui * gui;
 

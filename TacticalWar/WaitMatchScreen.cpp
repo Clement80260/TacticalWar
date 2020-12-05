@@ -45,8 +45,7 @@ WaitMatchScreen::WaitMatchScreen(tgui::Gui * gui)
 	*/
 
 	LinkToServer::getInstance()->addListener(this);
-	ellapsedTime = 0;
-	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground.glsl");
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 }
 
 WaitMatchScreen::~WaitMatchScreen()
@@ -81,14 +80,13 @@ void WaitMatchScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 
 void WaitMatchScreen::update(float deltatime)
 {
-	ellapsedTime += deltatime;
 	Screen::update(deltatime);
 	LinkToServer::getInstance()->UpdateReceivedData();
 }
 
 void WaitMatchScreen::render(sf::RenderWindow * window)
 {
-	shader.setUniform("time", ellapsedTime);
+	shader.setUniform("time", getShaderEllapsedTime());
 	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
 
 	sf::Shader::bind(&shader);
@@ -110,7 +108,9 @@ void WaitMatchScreen::onMessageReceived(std::string msg)
 	if (m.substring(0, 2) == "HC")
 	{
 		gui->removeAllWidgets();
-		tw::ScreenManager::getInstance()->setCurrentScreen(new ClassSelectionScreen(gui));
+		ClassSelectionScreen * classScreen = new ClassSelectionScreen(gui);
+		classScreen->setShaderEllapsedTime(getShaderEllapsedTime());
+		tw::ScreenManager::getInstance()->setCurrentScreen(classScreen);
 		delete this;
 	}
 }
