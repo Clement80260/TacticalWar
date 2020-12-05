@@ -3,15 +3,16 @@
 #include <Match.h>
 #include "MatchView.h"
 #include "PlayerStatusView.h"
+//#include <../ClassesLib/CharacterFactory.h>
 
 ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	: Screen()
 {
+	using namespace std;
 
 	float formFontSize = 16;
 	float formElementWidth = 200;
 	float formElementHeight = 25;
-
 
 	this->gui = gui;
 	gui->removeAllWidgets();
@@ -36,7 +37,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	buttonSuivant->setInheritedFont(font);
 	buttonSuivant->setTextSize(formFontSize);
 	buttonSuivant->setText("suivant");
-	buttonSuivant->setSize(200, 100);
+	buttonSuivant->setSize(100, 100);
 
 	gui->add(buttonSuivant, "buttonSuivant");
 
@@ -44,11 +45,20 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	buttonPrecedent->setInheritedFont(font);
 	buttonPrecedent->setTextSize(formFontSize);
 	buttonPrecedent->setText("precedent");
-	buttonPrecedent->setSize(200, 100);
+	buttonPrecedent->setSize(100, 100);
 
 	gui->add(buttonPrecedent, "buttonPrecedent");
 
-/*
+	tw::BaseCharacterModel * model = CharacterFactory::getInstance()->constructCharacter(NULL, 1, 1, 0, 0);
+	std::string path = model->getClassIconPath();
+
+	sf::Texture texture;
+	if (!texture.loadFromFile(path));
+
+	tgui::Picture::Ptr IconTest = tgui::Picture::create(texture);
+	gui->add(IconTest);
+
+
 	matchPanelTitle = tgui::Label::create();
 	matchPanelTitle->setInheritedFont(font);
 	matchPanelTitle->setTextSize(20);
@@ -61,7 +71,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 
 	gui->add(matchPanelTitle);
 	gui->add(m_matchListpanel);
-	*/
+	
 
 	gui->add(PlayerStatusView::getInstance());
 
@@ -114,7 +124,10 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 	btn1->setPosition(1250, 400);
 
 	tgui::Button::Ptr btn2 = gui->get<tgui::Button>("buttonPrecedent");
-	btn2->setPosition(400, 400);
+	btn2->setPosition(400, 400);	
+
+	
+
 
 }
 
