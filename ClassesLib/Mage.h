@@ -86,20 +86,20 @@ public:
 		return true;
 	}
 
-	//Sort 1 : Boule de feu (Mana : 4 / Zone étoile / DPS : 15-10(45%-25% de brûlure / Cd : 3t)
+	//Sort 1 : Boule de feu (Mana : 4 / ligne(3) puis Zone étoile / DPS : 15-10(45%-25% de brûlure / Cd : 3t)
 	virtual bool doAttack2(int targetX, int targetY)
 	{
 		
 		return true;
 	}
 
-	//Sort 2 : Eclair (Mana : 2 / Zone unique / DPS : 6 / Cd : 1t)
+	//Sort 2 : Eclair (Mana : 2 / ciblage (zone 3x3) / DPS : 6 / Cd : 1t)
 	virtual bool doAttack3(int targetX, int targetY)
 	{
 		return true;
 	}
 
-	//Sort 3 : Blizzard (Mana : 3 / Joueur au centre : carré de 3x3 autour du joueur / DPS : )
+	//Sort 3 : Blizzard (Mana : 3 / zone 3x3 autour du joueur / DPS : )
 	virtual bool doAttack4(int targetX, int targetY)
 	{
 		return true;
@@ -242,12 +242,12 @@ public:
 
 	virtual int getSpell2ManaCost()
 	{
-		return 3;
+		return 2;
 	}
 
 	virtual int getSpell3ManaCost()
 	{
-		return 2;
+		return 3;
 	}
 
 	virtual int getSpell4ManaCost()
@@ -258,7 +258,7 @@ public:
 	//------------------------------------
 	virtual int getSpell1MinPO()
 	{
-		return 2;
+		return 1;
 	}
 
 	virtual int getSpell2MinPO()
@@ -268,19 +268,19 @@ public:
 
 	virtual int getSpell3MinPO()
 	{
-		return 3;
+		return 1;
 	}
 
 	virtual int getSpell4MinPO()
 	{
-		return 4;
+		return 1;
 	}
 
 	//------------------------------------
 
 	virtual int getSpell1MaxPO()
 	{
-		return 5;
+		return 3; // ligne de 3 max + zone de 2x2
 	}
 
 	virtual int getSpell2MaxPO()
@@ -290,12 +290,12 @@ public:
 
 	virtual int getSpell3MaxPO()
 	{
-		return 8;
+		return 3;
 	}
 
 	virtual int getSpell4MaxPO()
 	{
-		return 12;
+		return 1;
 	}
 
 	//------------------------------------

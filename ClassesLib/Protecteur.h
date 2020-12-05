@@ -89,19 +89,19 @@ public:
 		return true;
 	}
 
-	//Sort 2 : Heal (Mana : 5 / Ciblé / Heal : +20% des HP max / Cd : 3t / )
+	//Sort 2 : Heal (Mana : 4 / Ciblé (zone 4x4??) / Heal : +20% des HP max / Cd : 3t / )
 	virtual bool doAttack3(int targetX, int targetY)
 	{
 		return true;
 	}
 
-	//Sort 3 : Purification d'âme (Mana : 2 / Pigme (4) / DPS : 10 / Cd : 2t) Supprime 1 tour de malus chez les alliés touchés
+	//Sort 3 : Purification d'âme (Mana : 2 / ligme (4) / DPS : 10 / Cd : 2t) Supprime 1 tour de malus chez les alliés touchés
 	virtual bool doAttack4(int targetX, int targetY)
 	{
 		return true;
 	}
 
-	//Auto attaque (Mana : 0 / Corps à corps / DPS : 5 / Cd : 0t)
+	//Auto attaque (Mana : 0 / ligne 2-3 / DPS : 5 / Cd : 0t)
 	virtual bool doAttack5(int targetX, int targetY)
 	{
 		return true;
@@ -125,7 +125,7 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description protecteur ...";
+		return "Personnage distance avec des compétences de soutien";
 	}
 
 	virtual std::string getClassIconPath()
@@ -138,44 +138,44 @@ public:
 
 	virtual std::string getSpell1Name()
 	{
-		return "Protecteur sort 1";
+		return "Réanimation";
 	}
 
 	virtual std::string getSpell2Name()
 	{
-		return "Protecteur sort 2";
+		return "Heal";
 	}
 
 	virtual std::string getSpell3Name()
 	{
-		return "Protecteur sort 3";
+		return "Purification d'âme";
 	}
 
 	virtual std::string getSpell4Name()
 	{
-		return "Protecteur sort 4";
+		return "Attaque de base";
 	}
 
 
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
-		return "Protecteur, description sort 1 ...";
+		return "Réanime un allié à 30% pv max dans la parite";
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Protecteur, description sort 2 ...";
+		return "Heal la cible de 15% pv max";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Protecteur, description sort 3 ...";
+		return "Lance une orbe qui purifie les malus des alliés toucher, Inflige des dégâts à l'enemi touché";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Protecteur, description sort 4 ...";
+		return "Inflige 3 de dégât";
 	}
 
 
@@ -234,12 +234,12 @@ public:
 	//------------------------------------
 	virtual int getSpell1ManaCost()
 	{
-		return 4;
+		return 5;
 	}
 
 	virtual int getSpell2ManaCost()
 	{
-		return 3;
+		return 4;
 	}
 
 	virtual int getSpell3ManaCost()
@@ -255,22 +255,22 @@ public:
 	//------------------------------------
 	virtual int getSpell1MinPO()
 	{
-		return 2;
+		return 1;
 	}
 
 	virtual int getSpell2MinPO()
 	{
-		return 1;
+		return 0;
 	}
 
 	virtual int getSpell3MinPO()
 	{
-		return 3;
+		return 1;
 	}
 
 	virtual int getSpell4MinPO()
 	{
-		return 4;
+		return 1;
 	}
 
 	//------------------------------------
@@ -282,17 +282,17 @@ public:
 
 	virtual int getSpell2MaxPO()
 	{
-		return 3;
+		return 4;
 	}
 
 	virtual int getSpell3MaxPO()
 	{
-		return 8;
+		return 4;
 	}
 
 	virtual int getSpell4MaxPO()
 	{
-		return 12;
+		return 2;
 	}
 
 	//------------------------------------
@@ -365,22 +365,22 @@ public:
 
 	virtual int getSpell1ImpactZoneMaxPO()
 	{
-		return 0;
+		return 1;
 	}
 
 	virtual int getSpell2ImpactZoneMaxPO()
 	{
-		return 0;
+		return 1;
 	}
 
 	virtual int getSpell3ImpactZoneMaxPO()
 	{
-		return 0;
+		return 1;
 	}
 
 	virtual int getSpell4ImpactZoneMaxPO()
 	{
-		return 0;
+		return 1;
 	}
 
 	//--------------------------------------------------------------------
