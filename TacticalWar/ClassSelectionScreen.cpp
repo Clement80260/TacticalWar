@@ -5,10 +5,13 @@
 #include "PlayerStatusView.h"
 #include "ScreenManager.h"
 #include "LoginScreen.h"
+#include <CharacterFactory.h>
+
 
 ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	: Screen()
 {
+
 	this->gui = gui;
 	gui->removeAllWidgets();
 	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
@@ -46,6 +49,45 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	LinkToServer::getInstance()->addListener(this);
 
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
+
+	tw::BaseCharacterModel * mage = CharacterFactory::getInstance()->constructCharacter(NULL, 1, 1, 0, 0);
+	std::string pathMage = mage->getClassIconPath();
+	sf::Texture TextureMage;
+	TextureMage.loadFromFile(pathMage);
+	tgui::Picture::Ptr IconMage = tgui::Picture::create(TextureMage);
+		
+	IconMage->setPosition(830, 350);
+	gui->add(IconMage);
+
+
+	tw::BaseCharacterModel * archer = CharacterFactory::getInstance()->constructCharacter(NULL, 2, 1, 0, 0);
+	std::string pathArcher = archer->getClassIconPath();
+	sf::Texture TextureArcher;
+	TextureArcher.loadFromFile(pathArcher);
+	tgui::Picture::Ptr IconArcher = tgui::Picture::create(TextureArcher);
+
+	IconArcher->setPosition(830, 350);
+	gui->add(IconArcher);
+
+	
+	tw::BaseCharacterModel * protecteur = CharacterFactory::getInstance()->constructCharacter(NULL, 3, 1, 0, 0);
+	std::string pathProtecteur = protecteur->getClassIconPath();
+	sf::Texture TextureProtecteur;
+	TextureProtecteur.loadFromFile(pathProtecteur);
+	tgui::Picture::Ptr IconProtecteur = tgui::Picture::create(TextureProtecteur);
+
+	IconProtecteur->setPosition(830, 350);
+	gui->add(IconProtecteur);
+
+	tw::BaseCharacterModel * barbare = CharacterFactory::getInstance()->constructCharacter(NULL, 4, 1, 0, 0);
+	std::string pathBarbare = barbare->getClassIconPath();
+	sf::Texture TextureBarbare;
+	TextureBarbare.loadFromFile(pathBarbare);
+	tgui::Picture::Ptr IconBarbare = tgui::Picture::create(TextureBarbare);
+
+	IconBarbare->setPosition(830, 350);
+	gui->add(IconBarbare);
+	
 }
 
 ClassSelectionScreen::~ClassSelectionScreen()
