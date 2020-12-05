@@ -6,6 +6,7 @@
 #include "ClassSelectionScreen.h"
 #include "AdminScreen.h"
 #include "WaitMatchScreen.h"
+#include "MusicManager.h"
 
 using namespace tw;
 
@@ -82,6 +83,8 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	LinkToServer::getInstance()->addListener(this);
 
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/intro2.glsl");
+
+	MusicManager::getInstance()->setMenuMusic();
 }
 
 LoginScreen::~LoginScreen()
