@@ -6,7 +6,7 @@
 class MatchView : public tgui::Panel
 {
 public:
-	MatchView(tw::Match m);
+	MatchView(tw::Match m, bool isSpectator = true);
 
 };
 

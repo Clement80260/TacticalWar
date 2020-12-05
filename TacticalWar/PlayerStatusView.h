@@ -15,5 +15,6 @@ public:
 	static std::shared_ptr<PlayerStatusView> getInstance();
 
 	virtual void onMessageReceived(std::string msg);
+	virtual void onDisconnected();
 };
 

@@ -119,6 +119,23 @@ std::vector<tw::Match*> tw::PlayerManager::getCurrentlyPlayingMatchs()
 	return result;
 }
 
+std::vector<tw::Match*> tw::PlayerManager::getPlanifiedAndPlayingMatchs()
+{
+	std::vector<tw::Match*> result;
+
+	// Construire la liste des matchs en cours :
+	for (int i = 0; i < matchList.size(); i++)
+	{
+		Match * match = matchList[i];
+		if (match->getStatus() == MatchStatus::STARTED || match->getStatus() == MatchStatus::NOT_STARTED)
+		{
+			result.push_back(match);
+		}
+	}
+
+	return result;
+}
+
 /*
 void tw::PlayerManager::subscribeToAllMatchEvent(MatchEventListener * l)
 {

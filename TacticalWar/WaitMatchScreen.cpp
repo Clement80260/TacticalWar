@@ -5,6 +5,7 @@
 #include "PlayerStatusView.h"
 #include "ScreenManager.h"
 #include "ClassSelectionScreen.h"
+#include "LoginScreen.h"
 
 WaitMatchScreen::WaitMatchScreen(tgui::Gui * gui)
 	: Screen()
@@ -44,6 +45,7 @@ WaitMatchScreen::WaitMatchScreen(tgui::Gui * gui)
 	*/
 
 	LinkToServer::getInstance()->addListener(this);
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 }
 
 WaitMatchScreen::~WaitMatchScreen()
@@ -84,6 +86,17 @@ void WaitMatchScreen::update(float deltatime)
 
 void WaitMatchScreen::render(sf::RenderWindow * window)
 {
+	shader.setUniform("time", getShaderEllapsedTime());
+	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
+
+	sf::Shader::bind(&shader);
+	sf::RectangleShape rect;
+	rect.setPosition(0, 0);
+	rect.setSize(sf::Vector2f(window->getSize()));
+	rect.setFillColor(sf::Color::Black);
+	window->draw(rect);
+	sf::Shader::bind(NULL);
+
 	window->draw(title);
 	window->draw(subtitle);
 }
@@ -95,7 +108,16 @@ void WaitMatchScreen::onMessageReceived(std::string msg)
 	if (m.substring(0, 2) == "HC")
 	{
 		gui->removeAllWidgets();
-		tw::ScreenManager::getInstance()->setCurrentScreen(new ClassSelectionScreen(gui));
+		ClassSelectionScreen * classScreen = new ClassSelectionScreen(gui);
+		classScreen->setShaderEllapsedTime(getShaderEllapsedTime());
+		tw::ScreenManager::getInstance()->setCurrentScreen(classScreen);
 		delete this;
 	}
+}
+
+void WaitMatchScreen::onDisconnected()
+{
+	gui->removeAllWidgets();
+	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));
+	delete this;
 }

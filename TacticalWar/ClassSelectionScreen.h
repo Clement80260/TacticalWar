@@ -16,6 +16,7 @@ private:
 	//static void scrollPanel(tgui::Panel::Ptr panel, int value);
 	//static int previousScrollbarValue;
 
+	sf::Shader shader;
 
 	tgui::Gui * gui;
 
@@ -29,5 +30,6 @@ public:
 
 
 	virtual void onMessageReceived(std::string msg);
+	virtual void onDisconnected();
 };
 

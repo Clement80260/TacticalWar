@@ -9,6 +9,7 @@
 #include <AnimationManager.h>
 #include <Mage.h>
 
+#include <SpellView.h>
 #include "ScreenCallbackTest.h"
 #include <LaunchSpellAction.h>
 #include <CharacterMoveAction.h>
@@ -27,6 +28,7 @@ int main(int argc, char** argv)
 	std::vector<BaseCharacterModel*> characters;
 
 	ScreenCallbackTest * screen = new ScreenCallbackTest(&environment);
+	SpellView * Spell = new SpellView();
 	characters.push_back(screen->getCharacter(1)->getCharacter());
 	characters.push_back(screen->getCharacter(2)->getCharacter());
 
@@ -73,7 +75,7 @@ int main(int argc, char** argv)
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 4, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path3));
-
+	Spell->loadAnimation("./assets/spellsprites/ballbig1_red");
 	while (window.isOpen())
 	{
 		float deltatime = deltaClock.restart().asSeconds();

@@ -15,7 +15,6 @@ namespace tw
 		tgui::Label::Ptr errorMsg;
 		tgui::Gui * gui;
 		sf::Shader shader;
-		float ellapsedTime;
 
 	public:
 		LoginScreen(tgui::Gui * gui);
@@ -26,5 +25,6 @@ namespace tw
 		virtual void render(sf::RenderWindow * window);
 
 		virtual void onMessageReceived(std::string msg);
+		virtual void onDisconnected();
 	};
 }
