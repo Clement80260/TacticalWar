@@ -7,8 +7,15 @@
 
 using namespace std;
 
-tw::Match * tw::PlayerManager::testMatch = NULL;
 std::vector<tw::Player*> tw::PlayerManager::playersCache;
+
+std::vector<tw::Match*> tw::PlayerManager::matchList;
+
+void tw::PlayerManager::addMatch(Match * m)
+{
+	matchList.push_back(m);
+}
+
 
 std::vector<tw::Player*> tw::PlayerManager::loadPlayers()
 {
@@ -56,36 +63,84 @@ std::vector<tw::Player*> tw::PlayerManager::loadPlayers()
 	return playersCache;
 }
 
-tw::Match * tw::PlayerManager::getCurrentOrNextMatchForPlayer(tw::Player * p)
-{
-	// TODO : Rechercher le match courant ou le prochain pour le joueur p et le retourner. Si aucun match à venir, retourner NULL.
-	createTestMatchIfNotExists();
 
-	if (testMatch->getStatus() != FINISHED)
+
+std::vector<tw::Match*> tw::PlayerManager::getAllMatchsForPlayer(tw::Player * p)
+{
+	std::vector <tw::Match*> matchs;
+
+	for (int i = 0; i < matchList.size(); i++)
 	{
-		return testMatch;
+		Match * m = matchList[i];
+		if (m->playerIsInThisMatch(p))
+		{
+			matchs.push_back(m);
+		}
 	}
 
-	return NULL;
+	return matchs;
+}
+
+tw::Match * tw::PlayerManager::getCurrentOrNextMatchForPlayer(tw::Player * p)
+{
+	Match * match = NULL;
+	// Rechercher le match courant ou le prochain pour le joueur p et le retourner. Si aucun match à venir, retourner NULL.
+
+	for (int i = 0; i < matchList.size(); i++)
+	{
+		Match * m = matchList[i];
+		if ((m->getStatus() == tw::MatchStatus::NOT_STARTED || m->getStatus() == tw::MatchStatus::STARTED) && m->playerIsInThisMatch(p))
+		{
+			match = m;
+
+			// Un match en cours passe en priorité sur les matchs planifiés :
+			if (m->getStatus() == tw::MatchStatus::STARTED)
+				break;
+		}
+	}
+
+	return match;
 }
 
 std::vector<tw::Match*> tw::PlayerManager::getCurrentlyPlayingMatchs()
 {
 	std::vector<tw::Match*> result;
 
-	createTestMatchIfNotExists();
-
-	if (testMatch->getStatus() == MatchStatus::STARTED)
+	// Construire la liste des matchs en cours :
+	for (int i = 0; i < matchList.size(); i++)
 	{
-		result.push_back(testMatch);
+		Match * match = matchList[i];
+		if (match->getStatus() == MatchStatus::STARTED)
+		{
+			result.push_back(match);
+		}
 	}
 
 	return result;
 }
 
+std::vector<tw::Match*> tw::PlayerManager::getPlanifiedAndPlayingMatchs()
+{
+	std::vector<tw::Match*> result;
+
+	// Construire la liste des matchs en cours :
+	for (int i = 0; i < matchList.size(); i++)
+	{
+		Match * match = matchList[i];
+		if (match->getStatus() == MatchStatus::STARTED || match->getStatus() == MatchStatus::NOT_STARTED)
+		{
+			result.push_back(match);
+		}
+	}
+
+	return result;
+}
+
+/*
 void tw::PlayerManager::subscribeToAllMatchEvent(MatchEventListener * l)
 {
 	createTestMatchIfNotExists();
 
 	testMatch->addEventListener(l);
 }
+*/

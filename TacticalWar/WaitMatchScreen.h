@@ -3,7 +3,7 @@
 #include "Screen.h"
 #include "ServerMessageListener.h"
 
-class ClassSelectionScreen : public tw::Screen, ServerMessageListener
+class WaitMatchScreen : public tw::Screen, ServerMessageListener
 {
 private:
 	sf::Font font;
@@ -15,13 +15,14 @@ private:
 	//static void scrollPanel(tgui::Panel::Ptr panel, int value);
 	//static int previousScrollbarValue;
 
+
 	sf::Shader shader;
 
 	tgui::Gui * gui;
 
 public:
-	ClassSelectionScreen(tgui::Gui * gui);
-	~ClassSelectionScreen();
+	WaitMatchScreen(tgui::Gui * gui);
+	~WaitMatchScreen();
 
 	virtual void handleEvents(sf::RenderWindow * window, tgui::Gui * gui);
 	virtual void update(float deltatime);
@@ -31,4 +32,3 @@ public:
 	virtual void onMessageReceived(std::string msg);
 	virtual void onDisconnected();
 };
-

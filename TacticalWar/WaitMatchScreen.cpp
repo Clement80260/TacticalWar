@@ -1,11 +1,13 @@
-#include "SpectatorModeScreen.h"
+#include "WaitMatchScreen.h"
 #include "LinkToServer.h"
 #include <Match.h>
 #include "MatchView.h"
+#include "PlayerStatusView.h"
 #include "ScreenManager.h"
+#include "ClassSelectionScreen.h"
 #include "LoginScreen.h"
 
-SpectatorModeScreen::SpectatorModeScreen(tgui::Gui * gui)
+WaitMatchScreen::WaitMatchScreen(tgui::Gui * gui)
 	: Screen()
 {
 	this->gui = gui;
@@ -22,42 +24,41 @@ SpectatorModeScreen::SpectatorModeScreen(tgui::Gui * gui)
 
 	subtitle.setFont(font);
 	subtitle.setCharacterSize(32);
-	subtitle.setString("Mode spectateur");
+	subtitle.setString("En attente d'un match ...");
 	subtitle.setFillColor(sf::Color::Red);
 	subtitle.setOutlineColor(sf::Color(255, 215, 0));
 	subtitle.setOutlineThickness(1.5);
 
+	/*
 	matchPanelTitle = tgui::Label::create();
 	matchPanelTitle->setInheritedFont(font);
 	matchPanelTitle->setTextSize(20);
-	matchPanelTitle->getRenderer()->setTextColor(sf::Color::White);
 	matchPanelTitle->setText("Match(s) en cours :");
 
 	m_matchListpanel = tgui::ScrollablePanel::create();
 	m_matchListpanel->setSize(1000, 600);
 	m_matchListpanel->setInheritedFont(font);
-	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
-	
-	//m_matchListpanel->setBackgroundColor(sf::Color(128, 128, 128, 0));
+	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128));
+
 	gui->add(matchPanelTitle);
 	gui->add(m_matchListpanel);
+	*/
 
 	LinkToServer::getInstance()->addListener(this);
-
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 }
 
-SpectatorModeScreen::~SpectatorModeScreen()
+WaitMatchScreen::~WaitMatchScreen()
 {
 	LinkToServer::getInstance()->removeListener(this);
 }
 
-void SpectatorModeScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
+void WaitMatchScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 {
 	title.setPosition(window->getSize().x / 2 - title.getLocalBounds().width / 2, 10);
 	subtitle.setPosition(window->getSize().x / 2 - subtitle.getLocalBounds().width / 2, 10 + 128 + 10);
-	matchPanelTitle->setPosition(window->getSize().x / 2.0 - m_matchListpanel->getSize().x / 2.0, 270);
-	m_matchListpanel->setPosition(window->getSize().x / 2.0 - m_matchListpanel->getSize().x / 2.0, 300);
+	//matchPanelTitle->setPosition(window->getSize().x / 2.0 - m_matchListpanel->getSize().x / 2.0, 270);
+	//m_matchListpanel->setPosition(window->getSize().x / 2.0 - m_matchListpanel->getSize().x / 2.0, 300);
 
 	sf::Event event;
 	while (window->pollEvent(event))
@@ -77,13 +78,13 @@ void SpectatorModeScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gu
 	}
 }
 
-void SpectatorModeScreen::update(float deltatime)
+void WaitMatchScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
 	LinkToServer::getInstance()->UpdateReceivedData();
 }
 
-void SpectatorModeScreen::render(sf::RenderWindow * window)
+void WaitMatchScreen::render(sf::RenderWindow * window)
 {
 	shader.setUniform("time", getShaderEllapsedTime());
 	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
@@ -100,38 +101,21 @@ void SpectatorModeScreen::render(sf::RenderWindow * window)
 	window->draw(subtitle);
 }
 
-void SpectatorModeScreen::onMessageReceived(std::string msg)
+void WaitMatchScreen::onMessageReceived(std::string msg)
 {
 	sf::String m = msg;
 
-	// Match list
-	if (m.substring(0, 2) == "ML")
+	if (m.substring(0, 2) == "HC")
 	{
-		std::vector<tw::Match*> matchs;
-		std::vector<std::string> str = StringUtils::explode(m.substring(2), ';');
-
-		for (int i = 0; i < str.size(); i++)
-		{
-			matchs.push_back(tw::Match::deserialize(str[i]));
-		}
-		
-		m_matchListpanel->removeAllWidgets();
-
-		// Afficher les matchs
-		for (int i = 0; i < matchs.size(); i++)
-		{
-			std::shared_ptr<MatchView> m = std::make_shared<MatchView>(*matchs[i]);
-			m->setSize(tgui::Layout("97%"), 120);
-			m->setPosition(tgui::Layout("1.5%"), 10 * (i + 1) + (120 * i));
-
-			m_matchListpanel->add(m);
-		}
-
-		m_matchListpanel->getRenderer()->setScrollbarWidth(10);
+		gui->removeAllWidgets();
+		ClassSelectionScreen * classScreen = new ClassSelectionScreen(gui);
+		classScreen->setShaderEllapsedTime(getShaderEllapsedTime());
+		tw::ScreenManager::getInstance()->setCurrentScreen(classScreen);
+		delete this;
 	}
 }
 
-void SpectatorModeScreen::onDisconnected()
+void WaitMatchScreen::onDisconnected()
 {
 	gui->removeAllWidgets();
 	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));

@@ -79,40 +79,6 @@ namespace tw
 			}
 		}
 
-		std::string serializeTeam(std::vector<Player*> & team, char separatorPlayer, char separatorInfo)
-		{
-			std::string result;
-
-			for (int i = 0; i < team.size(); i++)
-			{
-				Player * p = team[i];
-				if (i != 0)
-					result += separatorPlayer;
-
-				result += std::to_string(p->getTeamNumber()) + separatorInfo;
-				result += p->getPseudo() + separatorInfo;
-				result += std::to_string(p->getHasJoinBattle() ? 1 : 0);
-			}
-
-			return result;
-		}
-
-		static std::vector<Player> deserializeTeam(std::string teamInfo, char separatorPlayer, char separatorInfo)
-		{
-			std::vector<Player> result;
-			std::vector<std::string> teamData = StringUtils::explode(teamInfo, separatorPlayer);
-
-			for (int i = 0; i < teamData.size(); i++)
-			{
-				std::vector<std::string> playerData = StringUtils::explode(teamData[i], separatorInfo);
-				
-				result.push_back(Player(playerData[1], "", std::atoi(playerData[0].c_str())));
-				result.back().setHasJoinBattle(std::atoi(playerData[2].c_str()));
-			}
-
-			return result;
-		}
-
 		// A utiliser que pour la deserialisation :
 		inline void setId(int id)
 		{
@@ -268,6 +234,44 @@ namespace tw
 
 			result->clientSetTeam1(team1);
 			result->clientSetTeam2(team2);
+
+			return result;
+		}
+
+
+
+
+		// Serialisation team :
+		static std::string serializeTeam(std::vector<Player*> & team, char separatorPlayer, char separatorInfo)
+		{
+			std::string result;
+
+			for (int i = 0; i < team.size(); i++)
+			{
+				Player * p = team[i];
+				if (i != 0)
+					result += separatorPlayer;
+
+				result += std::to_string(p->getTeamNumber()) + separatorInfo;
+				result += p->getPseudo() + separatorInfo;
+				result += std::to_string(p->getHasJoinBattle() ? 1 : 0);
+			}
+
+			return result;
+		}
+
+		static std::vector<Player> deserializeTeam(std::string teamInfo, char separatorPlayer, char separatorInfo)
+		{
+			std::vector<Player> result;
+			std::vector<std::string> teamData = StringUtils::explode(teamInfo, separatorPlayer);
+
+			for (int i = 0; i < teamData.size(); i++)
+			{
+				std::vector<std::string> playerData = StringUtils::explode(teamData[i], separatorInfo);
+
+				result.push_back(Player(playerData[1], "", std::atoi(playerData[0].c_str())));
+				result.back().setHasJoinBattle(std::atoi(playerData[2].c_str()));
+			}
 
 			return result;
 		}

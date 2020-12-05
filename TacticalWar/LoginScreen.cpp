@@ -5,6 +5,7 @@
 #include "SpectatorModeScreen.h"
 #include "ClassSelectionScreen.h"
 #include "AdminScreen.h"
+#include "WaitMatchScreen.h"
 
 using namespace tw;
 
@@ -22,7 +23,7 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	
 	title.setFont(font);
 	title.setCharacterSize(128);
-	title.setString("Tactical War");
+	title.setString("");
 	title.setFillColor(sf::Color::White);
 	//title.setStyle(sf::Text::Bold);
 	title.setOutlineColor(sf::Color(255, 215, 0));
@@ -38,6 +39,7 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	login->setInheritedFont(font);
 	login->setTextSize(formFontSize);
 	login->setSize(formElementWidth, formElementHeight);
+	login->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 180));
 
 	tgui::Label::Ptr passwordLabel = tgui::Label::create();
 	passwordLabel->setInheritedFont(font);
@@ -50,12 +52,14 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	password->setPasswordCharacter('*');
 	password->setTextSize(formFontSize);
 	password->setSize(formElementWidth, formElementHeight);
+	password->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 180));
 
 	tgui::Button::Ptr button = tgui::Button::create();
 	button->setInheritedFont(font);
 	button->setTextSize(formFontSize);
 	button->setText("Connexion");
 	button->setSize(login->getSize().x, button->getSize().y);
+	button->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 180));
 
 	button->connect("pressed", [&]() { 
 		readyForConnect = true;
@@ -76,6 +80,8 @@ LoginScreen::LoginScreen(tgui::Gui * gui)
 	gui->add(errorMsg, "errorMsg");
 
 	LinkToServer::getInstance()->addListener(this);
+
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/intro2.glsl");
 }
 
 LoginScreen::~LoginScreen()
@@ -145,7 +151,6 @@ void LoginScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 void LoginScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
-	LinkToServer::getInstance()->UpdateReceivedData();
 
 	// Reset du message d'erreur :
 	if (messageDuration > 0)
@@ -158,11 +163,25 @@ void LoginScreen::update(float deltatime)
 			messageDuration = 0;
 		}
 	}
+
+	LinkToServer::getInstance()->UpdateReceivedData();
 }
 
 void LoginScreen::render(sf::RenderWindow * window)
 {
+	shader.setUniform("time", getShaderEllapsedTime());
+	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
+	
+	sf::Shader::bind(&shader);
+	sf::RectangleShape rect;
+	rect.setPosition(0, 0);
+	rect.setSize(sf::Vector2f(window->getSize()));
+	rect.setFillColor(sf::Color::Black);
+	window->draw(rect);
+	sf::Shader::bind(NULL);
+	
 	window->draw(title);
+	
 }
 
 void LoginScreen::onMessageReceived(std::string msg)
@@ -197,10 +216,21 @@ void LoginScreen::onMessageReceived(std::string msg)
 		ScreenManager::getInstance()->setCurrentScreen(new AdminScreen(gui));
 		delete this;
 	}
+	else if (sentence.substring(0, 2) == "HW")
+	{
+		readyForConnect = false;
+		gui->removeAllWidgets();
+		ScreenManager::getInstance()->setCurrentScreen(new WaitMatchScreen(gui));
+		delete this;
+	}
 	else
 	{
 		LinkToServer::getInstance()->Disconnect();
 		messageDuration = 5;
 		errorMsg->setText("Login ou mot de passe incorrect ...");
 	}
+}
+
+void tw::LoginScreen::onDisconnected()
+{
 }
