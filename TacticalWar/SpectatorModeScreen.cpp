@@ -2,6 +2,8 @@
 #include "LinkToServer.h"
 #include <Match.h>
 #include "MatchView.h"
+#include "ScreenManager.h"
+#include "LoginScreen.h"
 
 SpectatorModeScreen::SpectatorModeScreen(tgui::Gui * gui)
 	: Screen()
@@ -114,4 +116,11 @@ void SpectatorModeScreen::onMessageReceived(std::string msg)
 
 		m_matchListpanel->getRenderer()->setScrollbarWidth(10);
 	}
+}
+
+void SpectatorModeScreen::onDisconnected()
+{
+	gui->removeAllWidgets();
+	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));
+	delete this;
 }

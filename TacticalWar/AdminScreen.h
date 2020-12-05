@@ -2,10 +2,15 @@
 
 #include "Screen.h"
 #include "ServerMessageListener.h"
+#include <Player.h>
 
 class AdminScreen : public tw::Screen, ServerMessageListener
 {
 private:
+	std::map<int, std::vector<tw::Player> > teamIdToPlayer;
+	bool readyForCreate;
+
+
 	sf::Font font;
 	sf::Text title;
 	sf::Text subtitle;
@@ -29,6 +34,8 @@ private:
 
 	tgui::Gui * gui;
 
+	void updateListTeam(tgui::ListBox::Ptr listTeam);
+
 public:
 	AdminScreen(tgui::Gui * gui);
 	~AdminScreen();
@@ -39,5 +46,6 @@ public:
 
 
 	virtual void onMessageReceived(std::string msg);
+	virtual void onDisconnected();
 };
 

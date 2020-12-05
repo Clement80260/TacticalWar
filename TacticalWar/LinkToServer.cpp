@@ -120,8 +120,11 @@ void LinkToServer::UpdateReceivedData()
 	int bufCapability = 10240 - bufIndex;
 	std::size_t maxToRecv = bufCapability < maxRecv ? bufCapability : maxRecv;
 	sf::Socket::Status status = socket.receive(&buffer[bufIndex], maxToRecv, effRecv);
-
-	if (status == sf::Socket::Status::Done)
+	if (status == sf::Socket::Status::Disconnected)
+	{
+		notifyDisconnected();
+	}
+	else if (status == sf::Socket::Status::Done)
 	{
 		bufIndex += effRecv;
 

@@ -31,4 +31,5 @@ public:
 
 
 	virtual void onMessageReceived(std::string msg);
+	virtual void onDisconnected();
 };

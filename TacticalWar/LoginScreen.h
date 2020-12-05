@@ -26,5 +26,6 @@ namespace tw
 		virtual void render(sf::RenderWindow * window);
 
 		virtual void onMessageReceived(std::string msg);
+		virtual void onDisconnected();
 	};
 }

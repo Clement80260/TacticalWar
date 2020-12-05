@@ -5,6 +5,7 @@
 #include "PlayerStatusView.h"
 #include "ScreenManager.h"
 #include "ClassSelectionScreen.h"
+#include "LoginScreen.h"
 
 WaitMatchScreen::WaitMatchScreen(tgui::Gui * gui)
 	: Screen()
@@ -112,4 +113,11 @@ void WaitMatchScreen::onMessageReceived(std::string msg)
 		tw::ScreenManager::getInstance()->setCurrentScreen(new ClassSelectionScreen(gui));
 		delete this;
 	}
+}
+
+void WaitMatchScreen::onDisconnected()
+{
+	gui->removeAllWidgets();
+	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));
+	delete this;
 }

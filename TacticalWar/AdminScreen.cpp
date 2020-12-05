@@ -2,10 +2,15 @@
 #include "LinkToServer.h"
 #include <Match.h>
 #include "MatchView.h"
+#include "ScreenManager.h"
+#include "LoginScreen.h"
+
+
 
 AdminScreen::AdminScreen(tgui::Gui * gui)
 	: Screen()
 {
+	readyForCreate = false;
 	this->gui = gui;
 	gui->removeAllWidgets();
 	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
@@ -51,11 +56,6 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	listTeam2->setInheritedFont(font);
 	listTeam2->getRenderer()->setBackgroundColor(sf::Color::White);
 
-	listMatchCreate = tgui::ListBox::create();
-	listMatchCreate->setSize(250, 550);
-	listMatchCreate->setInheritedFont(font);
-	listMatchCreate->getRenderer()->setBackgroundColor(sf::Color::White);
-
 	versus = tgui::Label::create();
 	versus->setInheritedFont(font);
 	versus->setTextSize(50);
@@ -94,6 +94,9 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	//createMatch->getRenderer()->setBackgroundColor(sf::Color(226, 82, 32)); // couleur rouge
 	//createMatch->getRenderer()->setBackgroundColor(sf::Color(90, 182, 96)); // couleur verte
 	createMatch->setText("Creer");
+	createMatch->connect("pressed", [&]() {
+		readyForCreate = true;
+	});
 
 	matchName = tgui::EditBox::create();
 	matchName->setSize(250, 30);
@@ -114,7 +117,6 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	gui->add(matchCreate);
 	gui->add(team1Choice);
 	gui->add(team2Choice);
-	gui->add(listMatchCreate);
 
 	LinkToServer::getInstance()->addListener(this);
 }
@@ -133,7 +135,6 @@ void AdminScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 	m_matchListCreate->setPosition(window->getSize().x / 2.0 + 700 - m_matchListCreate->getSize().x / 2.0, 300);
 	listTeam1->setPosition(window->getSize().x / 2.0 - 350 - listTeam1->getSize().x / 2.0, 450);
 	listTeam2->setPosition(window->getSize().x / 2.0 + 350 - listTeam2->getSize().x / 2.0, 450);
-	listMatchCreate->setPosition(window->getSize().x / 2.0 + 700 - listMatchCreate->getSize().x / 2.0, 330);
 	versus->setPosition(window->getSize().x / 2.0 - versus->getSize().x / 2.0, 500);
 	createMatch->setPosition(window->getSize().x / 2.0 - createMatch->getSize().x / 2.0, 800);
 	matchName->setPosition(window->getSize().x / 2.0 - matchName->getSize().x / 2.0, 350);
@@ -164,6 +165,21 @@ void AdminScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
 	LinkToServer::getInstance()->UpdateReceivedData();
+
+	if (readyForCreate)
+	{
+		sf::String matchNameStr = matchName->getText();
+		sf::String teamAId = listTeam1->getSelectedItemId();
+		sf::String teamBId = listTeam2->getSelectedItemId();
+
+		if (matchNameStr.getSize() > 0 && teamAId.getSize() > 0 && teamBId.getSize() > 0)
+		{
+			sf::String request = "CM" + matchNameStr + ";" + teamAId + ";" + teamBId;
+			LinkToServer::getInstance()->Send(request);
+		}
+
+		readyForCreate = false;
+	}
 }
 
 void AdminScreen::render(sf::RenderWindow * window)
@@ -177,7 +193,7 @@ void AdminScreen::onMessageReceived(std::string msg)
 	sf::String m = msg;
 
 	// Match list
-	if (m.substring(0, 2) == "ML")
+	if (m.substring(0, 2) == "MC")
 	{
 		std::vector<tw::Match*> matchs;
 		std::vector<std::string> str = StringUtils::explode(m.substring(2), ';');
@@ -187,18 +203,63 @@ void AdminScreen::onMessageReceived(std::string msg)
 			matchs.push_back(tw::Match::deserialize(str[i]));
 		}
 
-		m_matchListpanel->removeAllWidgets();
+		m_matchListCreate->removeAllWidgets();
 
 		// Afficher les matchs
 		for (int i = 0; i < matchs.size(); i++)
 		{
-			std::shared_ptr<MatchView> m = std::make_shared<MatchView>(*matchs[i]);
+			std::shared_ptr<MatchView> m = std::make_shared<MatchView>(*matchs[i], false);
 			m->setSize(tgui::Layout("97%"), 120);
 			m->setPosition(tgui::Layout("1.5%"), 10 * (i + 1) + (120 * i));
 
-			m_matchListpanel->add(m);
+			m_matchListCreate->add(m);
 		}
 
-		m_matchListpanel->getRenderer()->setScrollbarWidth(10);
+		m_matchListCreate->getRenderer()->setScrollbarWidth(10);
 	}
+	// Team list
+	else if (m.substring(0, 2) == "TL")
+	{
+		teamIdToPlayer.clear();
+		std::vector<std::string> data = StringUtils::explode(m.substring(2), ';');
+
+		for (int i = 0; i < data.size(); i++)
+		{
+			std::vector<std::string> teamData = StringUtils::explode(data[i], ',');
+			int teamId = std::atoi(teamData[0].c_str());
+			std::string teamInfo = teamData[1];
+
+			std::vector<tw::Player> team = tw::Match::deserializeTeam(teamInfo, '¨', '^');
+
+			teamIdToPlayer[teamId].clear();
+			teamIdToPlayer[teamId] = team;
+		}
+		
+		updateListTeam(listTeam1);
+		updateListTeam(listTeam2);
+	}
+	else if (m.substring(0, 2) == "CO")
+	{
+		matchName->setText("");
+		listTeam1->setSelectedItem("");
+		listTeam2->setSelectedItem("");
+	}
+}
+
+void AdminScreen::updateListTeam(tgui::ListBox::Ptr listTeam)
+{
+	listTeam->removeAllItems();
+
+	for (std::map<int, std::vector<tw::Player>>::iterator it = teamIdToPlayer.begin(); it != teamIdToPlayer.end(); it++)
+	{
+		sf::String item = "Equipe " + sf::String(std::to_string((*it).first)) + " (" + (*it).second[0].getPseudo() + ", " + (*it).second[1].getPseudo() + ")";
+		listTeam->addItem(item, std::to_string((*it).first));
+	}
+}
+
+void AdminScreen::onDisconnected()
+{
+	gui->removeAllWidgets();
+	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));
+	delete this;
 }

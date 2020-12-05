@@ -4,6 +4,8 @@
 #include <ZoneAndSightCalculator.h>
 #include <EnvironmentManager.h>
 #include <TypeZoneLaunch.h>
+#include "ScreenManager.h"
+#include "LoginScreen.h"
 
 
 using namespace tw;
@@ -242,6 +244,13 @@ void BattleScreen::onMessageReceived(std::string msg)
 		activeCharacter = characters[0];
 		onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
 	}
+}
+
+void tw::BattleScreen::onDisconnected()
+{
+	gui->removeAllWidgets();
+	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));
+	delete this;
 }
 
 //----------------------------------------------------------

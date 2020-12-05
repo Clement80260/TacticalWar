@@ -149,8 +149,7 @@ void LoginScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 void LoginScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
-	LinkToServer::getInstance()->UpdateReceivedData();
-
+	
 	ellapsedTime += deltatime;
 
 	// Reset du message d'erreur :
@@ -164,6 +163,8 @@ void LoginScreen::update(float deltatime)
 			messageDuration = 0;
 		}
 	}
+
+	LinkToServer::getInstance()->UpdateReceivedData();
 }
 
 void LoginScreen::render(sf::RenderWindow * window)
@@ -228,4 +229,8 @@ void LoginScreen::onMessageReceived(std::string msg)
 		messageDuration = 5;
 		errorMsg->setText("Login ou mot de passe incorrect ...");
 	}
+}
+
+void tw::LoginScreen::onDisconnected()
+{
 }

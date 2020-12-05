@@ -3,6 +3,8 @@
 #include <Match.h>
 #include "MatchView.h"
 #include "PlayerStatusView.h"
+#include "ScreenManager.h"
+#include "LoginScreen.h"
 
 ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	: Screen()
@@ -93,4 +95,11 @@ void ClassSelectionScreen::onMessageReceived(std::string msg)
 	sf::String m = msg;
 
 	// Le status des joueurs est géré dans PlayerStatusView (widget autonome)
+}
+
+void ClassSelectionScreen::onDisconnected()
+{
+	gui->removeAllWidgets();
+	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));
+	delete this;
 }
