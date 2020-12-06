@@ -8,6 +8,7 @@ namespace tw
 
 	public:
 		Point2D(int x, int y);
+		//Point2D(Point2D &p);
 		Point2D();
 		~Point2D();
 

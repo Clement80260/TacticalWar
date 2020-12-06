@@ -10,6 +10,8 @@
 
 TWParser::TWParser()
 {
+	srand(time(NULL));
+	
 	loadEnvironments();
 	
 	players = tw::PlayerManager::loadPlayers();
@@ -161,6 +163,13 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 									TcpServer<TWParser, ClientState>::Send(client, (char*)"HC\n", 3);
 									p->setHasJoinBattle(true);
 									notifyMatchConnectedPlayerChanged(match);
+
+									// Si la classe a déjà été verrouillée précédemment :
+									if (p->getCharacter() != NULL)
+									{
+										notifyClassChoiceLocked(client);
+									}
+
 									//match->setMatchStatus(tw::MatchStatus::STARTED);	// For test purpose
 								}
 							}
@@ -243,6 +252,8 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 						m->setTeam1Players(teamA[0], teamA[1]);
 						m->setTeam2Players(teamB[0], teamB[1]);
 
+						m->setEnvironment(environments[rand() % environments.size()]);
+
 						m->addEventListener(this);
 						tw::PlayerManager::addMatch(m);
 						notifyMatchCreated(m);
@@ -258,6 +269,75 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 					TcpServer<TWParser, ClientState>::Send(client, (char*)"CF\n", 3);
 				}
 			}
+		}
+		// Validation du choix de la classe :
+		else if (StringUtils::startsWith(toParse, "PC"))
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = playersMap[client->getPseudo()];
+
+				if (p->getHasJoinBattle())
+				{
+					std::string classIdStr = toParse.substr(2);
+					int classId = std::atoi(classIdStr.c_str());
+					std::vector<int> classes = CharacterFactory::getInstance()->getClassesIds();
+					// La classe existe :
+					if (std::find(classes.begin(), classes.end(), classId) != classes.end())
+					{
+						if (p->getCharacter() == NULL)
+						{
+							tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+							if (m != NULL)
+							{
+								bool isTeam1 = m->playerIsInTeam1(p);
+
+								std::vector<tw::Player*> team = isTeam1 ? m->getTeam1() : m->getTeam2();
+								std::vector<tw::Point2D> alreadyUsedStartCells;
+								for (int i = 0; i < team.size(); i++)
+								{
+									tw::Player * coTeam = team[i];
+									if (coTeam != p)
+									{
+										if (coTeam->getCharacter() != NULL)
+										{
+											alreadyUsedStartCells.push_back(tw::Point2D(coTeam->getCharacter()->getCurrentX(), coTeam->getCharacter()->getCurrentY()));
+										}
+									}
+								}
+
+								tw::Point2D cell = m->getRandomAvailableCellForTeam((isTeam1 ? 1 : 2), alreadyUsedStartCells);
+
+								if (cell.getX() != -1 && cell.getY() != -1)
+								{
+									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY()));
+									
+									notifyClassChoiceLocked(client);
+									// TODO : Si tout le monde est prêt : démarrage du combat.
+								}
+								else
+								{
+									std::cout << "[ERREUR] Probleme environment : Il n'y a pas de cellule de demarrage pour l'equipe !" << std::endl;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void TWParser::notifyClassChoiceLocked(ClientState * c)
+{
+	if (c->getPseudo().size() > 0)
+	{
+		tw::Player * p = playersMap[c->getPseudo()];
+		tw::BaseCharacterModel * character = p->getCharacter();
+		if (p != NULL)
+		{
+			std::string sentence = "PO" + std::to_string(character->getClassId()) + "\n";
+			TcpServer<TWParser, ClientState>::Send(c, (char*)sentence.c_str(), sentence.size());
 		}
 	}
 }
