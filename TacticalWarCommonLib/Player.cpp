@@ -7,4 +7,5 @@ tw::Player::Player(std::string pseudo, std::string password, int teamId)
 	this->password = password;
 	this->teamNumber = teamId;
 	this->hasJoinBattle = false;
+	this->character = NULL;
 }

@@ -3,6 +3,7 @@
 #include <vector>
 #include <Player.h>
 #include "StringUtils.h"
+#include <Environment.h>
 
 namespace tw
 {
@@ -65,6 +66,9 @@ namespace tw
 
 		std::vector<MatchEventListener*> listeners;
 
+		Environment * environment;
+		std::vector<Point2D> availableStartPositionTeam1;
+		std::vector<Point2D> availableStartPositionTeam2;
 
 		bool playerIsInTeam(Player * p, std::vector<Player*> & team)
 		{
@@ -98,6 +102,7 @@ namespace tw
 			status = MatchStatus::NOT_STARTED;
 			winnerTeam = 0;
 			battlePayload = NULL;
+			environment = NULL;
 		}
 
 		int getId()
@@ -186,6 +191,81 @@ namespace tw
 			this->status = status;
 			notifyStatusChanged(oldStatus, status);
 		}
+
+
+		Environment * getEnvironment()
+		{
+			return environment;
+		}
+
+		void setEnvironment(Environment * environment)
+		{
+			this->environment = environment;
+
+			availableStartPositionTeam1.clear();
+			availableStartPositionTeam2.clear();
+
+			if (environment != NULL)
+			{
+				for (int i = 0; i < environment->getWidth(); i++)
+				{
+					for (int j = 0; j < environment->getHeight(); j++)
+					{
+						CellData * cell = environment->getMapData(i, j);
+						if (cell->isTeam1StartPoint())
+						{
+							availableStartPositionTeam1.push_back(tw::Point2D(*cell));
+						}
+						else if (cell->isTeam2StartPoint())
+						{
+							availableStartPositionTeam2.push_back(tw::Point2D(*cell));
+						}
+					}
+				}
+			}
+		}
+
+		tw::Point2D getRandomAvailableCellForTeam(int teamId, std::vector<tw::Point2D> alreadyUsed)
+		{
+			tw::Point2D result(-1, -1);
+
+			std::vector<tw::Point2D> candidateCells;
+			std::vector<tw::Point2D> sourceCells;
+			if (teamId == 1)
+			{
+				sourceCells = availableStartPositionTeam1;
+			}
+			else
+			{
+				sourceCells = availableStartPositionTeam2;
+			}
+
+			for (int i = 0; i < sourceCells.size(); i++)
+			{
+				bool isAvailable = true;
+				for (int j = 0; j < alreadyUsed.size(); j++)
+				{
+					if (sourceCells[i] == alreadyUsed[j])
+					{
+						isAvailable = false;
+						break;
+					}
+				}
+
+				if (isAvailable)
+				{
+					candidateCells.push_back(sourceCells[i]);
+				}
+			}
+
+			if (candidateCells.size() > 0)
+			{
+				result = candidateCells[rand() % candidateCells.size()];
+			}
+
+			return result;
+		}
+
 
 		void addEventListener(MatchEventListener * l)
 		{
