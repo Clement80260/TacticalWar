@@ -50,57 +50,75 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 
+
+	/* MAGE */
 	tw::BaseCharacterModel * mage = CharacterFactory::getInstance()->constructCharacter(NULL, 1, 1, 0, 0);
 	std::string pathMage = mage->getClassIconPath();
 	sf::Texture TextureMage;
 	TextureMage.loadFromFile(pathMage);
 	tgui::Picture::Ptr IconMage = tgui::Picture::create(TextureMage);
-		
-	IconMage->setPosition(830, 350);
-	gui->add(IconMage, "mageIcon");
+	IconMage->setSize(70, 75);
+	IconMage->setPosition(630, 250);
 
-/*
+	std::string graphicPathMage = mage->getGraphicsPath();
+	sf::Texture TextureGraphicMage;
+	TextureGraphicMage.loadFromFile(graphicPathMage);
+	tgui::Picture::Ptr GraphicMage = tgui::Picture::create(TextureGraphicMage);
+	
+	
+
+
+	/*ARCHER*/
 	tw::BaseCharacterModel * archer = CharacterFactory::getInstance()->constructCharacter(NULL, 2, 1, 0, 0);
 	std::string pathArcher = archer->getClassIconPath();
 	sf::Texture TextureArcher;
 	TextureArcher.loadFromFile(pathArcher);
 	tgui::Picture::Ptr IconArcher = tgui::Picture::create(TextureArcher);
-
 	IconArcher->setPosition(830, 350);
-	gui->add(IconArcher, "archerIcon");
-
-	
+	/*PROTECTEUR*/
 	tw::BaseCharacterModel * protecteur = CharacterFactory::getInstance()->constructCharacter(NULL, 3, 1, 0, 0);
 	std::string pathProtecteur = protecteur->getClassIconPath();
 	sf::Texture TextureProtecteur;
 	TextureProtecteur.loadFromFile(pathProtecteur);
 	tgui::Picture::Ptr IconProtecteur = tgui::Picture::create(TextureProtecteur);
-
 	IconProtecteur->setPosition(830, 350);
-	gui->add(IconProtecteur, "protecteurIcon");
-
+	/*BARBARE*/
 	tw::BaseCharacterModel * barbare = CharacterFactory::getInstance()->constructCharacter(NULL, 4, 1, 0, 0);
 	std::string pathBarbare = barbare->getClassIconPath();
 	sf::Texture TextureBarbare;
 	TextureBarbare.loadFromFile(pathBarbare);
 	tgui::Picture::Ptr IconBarbare = tgui::Picture::create(TextureBarbare);
-
 	IconBarbare->setPosition(830, 350);
-	gui->add(IconBarbare, "barbareIcon");
-	*/
+	
 	tgui::Button::Ptr buttonSuivant = tgui::Button::create();
 	buttonSuivant->setInheritedFont(font);
 	buttonSuivant->setText("suivant");
 	buttonSuivant->setSize(200, 100);
-
-	gui->add(buttonSuivant, "buttonSuivant");
 
 	tgui::Button::Ptr buttonPrecedent = tgui::Button::create();
 	buttonPrecedent->setInheritedFont(font);
 	buttonPrecedent->setText("precedent");
 	buttonPrecedent->setSize(200, 100);
 
+	m_matchListpanel = tgui::ScrollablePanel::create();
+	m_matchListpanel->setSize(1000, 500);
+	m_matchListpanel->setPosition(550, 250);
+	m_matchListpanel->setInheritedFont(font);
+	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
+
+
+	gui->add(m_matchListpanel);
+	gui->add(IconMage, "mageIcon");
+	gui->add(IconArcher, "archerIcon");
+	gui->add(IconProtecteur, "protecteurIcon");
+	gui->add(IconBarbare, "barbareIcon");
+
+	gui->add(GraphicMage, "graphicMage");
+	
+	gui->add(buttonSuivant, "buttonSuivant");
 	gui->add(buttonPrecedent, "buttonPrecedent");
+
+
 
 }
 
@@ -156,31 +174,51 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 	window->draw(title);
 	window->draw(subtitle);
 
-	tgui::Button::Ptr btn1 = gui->get<tgui::Button>("buttonSuivant");
-	btn1->setPosition(1250, 800);
+	tgui::Button::Ptr btnSuivant = gui->get<tgui::Button>("buttonSuivant");
+	btnSuivant->setPosition(1250, 800);
 
-	tgui::Button::Ptr btn2 = gui->get<tgui::Button>("buttonPrecedent");
-	btn2->setPosition(400, 800);
+	tgui::Button::Ptr btnPrecedent = gui->get<tgui::Button>("buttonPrecedent");
+	btnPrecedent->setPosition(400, 800);
 
 
-	btn1->connect("pressed", [&]() {
-
-			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("mageIcon");
-			mage->setPosition(0,0);
-			/*
-			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("archerIcon");
-			mage->setEnabled(true);
-
-			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("protecteurIcon");
-			mage->setEnabled(true);
-
-			tgui::Picture::Ptr mage = gui->get<tgui::Picture>("barbareIcon");
-			mage->setEnabled(true);*/
-	});
 	
 
+	tgui::Picture::Ptr archer = gui->get<tgui::Picture>("archerIcon");
+	archer->setVisible(false);
 
+	tgui::Picture::Ptr protecteur = gui->get<tgui::Picture>("protecteurIcon");
+	protecteur->setVisible(false);
 
+	tgui::Picture::Ptr barbare = gui->get<tgui::Picture>("barbareIcon");
+	barbare->setVisible(false);
+
+	tgui::Picture::Ptr graphicMage = gui->get<tgui::Picture>("graphicMage");
+	graphicMage->setPosition(630, 350);
+	
+
+	// TODO envoyer une tram contenant PC + L'id de la classe ex (PC2 pour archer) lorsque le joueur verouille son choix !
+
+	btnSuivant->connect("pressed", [&]() {
+
+		tgui::Picture::Ptr mage = gui->get<tgui::Picture>("mageIcon");
+		mage->setVisible(false);
+
+		tgui::Picture::Ptr archer = gui->get<tgui::Picture>("archerIcon");
+		archer->setVisible(true);
+	});
+
+	/*tgui::Picture::Ptr mage = gui->get<tgui::Picture>("mageIcon");
+	mage->setVisible(false);
+
+	tgui::Picture::Ptr archer = gui->get<tgui::Picture>("archerIcon");
+	archer->setVisible(true);
+
+	tgui::Picture::Ptr protecteur = gui->get<tgui::Picture>("protecteurIcon");
+	protecteur->setVisible(false);
+
+	tgui::Picture::Ptr barbare = gui->get<tgui::Picture>("barbareIcon");
+	barbare->setVisible(false);
+	*/
 	
 }
 
