@@ -163,6 +163,13 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 									TcpServer<TWParser, ClientState>::Send(client, (char*)"HC\n", 3);
 									p->setHasJoinBattle(true);
 									notifyMatchConnectedPlayerChanged(match);
+
+									// Si la classe a déjà été verrouillée précédemment :
+									if (p->getCharacter() != NULL)
+									{
+										notifyClassChoiceLocked(client);
+									}
+
 									//match->setMatchStatus(tw::MatchStatus::STARTED);	// For test purpose
 								}
 							}
@@ -304,9 +311,8 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 								if (cell.getX() != -1 && cell.getY() != -1)
 								{
 									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY()));
-									std::string sentence = "PO" + std::to_string(classId) + "\n";
-									TcpServer<TWParser, ClientState>::Send(client, (char*)sentence.c_str(), sentence.size());
-
+									
+									notifyClassChoiceLocked(client);
 									// TODO : Si tout le monde est prêt : démarrage du combat.
 								}
 								else
@@ -318,6 +324,20 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 					}
 				}
 			}
+		}
+	}
+}
+
+void TWParser::notifyClassChoiceLocked(ClientState * c)
+{
+	if (c->getPseudo().size() > 0)
+	{
+		tw::Player * p = playersMap[c->getPseudo()];
+		tw::BaseCharacterModel * character = p->getCharacter();
+		if (p != NULL)
+		{
+			std::string sentence = "PO" + std::to_string(character->getClassId()) + "\n";
+			TcpServer<TWParser, ClientState>::Send(c, (char*)sentence.c_str(), sentence.size());
 		}
 	}
 }
