@@ -14,6 +14,8 @@ private:
 
 	tgui::Label::Ptr matchPanelTitle;
 	tgui::ScrollablePanel::Ptr m_matchListpanel;
+	tgui::ScrollablePanel::Ptr warriorpanel;
+	tgui::ScrollablePanel::Ptr statsPanel;
 	//static void scrollPanel(tgui::Panel::Ptr panel, int value);
 	//static int previousScrollbarValue;
 
@@ -24,6 +26,16 @@ private:
 	std::vector<tw::BaseCharacterModel*> classesInstances;
 	tw::CharacterView * characterView;
 	int indexClass;
+	
+	int PositionOfPanelX = 230;
+	int PositionOfPanelY = 250;
+	int SizeOfPanelX = 1500;
+	int SizeOfPanelY = 700;
+
+	int PositionOfCardX = 800;
+	int PositionOfCardY = 380;
+	int SizeOfCardX = 400;
+	int SizeOfCardY = 450;
 	void setClassView();
 
 	sf::Vector2u windowSize;

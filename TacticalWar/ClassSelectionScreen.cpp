@@ -34,6 +34,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	subtitle.setOutlineColor(sf::Color(255, 215, 0));
 	subtitle.setOutlineThickness(1.5);
 
+
 	/*
 	matchPanelTitle = tgui::Label::create();
 	matchPanelTitle->setInheritedFont(font);
@@ -65,11 +66,8 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	indexClass = 0;
 	characterView = NULL;
 	
-
-	tgui::Picture::Ptr IconMage = tgui::Picture::create();
-	IconMage->setSize(70, 75);
-	IconMage->setPosition(630, 250);
 	
+	tgui::Picture::Ptr Icon = tgui::Picture::create();	
 	std::shared_ptr<PictureCharacterView> classCharacterView = std::make_shared<PictureCharacterView>();
 	
 	
@@ -95,21 +93,36 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 		currentValue--;
 		this->setIdxClass(currentValue);
 	});
-
+	
 	m_matchListpanel = tgui::ScrollablePanel::create();
-	m_matchListpanel->setSize(1000, 500);
-	m_matchListpanel->setPosition(550, 250);
+	m_matchListpanel->setSize(1500, 700);
+	m_matchListpanel->setPosition(230, 250);
 	m_matchListpanel->setInheritedFont(font);
 	m_matchListpanel->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
 
+	statsPanel = tgui::ScrollablePanel::create();
+	statsPanel->setSize(SizeOfPanelX/3-20, SizeOfPanelY-100);
+	statsPanel->setPosition(PositionOfPanelX+20, PositionOfPanelY+50);
+	statsPanel->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255));
+
+	warriorpanel = tgui::ScrollablePanel::create();
+	warriorpanel->setSize(400, 450);
+	warriorpanel->setPosition(PositionOfCardX, PositionOfCardY);
+	warriorpanel->setInheritedFont(font);
+	warriorpanel->getRenderer()->setBackgroundColor(sf::Color(0,0,0));
+	
+	tgui::Label::Ptr classeNameLabel = tgui::Label::create();
+	classeNameLabel->setInheritedFont(font);
 
 	gui->add(m_matchListpanel);
-	gui->add(IconMage, "classIcon");
-	gui->add(classCharacterView, "classCharacterView");
-	
+	gui->add(warriorpanel);
+	gui->add(statsPanel);
+	gui->add(Icon, "classIcon");
+	gui->add(classCharacterView, "classCharacterView");	
 	gui->add(buttonSuivant, "buttonSuivant");
 	gui->add(buttonPrecedent, "buttonPrecedent");
-
+	gui->add(classeNameLabel, "classeNameLabel");
+	
 	setClassView();
 }
 
@@ -117,13 +130,19 @@ void ClassSelectionScreen::setClassView()
 {
 	tw::BaseCharacterModel * model = classesInstances[indexClass];
 
-	std::string pathMage = model->getClassIconPath();
+	std::string path = model->getClassIconPath();
 	sf::Texture TextureIconClass;
-	TextureIconClass.loadFromFile(pathMage);
+	TextureIconClass.loadFromFile(path);
 	tgui::Picture::Ptr IconClass = gui->get<tgui::Picture>("classIcon");
 	IconClass->getRenderer()->setTexture(TextureIconClass);
 	IconClass->setSize(70, 75);
-	IconClass->setPosition(630, 250);
+	IconClass->setPosition(810, 380);
+
+	std::string classeName = model->getClassName();
+	tgui::Label::Ptr classeNameLabel = gui->get<tgui::Label>("classeNameLabel");
+	classeNameLabel->setText(classeName);
+	//classeNameLabel->set
+	classeNameLabel->setPosition(PositionOfCardX + SizeOfCardX - 100, PositionOfCardY + SizeOfCardY - 20);
 
 	std::shared_ptr<tgui::Picture> classCharacterView = gui->get<tgui::Picture>("classCharacterView");
 	std::shared_ptr<PictureCharacterView> convertedCharacterView = std::dynamic_pointer_cast<PictureCharacterView>(classCharacterView);
@@ -219,10 +238,10 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 	window->draw(subtitle);
 
 	tgui::Button::Ptr btnSuivant = gui->get<tgui::Button>("buttonSuivant");
-	btnSuivant->setPosition(1250, 800);
+	btnSuivant->setPosition(windowSize.x- 200, windowSize.y/2);
 
 	tgui::Button::Ptr btnPrecedent = gui->get<tgui::Button>("buttonPrecedent");
-	btnPrecedent->setPosition(400, 800);
+	btnPrecedent->setPosition(0, windowSize.y/2);
 
 	
 
@@ -235,22 +254,8 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 		convertedCharacterView->setCharacterView(characterView);
 		sf::FloatRect size = convertedCharacterView->getSize();
 		convertedCharacterView->setSize(size.width, size.height);
-		convertedCharacterView->setPosition(windowSize.x / 2., windowSize.y / 2. - convertedCharacterView->getSize().height / 2.);
+		convertedCharacterView->setPosition(windowSize.x / 2. - 600, windowSize.y / 2. - convertedCharacterView->getSize().height / 2. + 80);
 	}
-
-	/*tgui::Picture::Ptr mage = gui->get<tgui::Picture>("mageIcon");
-	mage->setVisible(false);
-
-	tgui::Picture::Ptr archer = gui->get<tgui::Picture>("archerIcon");
-	archer->setVisible(true);
-
-	tgui::Picture::Ptr protecteur = gui->get<tgui::Picture>("protecteurIcon");
-	protecteur->setVisible(false);
-
-	tgui::Picture::Ptr barbare = gui->get<tgui::Picture>("barbareIcon");
-	barbare->setVisible(false);
-	*/
-
 }
 
 void ClassSelectionScreen::onMessageReceived(std::string msg)
