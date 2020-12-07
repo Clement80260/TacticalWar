@@ -6,12 +6,15 @@
 #include "ScreenManager.h"
 #include "LoginScreen.h"
 #include <CharacterFactory.h>
+#include "PictureCharacterView.h"
+
 
 
 ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	: Screen()
 {
-
+	ellapsedTime = 0;
+	orientation = 0;
 	this->gui = gui;
 	gui->removeAllWidgets();
 	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
@@ -51,44 +54,24 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/animatedBackground2.glsl");
 
 
-	/* MAGE */
-	tw::BaseCharacterModel * mage = CharacterFactory::getInstance()->constructCharacter(NULL, 1, 1, 0, 0);
-	std::string pathMage = mage->getClassIconPath();
-	sf::Texture TextureMage;
-	TextureMage.loadFromFile(pathMage);
-	tgui::Picture::Ptr IconMage = tgui::Picture::create(TextureMage);
+	std::vector<int> classesIds = CharacterFactory::getInstance()->getClassesIds();
+
+	
+	for (int i = 0; i < classesIds.size(); i++)
+	{
+		classesInstances.push_back(CharacterFactory::getInstance()->constructCharacter(NULL, classesIds[i], 1, 0, 0));
+	}
+
+	indexClass = 0;
+	characterView = NULL;
+	
+
+	tgui::Picture::Ptr IconMage = tgui::Picture::create();
 	IconMage->setSize(70, 75);
 	IconMage->setPosition(630, 250);
-
-	std::string graphicPathMage = mage->getGraphicsPath();
-	sf::Texture TextureGraphicMage;
-	TextureGraphicMage.loadFromFile(graphicPathMage);
-	tgui::Picture::Ptr GraphicMage = tgui::Picture::create(TextureGraphicMage);
 	
+	std::shared_ptr<PictureCharacterView> classCharacterView = std::make_shared<PictureCharacterView>();
 	
-
-
-	/*ARCHER*/
-	tw::BaseCharacterModel * archer = CharacterFactory::getInstance()->constructCharacter(NULL, 2, 1, 0, 0);
-	std::string pathArcher = archer->getClassIconPath();
-	sf::Texture TextureArcher;
-	TextureArcher.loadFromFile(pathArcher);
-	tgui::Picture::Ptr IconArcher = tgui::Picture::create(TextureArcher);
-	IconArcher->setPosition(830, 350);
-	/*PROTECTEUR*/
-	tw::BaseCharacterModel * protecteur = CharacterFactory::getInstance()->constructCharacter(NULL, 3, 1, 0, 0);
-	std::string pathProtecteur = protecteur->getClassIconPath();
-	sf::Texture TextureProtecteur;
-	TextureProtecteur.loadFromFile(pathProtecteur);
-	tgui::Picture::Ptr IconProtecteur = tgui::Picture::create(TextureProtecteur);
-	IconProtecteur->setPosition(830, 350);
-	/*BARBARE*/
-	tw::BaseCharacterModel * barbare = CharacterFactory::getInstance()->constructCharacter(NULL, 4, 1, 0, 0);
-	std::string pathBarbare = barbare->getClassIconPath();
-	sf::Texture TextureBarbare;
-	TextureBarbare.loadFromFile(pathBarbare);
-	tgui::Picture::Ptr IconBarbare = tgui::Picture::create(TextureBarbare);
-	IconBarbare->setPosition(830, 350);
 	
 	tgui::Button::Ptr buttonSuivant = tgui::Button::create();
 	buttonSuivant->setInheritedFont(font);
@@ -100,6 +83,19 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	buttonPrecedent->setText("precedent");
 	buttonPrecedent->setSize(200, 100);
 
+	buttonSuivant->connect("pressed", [&]() {
+		int currentValue = this->getIdxClass();
+		currentValue++;
+		this->setIdxClass(currentValue);
+	});
+
+
+	buttonPrecedent->connect("pressed", [&]() {
+		int currentValue = this->getIdxClass();
+		currentValue--;
+		this->setIdxClass(currentValue);
+	});
+
 	m_matchListpanel = tgui::ScrollablePanel::create();
 	m_matchListpanel->setSize(1000, 500);
 	m_matchListpanel->setPosition(550, 250);
@@ -108,18 +104,45 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 
 
 	gui->add(m_matchListpanel);
-	gui->add(IconMage, "mageIcon");
-	gui->add(IconArcher, "archerIcon");
-	gui->add(IconProtecteur, "protecteurIcon");
-	gui->add(IconBarbare, "barbareIcon");
-
-	gui->add(GraphicMage, "graphicMage");
+	gui->add(IconMage, "classIcon");
+	gui->add(classCharacterView, "classCharacterView");
 	
 	gui->add(buttonSuivant, "buttonSuivant");
 	gui->add(buttonPrecedent, "buttonPrecedent");
 
+	setClassView();
+}
 
+void ClassSelectionScreen::setClassView()
+{
+	tw::BaseCharacterModel * model = classesInstances[indexClass];
 
+	std::string pathMage = model->getClassIconPath();
+	sf::Texture TextureIconClass;
+	TextureIconClass.loadFromFile(pathMage);
+	tgui::Picture::Ptr IconClass = gui->get<tgui::Picture>("classIcon");
+	IconClass->getRenderer()->setTexture(TextureIconClass);
+	IconClass->setSize(70, 75);
+	IconClass->setPosition(630, 250);
+
+	std::shared_ptr<tgui::Picture> classCharacterView = gui->get<tgui::Picture>("classCharacterView");
+	std::shared_ptr<PictureCharacterView> convertedCharacterView = std::dynamic_pointer_cast<PictureCharacterView>(classCharacterView);
+
+	if (characterView != NULL)
+	{
+		delete characterView;
+	}
+
+	characterView = new tw::CharacterView(model);
+	characterView->setOrientation((tw::Orientation)((orientation) % 4));
+
+	if (convertedCharacterView != NULL)
+	{
+		convertedCharacterView->setCharacterView(characterView);
+		sf::FloatRect size = convertedCharacterView->getSize();
+		convertedCharacterView->setSize(size.width, size.height);
+		convertedCharacterView->setPosition(windowSize.x / 2. - convertedCharacterView->getSize().width / 2., windowSize.y / 2. - convertedCharacterView->getSize().height / 2.);
+	}
 }
 
 ClassSelectionScreen::~ClassSelectionScreen()
@@ -129,6 +152,8 @@ ClassSelectionScreen::~ClassSelectionScreen()
 
 void ClassSelectionScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 {
+	windowSize = window->getSize();
+
 	title.setPosition(window->getSize().x / 2 - title.getLocalBounds().width / 2, 10);
 	subtitle.setPosition(window->getSize().x / 2 - subtitle.getLocalBounds().width / 2, 10 + 128 + 10);
 	//matchPanelTitle->setPosition(window->getSize().x / 2.0 - m_matchListpanel->getSize().x / 2.0, 270);
@@ -156,6 +181,25 @@ void ClassSelectionScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
 	LinkToServer::getInstance()->UpdateReceivedData();
+	ellapsedTime += deltatime;
+
+	bool changeOrientation = false;
+	if (ellapsedTime > 1)
+	{
+		changeOrientation = true;
+		ellapsedTime = 0;
+	}
+
+	if (changeOrientation)
+	{
+		characterView->setOrientation((tw::Orientation)((++orientation) % 4));
+	}
+
+	if (characterView != NULL)
+	{
+		characterView->update(deltatime);
+	}
+		
 }
 
 void ClassSelectionScreen::render(sf::RenderWindow * window)
@@ -180,32 +224,19 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 	tgui::Button::Ptr btnPrecedent = gui->get<tgui::Button>("buttonPrecedent");
 	btnPrecedent->setPosition(400, 800);
 
-
-	
-
-	tgui::Picture::Ptr archer = gui->get<tgui::Picture>("archerIcon");
-	archer->setVisible(false);
-
-	tgui::Picture::Ptr protecteur = gui->get<tgui::Picture>("protecteurIcon");
-	protecteur->setVisible(false);
-
-	tgui::Picture::Ptr barbare = gui->get<tgui::Picture>("barbareIcon");
-	barbare->setVisible(false);
-
-	tgui::Picture::Ptr graphicMage = gui->get<tgui::Picture>("graphicMage");
-	graphicMage->setPosition(630, 350);
 	
 
 	// TODO envoyer une tram contenant PC + L'id de la classe ex (PC2 pour archer) lorsque le joueur verouille son choix !
+	std::shared_ptr<tgui::Picture> classCharacterView = gui->get<tgui::Picture>("classCharacterView");
+	std::shared_ptr<PictureCharacterView> convertedCharacterView = std::dynamic_pointer_cast<PictureCharacterView>(classCharacterView);
 
-	btnSuivant->connect("pressed", [&]() {
-
-		tgui::Picture::Ptr mage = gui->get<tgui::Picture>("mageIcon");
-		mage->setVisible(false);
-
-		tgui::Picture::Ptr archer = gui->get<tgui::Picture>("archerIcon");
-		archer->setVisible(true);
-	});
+	if (convertedCharacterView != NULL)
+	{
+		convertedCharacterView->setCharacterView(characterView);
+		sf::FloatRect size = convertedCharacterView->getSize();
+		convertedCharacterView->setSize(size.width, size.height);
+		convertedCharacterView->setPosition(windowSize.x / 2., windowSize.y / 2. - convertedCharacterView->getSize().height / 2.);
+	}
 
 	/*tgui::Picture::Ptr mage = gui->get<tgui::Picture>("mageIcon");
 	mage->setVisible(false);
@@ -219,7 +250,7 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 	tgui::Picture::Ptr barbare = gui->get<tgui::Picture>("barbareIcon");
 	barbare->setVisible(false);
 	*/
-	
+
 }
 
 void ClassSelectionScreen::onMessageReceived(std::string msg)

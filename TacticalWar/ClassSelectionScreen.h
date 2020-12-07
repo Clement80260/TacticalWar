@@ -2,6 +2,7 @@
 
 #include "Screen.h"
 #include "ServerMessageListener.h"
+#include <CharacterView.h>
 
 class ClassSelectionScreen : public tw::Screen, ServerMessageListener
 {
@@ -20,6 +21,15 @@ private:
 
 	tgui::Gui * gui;
 
+	std::vector<tw::BaseCharacterModel*> classesInstances;
+	tw::CharacterView * characterView;
+	int indexClass;
+	void setClassView();
+
+	sf::Vector2u windowSize;
+	float ellapsedTime;
+	int orientation;
+
 public:
 	ClassSelectionScreen(tgui::Gui * gui);
 	~ClassSelectionScreen();
@@ -31,6 +41,27 @@ public:
 
 	virtual void onMessageReceived(std::string msg);
 	virtual void onDisconnected();
+
+	
+	void setIdxClass(int classId)
+	{
+		if (classId < 0)
+		{
+			classId = classesInstances.size() - 1;
+		}
+		else if (classId >= classesInstances.size())
+		{
+			classId = 0;
+		}
+
+		this->indexClass = classId;
+		setClassView();
+	}
+
+	int getIdxClass()
+	{
+		return indexClass;
+	}
 };
 
 

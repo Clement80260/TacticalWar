@@ -7,9 +7,9 @@
 namespace tw
 {
 	enum class Orientation {
+		BOTTOM_RIGHT,
 		TOP_RIGHT,
 		TOP_LEFT,
-		BOTTOM_RIGHT,
 		BOTTOM_LEFT
 	};
 

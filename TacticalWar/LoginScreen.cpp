@@ -176,7 +176,6 @@ void LoginScreen::render(sf::RenderWindow * window)
 	shader.setUniform("resolution", sf::Glsl::Vec2(window->getSize()));
 	
 	sf::Shader::bind(&shader);
-	sf::RectangleShape rect;
 	rect.setPosition(0, 0);
 	rect.setSize(sf::Vector2f(window->getSize()));
 	rect.setFillColor(sf::Color::Black);

@@ -15,6 +15,7 @@ namespace tw
 		tgui::Label::Ptr errorMsg;
 		tgui::Gui * gui;
 		sf::Shader shader;
+		sf::RectangleShape rect;
 
 	public:
 		LoginScreen(tgui::Gui * gui);
