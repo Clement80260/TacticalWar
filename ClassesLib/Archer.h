@@ -24,7 +24,7 @@ public:
 
 	virtual std::string getGraphicsPath()
 	{
-		return "./assets/Warrior/";
+		return "./assets/Archer/";
 	}
 
 	// Retourne la valeur du maximum de point de vie de base (sans altération d'effet). C'est une caractéristique de base de la classe.
