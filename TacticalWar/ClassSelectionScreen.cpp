@@ -13,6 +13,7 @@
 ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	: Screen()
 {
+	readyToLock = false;
 	ellapsedTime = 0;
 	orientation = 0;
 	this->gui = gui;
@@ -81,6 +82,11 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	buttonPrecedent->setText("precedent");
 	buttonPrecedent->setSize(200, 100);
 
+	tgui::Button::Ptr buttonLock = tgui::Button::create();
+	buttonLock->setInheritedFont(font);
+	buttonLock->setText("Verrouiller mon choix");
+	buttonLock->setSize(300, 100);
+
 	buttonSuivant->connect("pressed", [&]() {
 		int currentValue = this->getIdxClass();
 		currentValue++;
@@ -93,7 +99,15 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 		currentValue--;
 		this->setIdxClass(currentValue);
 	});
+<<<<<<< HEAD
 	
+=======
+
+	buttonLock->connect("pressed", [&]() {
+		readyToLock = true;
+	});
+
+>>>>>>> e8ba348522297d6dab8e74d22a99d28f18ee8a1c
 	m_matchListpanel = tgui::ScrollablePanel::create();
 	m_matchListpanel->setSize(1500, 700);
 	m_matchListpanel->setPosition(230, 250);
@@ -124,8 +138,12 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	gui->add(classCharacterView, "classCharacterView");	
 	gui->add(buttonSuivant, "buttonSuivant");
 	gui->add(buttonPrecedent, "buttonPrecedent");
+<<<<<<< HEAD
 	gui->add(classeNameLabel, "classeNameLabel");
 	gui->add(atkLabel, "atkLabel");
+=======
+	gui->add(buttonLock, "buttonLock");
+>>>>>>> e8ba348522297d6dab8e74d22a99d28f18ee8a1c
 
 	setClassView();
 }
@@ -148,7 +166,7 @@ void ClassSelectionScreen::setClassView()
 	//classeNameLabel->set
 	classeNameLabel->setPosition(PositionOfCardX + SizeOfCardX - 100, PositionOfCardY + SizeOfCardY - 20);
 
-	/*int atk = model->getBaseAttack();
+	int atk = model->getBaseAttack();
 	tgui::Label::Ptr atkLabel = gui->get<tgui::Label>("atkLabel");
 	classeNameLabel->setText(atk);
 	//classeNameLabel->set
@@ -229,6 +247,11 @@ void ClassSelectionScreen::update(float deltatime)
 		characterView->update(deltatime);
 	}
 		
+	if (readyToLock)
+	{
+		LinkToServer::getInstance()->Send("PC" + std::to_string(classesInstances[indexClass]->getClassId()));
+		readyToLock = false;
+	}
 }
 
 void ClassSelectionScreen::render(sf::RenderWindow * window)
@@ -253,6 +276,9 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 	tgui::Button::Ptr btnPrecedent = gui->get<tgui::Button>("buttonPrecedent");
 	btnPrecedent->setPosition(0, windowSize.y/2);
 
+
+	tgui::Button::Ptr btnLock = gui->get<tgui::Button>("buttonLock");
+	btnLock->setPosition(window->getSize().x / 2. - btnLock->getSize().x / 2, 800);
 	
 
 	// TODO envoyer une tram contenant PC + L'id de la classe ex (PC2 pour archer) lorsque le joueur verouille son choix !
@@ -273,6 +299,31 @@ void ClassSelectionScreen::onMessageReceived(std::string msg)
 	sf::String m = msg;
 
 	// Le status des joueurs est géré dans PlayerStatusView (widget autonome)
+
+	// Choix classe verrouillé :
+	if (m.substring(0, 2) == "PO")
+	{
+		tgui::Button::Ptr lockButton = gui->get<tgui::Button>("buttonLock");
+		lockButton->setEnabled(false);
+		lockButton->setText("Choix verrouillé");
+		tgui::Button::Ptr previousButton = gui->get<tgui::Button>("buttonPrecedent");
+		previousButton->setEnabled(false);
+		previousButton->setVisible(false);
+		tgui::Button::Ptr nextButton = gui->get<tgui::Button>("buttonSuivant");
+		nextButton->setEnabled(false);
+		nextButton->setVisible(false);
+
+		int idClass = std::atoi(m.substring(2).toAnsiString().c_str());
+		for (int i = 0; i < classesInstances.size(); i++)
+		{
+			if (classesInstances[i]->getClassId() == idClass)
+			{
+				indexClass = i;
+				setClassView();
+				break;
+			}
+		}
+	}
 }
 
 void ClassSelectionScreen::onDisconnected()
