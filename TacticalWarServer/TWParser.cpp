@@ -10,9 +10,8 @@
 
 
 TWParser::TWParser()
-{
-	srand(time(NULL));
-	
+{	
+	initRandom = false;
 	loadEnvironments();
 	
 	players = tw::PlayerManager::loadPlayers();
@@ -83,6 +82,12 @@ std::string TWParser::extractCompleteMessageFromBuffer(ClientState * client)
 
 void TWParser::parse(ClientState * client, std::vector<unsigned char> & receivedPacket)
 {
+	if (!initRandom)
+	{
+		srand(time(NULL));
+		initRandom = true;
+	}
+
 	bool spectatorMode = false;
 	std::deque<unsigned char> & buffer = client->getBuffer();
 

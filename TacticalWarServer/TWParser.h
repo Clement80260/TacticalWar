@@ -43,6 +43,8 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener
 	void synchronizeBattleState(tw::Match * m, ClientState * c);
 	void enterBattleState(tw::Match * m, ClientState * c);
 
+	bool initRandom;
+
 
 	ClientState * getClientStateFromPlayer(tw::Player * p)
 	{
