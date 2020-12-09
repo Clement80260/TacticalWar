@@ -8,6 +8,7 @@
 #include <CharacterFactory.h>
 #include <EnvironmentManager.h>
 
+
 TWParser::TWParser()
 {
 	srand(time(NULL));
@@ -152,10 +153,15 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 								{
 									// Retour en jeu (reconnexion en combat)
 									Battle * b = (Battle*)match->getBattlePayload();
+
+									// Retour en combat :
+									enterBattleState(b->getMatch(), client);
+									synchronizeBattleState(b->getMatch(), client);
+									
 									// TODO : Notify that the player is back.
-									TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
-									TcpServer<TWParser, ClientState>::Send(client, (char*)"CA\n", 3);
-									TcpServer<TWParser, ClientState>::Send(client, (char*)"CS\n", 3);
+									//TcpServer<TWParser, ClientState>::Send(client, (char*)"HG\n", 3);
+									//TcpServer<TWParser, ClientState>::Send(client, (char*)"CA\n", 3);
+									//TcpServer<TWParser, ClientState>::Send(client, (char*)"CS\n", 3);
 								}
 								else
 								{
@@ -313,7 +319,13 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY()));
 									
 									notifyClassChoiceLocked(client);
-									// TODO : Si tout le monde est prêt : démarrage du combat.
+									
+									// Si tout le monde est prêt : démarrage du combat.
+									if (everybodyReadyForBattle(m))
+									{
+										Battle * b = new Battle(m);
+										switchParticipantToBattleState(b);
+									}
 								}
 								else
 								{
@@ -324,6 +336,86 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 					}
 				}
 			}
+		}
+	}
+}
+
+
+bool TWParser::everybodyReadyForBattle(tw::Match * m)
+{
+	std::vector<tw::Player*> players = m->getPlayers();
+	bool ready = true;
+
+	for (int i = 0; i < players.size(); i++)
+	{
+		if (players[i]->getCharacter() == NULL)
+		{
+			ready = false;
+			break;
+		}
+	}
+
+	return ready;
+}
+
+void TWParser::switchParticipantToBattleState(Battle * b)
+{
+	std::vector<tw::Player *> players = b->getTimeline();
+	for (int i = 0; i < players.size(); i++)
+	{
+		ClientState * c = getClientStateFromPlayer(players[i]);
+		// Si le client est connecté :
+		if (c != NULL)
+		{
+			enterBattleState(b->getMatch(), c);
+			synchronizeBattleState(b->getMatch(), c);
+		}
+	}
+}
+
+void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
+{
+	if (m != NULL && c != NULL)
+	{
+		tw::Player * p = getPlayerFromClientState(c);
+
+		Battle * b = (Battle*)m->getBattlePayload();
+		if (b != NULL)
+		{
+			std::vector<tw::Player *> players = b->getTimeline();
+			for (int i = 0; i < players.size(); i++)
+			{
+				tw::Player * player = players[i];
+				tw::BaseCharacterModel * model = player->getCharacter();
+				
+				std::string addPlayerStr = "CA" + std::to_string(i) + ";" 
+												+ std::to_string(model->getClassId()) + ";" 
+												+ std::to_string(model->getTeamId()) + ";"
+												+ std::to_string(model->getCurrentX()) + ";"
+												+ std::to_string(model->getCurrentY())
+												+ "\n";
+				TcpServer<TWParser, ClientState>::Send(c, (char*)addPlayerStr.c_str(), addPlayerStr.size());
+
+				// Informe le client de son personnage actif (celui qu'il contrôle) :
+				if (players[i] == p)
+				{
+					std::string activeCharacterStr = "CS" + std::to_string(i) + "\n";
+					TcpServer<TWParser, ClientState>::Send(c, (char*)activeCharacterStr.c_str(), activeCharacterStr.size());
+				}
+			}
+		}
+	}
+}
+
+void TWParser::enterBattleState(tw::Match * m, ClientState * c)
+{
+	if (m != NULL && c != NULL)
+	{
+		Battle * b = (Battle*)m->getBattlePayload();
+		if (b != NULL)
+		{
+			std::string sentence = "HG" + std::to_string(m->getEnvironment()->getId()) + "\n";
+			TcpServer<TWParser, ClientState>::Send(c, (char*)sentence.c_str(), sentence.size());
 		}
 	}
 }

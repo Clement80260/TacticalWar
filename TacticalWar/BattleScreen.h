@@ -6,6 +6,7 @@
 #include <BaseCharacterModel.h>
 #include "TWColorator.h"
 #include "LinkToServer.h"
+#include <Obstacle.h>
 
 namespace tw
 {
@@ -32,8 +33,10 @@ namespace tw
 		Point2D lastTargetPosition;
 		void invalidatePathZone();
 
+		std::vector<Obstacle> getDynamicObstacles();
+
 	public:
-		BattleScreen(tgui::Gui * gui);
+		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();
 
 		virtual void handleEvents(sf::RenderWindow * window, tgui::Gui * gui);

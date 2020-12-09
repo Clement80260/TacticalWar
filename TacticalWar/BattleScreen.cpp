@@ -6,11 +6,13 @@
 #include <TypeZoneLaunch.h>
 #include "ScreenManager.h"
 #include "LoginScreen.h"
+#include <StringUtils.h>
+#include <CharacterFactory.h>
 
 
 using namespace tw;
 
-BattleScreen::BattleScreen(tgui::Gui * gui)
+BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 {
 	this->gui = NULL;
 	this->window = NULL;
@@ -21,7 +23,7 @@ BattleScreen::BattleScreen(tgui::Gui * gui)
 	//environment = new Environment(15, 15, 0);
 	//environment->getMapData(2, 2)->setIsObstacle(true);
 	//environment->getMapData(1, 1)->setIsWalkable(false);
-	environment = EnvironmentManager::getInstance()->getRandomEnvironment();
+	environment = EnvironmentManager::getInstance()->loadEnvironment(environmentId);
 
 	
 	colorator = new TWColorator(sf::Color(40, 200, 255), sf::Color(20, 100, 200));
@@ -85,12 +87,25 @@ void BattleScreen::invalidatePathZone()
 	lastStartPosition.setY(-1);
 }
 
+std::vector<Obstacle> tw::BattleScreen::getDynamicObstacles()
+{
+	std::vector<Obstacle> obstacles;
+
+	for (auto it = characters.begin(); it != characters.end(); it++)
+	{
+		if(activeCharacter != (*it).second)
+			obstacles.push_back(Obstacle((*it).second));
+	}
+
+	return obstacles;
+}
+
 // Renderer Event Listener
 void BattleScreen::onCellClicked(int cellX, int cellY)
 {
 	std::cout << "Cell x=" << cellX << ", y=" << cellY << " clicked !" << std::endl;
-	BaseCharacterModel * m = characters[0];
-	if (!m->hasTargetPosition())
+	BaseCharacterModel * m = activeCharacter;
+	if (m != NULL && !m->hasTargetPosition())
 	{
 		bool isInPathZone = false;
 		for (int i = 0; i < pathZone.size(); i++)
@@ -107,7 +122,7 @@ void BattleScreen::onCellClicked(int cellX, int cellY)
 			Point2D startPosition(m->getCurrentX(), m->getCurrentY());
 			Point2D targetPosition(cellX, cellY);
 
-			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPosition, targetPosition, environment, std::vector<Obstacle*>());
+			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPosition, targetPosition, environment, getDynamicObstacles());
 			m->setPath(path);
 		}
 	}
@@ -124,7 +139,7 @@ void BattleScreen::onCellHover(int cellX, int cellY)
 		{
 			if (pathZone[i].getX() == cellX && pathZone[i].getY() == cellY)
 			{
-				Point2D startPosition(characters[0]->getCurrentX(), characters[0]->getCurrentY());
+				Point2D startPosition(activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
 				Point2D targetPosition(cellX, cellY);
 
 				if (startPosition != lastStartPosition || targetPosition != lastTargetPosition)
@@ -146,7 +161,7 @@ void BattleScreen::onCellHover(int cellX, int cellY)
 
 		if (needToReprocess)
 		{
-			std::vector<Point2D> pathToHighlight = Pathfinder::getInstance()->getPath(lastStartPosition, lastTargetPosition, environment, std::vector<Obstacle*>());
+			std::vector<Point2D> pathToHighlight = Pathfinder::getInstance()->getPath(lastStartPosition, lastTargetPosition, environment, getDynamicObstacles());
 			if (pathToHighlight.size() <= 2)
 			{
 				colorator->setPathToHighlight(pathToHighlight);
@@ -208,8 +223,8 @@ void BattleScreen::onPositionChanged(BaseCharacterModel * c, int newPositionX, i
 		std::vector<Point2D> realZone;
 		for (int i = 0; i < zone.size(); i++)
 		{
-			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPoint, zone[i], environment, std::vector<Obstacle*>());
-			if (path.size() <= 2)
+			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPoint, zone[i], environment, getDynamicObstacles());
+			if (path.size() > 0 && path.size() <= 2)
 			{
 				realZone.push_back(zone[i]);
 			}
@@ -235,13 +250,28 @@ void BattleScreen::onMessageReceived(std::string msg)
 	
 	if (str.substring(0, 2) == "CA")	// Add character
 	{
-		BaseCharacterModel * c = new TestCharacterModel(environment, 1, 9, 9);
-		characters[0] = c;
+		std::string data = str.substring(2).toAnsiString();
+		std::vector<std::string> splitedData = StringUtils::explode(data, ';');
+		int characterId = std::atoi(splitedData[0].c_str());
+		int classId = std::atoi(splitedData[1].c_str());
+		int teamId = std::atoi(splitedData[2].c_str());
+		int currentX = std::atoi(splitedData[3].c_str());
+		int currentY = std::atoi(splitedData[4].c_str());
+
+		BaseCharacterModel * c = CharacterFactory::getInstance()->constructCharacter(environment, classId, teamId, currentX, currentY);
+		characters[characterId] = c;
 		c->addEventListener(this);
+
+		// To reprocess the path zone with new obstacles :
+		if (activeCharacter != NULL)
+		{
+			onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
+		}
 	}
 	else if (str.substring(0, 2) == "CS")	// Set active character
 	{
-		activeCharacter = characters[0];
+		int characterId = std::atoi(str.substring(2).toAnsiString().c_str());
+		activeCharacter = characters[characterId];
 		onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
 	}
 }

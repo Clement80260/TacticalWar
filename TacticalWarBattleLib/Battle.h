@@ -21,13 +21,16 @@ class Battle
 
 
 	std::vector<tw::Player*> timeline;
+	int turnToken;
 
 	tw::Environment * environment;
+	tw::Match * match;
 
 public:
 	// Server side constructor :
 	Battle(tw::Match * m)
 	{
+		this->match = m;
 		std::vector<tw::Player*> & t1 = m->getTeam1();
 		std::vector<tw::Player*> & t2 = m->getTeam2();
 
@@ -41,16 +44,71 @@ public:
 			team2.push_back(t2[i]);
 		}
 
-		environment = tw::EnvironmentManager::getInstance()->getRandomEnvironment();
+		environment = m->getEnvironment();
 
-		state = BattleState::WAITING_PLAYER_PHASE;
+		state = BattleState::PREPARATION_PHASE;
 		
 		m->setBattlePayload(this);
 		m->setMatchStatus(tw::MatchStatus::STARTED);
+
+		int teamStart = rand() % 2;
+		int team1Ini = rand() % 2;
+		int team2Ini = rand() % 2;
+
+		std::vector<tw::Player *> startTeam;
+		std::vector<tw::Player*> secondTeam;
+
+		if (teamStart == 0)
+		{
+			startTeam = m->getTeam1();
+			secondTeam = m->getTeam2();
+		}
+		else
+		{
+			startTeam = m->getTeam2();
+			secondTeam = m->getTeam1();
+		}
+
+		timeline.push_back(startTeam[team1Ini]);
+		timeline.push_back(secondTeam[team2Ini]);
+		timeline.push_back(startTeam[!team1Ini]);
+		timeline.push_back(secondTeam[!team2Ini]);
+
+		turnToken = 0;
 	}
 
 	inline bool isPreparationPhase()
 	{
 		return state == BattleState::PREPARATION_PHASE;
+	}
+
+	tw::Environment * getEnvironment()
+	{
+		return environment;
+	}
+	
+	tw::Match * getMatch()
+	{
+		return match;
+	}
+
+	std::vector<tw::Player*> getTimeline()
+	{
+		return timeline;
+	}
+
+	tw::Player * getActivePlayer()
+	{
+		return timeline[turnToken];
+	}
+
+	void changeTurn()
+	{
+		turnToken++;
+		if (turnToken >= timeline.size())
+			turnToken = 0;
+
+		tw::Player * p = getActivePlayer();
+		
 	}
 };

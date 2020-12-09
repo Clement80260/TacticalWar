@@ -39,6 +39,38 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener
 
 	int isTeamAvailableForMatchCreation(int teamId);
 
+	bool everybodyReadyForBattle(tw::Match * m);
+	void synchronizeBattleState(tw::Match * m, ClientState * c);
+	void enterBattleState(tw::Match * m, ClientState * c);
+
+
+	ClientState * getClientStateFromPlayer(tw::Player * p)
+	{
+		ClientState * c = NULL;
+		if (connectedPlayerMap.find(p) != connectedPlayerMap.end())
+		{
+			c = connectedPlayerMap[p];
+		}
+		return c;
+	}
+
+	tw::Player * getPlayerFromClientState(ClientState * c)
+	{
+		tw::Player * p = NULL;
+
+		if (c->getPseudo().size() > 0)
+		{
+			if (playersMap.find(c->getPseudo()) != playersMap.end())
+			{
+				p = playersMap[c->getPseudo()];
+			}
+		}
+
+		return p;
+	}
+
+	void switchParticipantToBattleState(Battle * b);
+
 	ClientState * admin;
 
 public:

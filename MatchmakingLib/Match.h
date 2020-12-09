@@ -153,6 +153,17 @@ namespace tw
 			return playerIsInTeam1(p) || playerIsInTeam2(p);
 		}
 
+		std::vector<tw::Player *> getPlayers()
+		{
+			std::vector<tw::Player*> players;
+			for (int i = 0; i < getTeam1().size(); i++)
+				players.push_back(getTeam1()[i]);
+			for (int i = 0; i < getTeam2().size(); i++)
+				players.push_back(getTeam2()[i]);
+
+			return players;
+		}
+
 		MatchStatus getStatus()
 		{
 			return status;

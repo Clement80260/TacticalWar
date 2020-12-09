@@ -46,17 +46,17 @@ int main(int argc, char** argv)
 	std::vector<Point2D> path1 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY()),
 																	tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY() + 1),
 																	&environment,
-																	std::vector<Obstacle*>());
+																	std::vector<Obstacle>());
 
 	std::vector<Point2D> path2 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY() + 1),
 		tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX() - 1, screen->getCharacter(1)->getCharacter()->getCurrentY()),
 		&environment,
-		std::vector<Obstacle*>());
+		std::vector<Obstacle>());
 
 	std::vector<Point2D> path3 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX() - 1, screen->getCharacter(1)->getCharacter()->getCurrentY()),
 		tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY()),
 		&environment,
-		std::vector<Obstacle*>());
+		std::vector<Obstacle>());
 
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path1));
