@@ -114,6 +114,9 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Label::Ptr classeNameLabel = tgui::Label::create();
 	classeNameLabel->setInheritedFont(font);
 
+	tgui::Label::Ptr atkLabel = tgui::Label::create();
+	atkLabel->setInheritedFont(font);
+
 	gui->add(m_matchListpanel);
 	gui->add(warriorpanel);
 	gui->add(statsPanel);
@@ -122,7 +125,8 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	gui->add(buttonSuivant, "buttonSuivant");
 	gui->add(buttonPrecedent, "buttonPrecedent");
 	gui->add(classeNameLabel, "classeNameLabel");
-	
+	gui->add(atkLabel, "atkLabel");
+
 	setClassView();
 }
 
@@ -144,6 +148,12 @@ void ClassSelectionScreen::setClassView()
 	//classeNameLabel->set
 	classeNameLabel->setPosition(PositionOfCardX + SizeOfCardX - 100, PositionOfCardY + SizeOfCardY - 20);
 
+	/*int atk = model->getBaseAttack();
+	tgui::Label::Ptr atkLabel = gui->get<tgui::Label>("atkLabel");
+	classeNameLabel->setText(atk);
+	//classeNameLabel->set
+	classeNameLabel->setPosition(PositionOfCardX + SizeOfCardX - 300, PositionOfCardY + SizeOfCardY - 200);
+	/*
 	std::shared_ptr<tgui::Picture> classCharacterView = gui->get<tgui::Picture>("classCharacterView");
 	std::shared_ptr<PictureCharacterView> convertedCharacterView = std::dynamic_pointer_cast<PictureCharacterView>(classCharacterView);
 
