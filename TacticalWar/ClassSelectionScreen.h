@@ -30,6 +30,8 @@ private:
 	float ellapsedTime;
 	int orientation;
 
+	bool readyToLock;
+
 public:
 	ClassSelectionScreen(tgui::Gui * gui);
 	~ClassSelectionScreen();
