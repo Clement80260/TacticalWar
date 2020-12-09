@@ -8,6 +8,7 @@
 #include "LoginScreen.h"
 #include <StringUtils.h>
 #include <CharacterFactory.h>
+#include "MusicManager.h"
 
 
 using namespace tw;
@@ -37,6 +38,7 @@ BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 	FPS.setFont(font);
 
 	LinkToServer::getInstance()->addListener(this);
+	MusicManager::getInstance()->setBattleMusic();
 }
 
 BattleScreen::~BattleScreen()
