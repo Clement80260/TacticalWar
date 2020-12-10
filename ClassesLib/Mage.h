@@ -113,6 +113,7 @@ public:
 	Mage(tw::Environment * environment, int teamId, int currentX, int currentY)
 		: BaseCharacterModel(environment, teamId, currentX, currentY)
 	{
+		initializeValues();
 		compt1 = 3;
 		compt2 = 1;
 		compt3 = 4;

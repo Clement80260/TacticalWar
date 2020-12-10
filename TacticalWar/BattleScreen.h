@@ -37,6 +37,8 @@ namespace tw
 
 		bool readyToValidatePosition;
 
+		int turnToken;
+
 	public:
 		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();

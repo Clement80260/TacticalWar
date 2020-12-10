@@ -16,6 +16,7 @@ using namespace tw;
 
 BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 {
+	turnToken = -1;
 	readyToValidatePosition = false;
 	this->gui = NULL;
 	this->window = NULL;
@@ -351,6 +352,13 @@ void BattleScreen::onMessageReceived(std::string msg)
 
 		characters[playerId]->setCurrentX(cellX);
 		characters[playerId]->setCurrentY(cellY);
+	}
+	else if (str.substring(0, 2) == "Ct")	// Changement de tour
+	{
+		std::string data = str.substring(2);
+		int playerId = std::atoi(data.c_str());
+		turnToken = playerId;
+		characters[playerId]->turnStart();
 	}
 }
 

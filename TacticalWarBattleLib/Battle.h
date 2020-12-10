@@ -19,6 +19,7 @@ class BattleEventListener
 {
 public:
 	virtual void onBattleStateChanged(tw::Match * m, BattleState state) = 0;
+	virtual void onPlayerTurnStart(tw::Match * match, tw::Player * player) = 0;
 };
 
 class Battle
@@ -42,6 +43,14 @@ class Battle
 		for (int i = 0; i < listeners.size(); i++)
 		{
 			listeners[i]->onBattleStateChanged(match, state);
+		}
+	}
+
+	void notifyPlayerTurnStart(tw::Player * p)
+	{
+		for (int i = 0; i < listeners.size(); i++)
+		{
+			listeners[i]->onPlayerTurnStart(match, p);
 		}
 	}
 
@@ -116,6 +125,14 @@ public:
 	{
 		state = BattleState::BATTLE_PHASE;
 		notifyBattleStateChanged(state);
+
+		playerStartTurn(timeline[turnToken]);
+	}
+
+	void playerStartTurn(tw::Player * p)
+	{
+		p->getCharacter()->turnStart();
+		notifyPlayerTurnStart(p);
 	}
 
 	inline BattleState getBattleState()

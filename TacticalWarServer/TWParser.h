@@ -78,6 +78,8 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEvent
 
 	ClientState * admin;
 
+	void sendToMatch(tw::Match * match, std::string str);
+
 public:
 	TWParser();
 	~TWParser();
@@ -95,5 +97,6 @@ public:
 
 	// BattleEventListener implementation :
 	virtual void onBattleStateChanged(tw::Match * m, BattleState state);
+	virtual void onPlayerTurnStart(tw::Match * match, tw::Player * player);
 };
 

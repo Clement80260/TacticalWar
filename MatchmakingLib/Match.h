@@ -348,6 +348,23 @@ namespace tw
 			return result;
 		}
 
+		bool allPlayersReady()
+		{
+			bool result = true;
+			std::vector<tw::Player*> players = getPlayers();
+			for (int i = 0; i < players.size(); i++)
+			{
+				BaseCharacterModel * character = players[i]->getCharacter();
+				if (character == NULL || !character->isPlayerReady())
+				{
+					result = false;
+					break;
+				}
+			}
+
+			return result;
+		}
+
 
 		void addEventListener(MatchEventListener * l)
 		{

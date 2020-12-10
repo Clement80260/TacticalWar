@@ -351,6 +351,16 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 								notifyReadyState(toNotify, playerId, p);
 							}
 						}
+
+
+						// Si tous les joueurs sont prêts : Démarrage du combat
+						if (m->allPlayersReady())
+						{
+							if (b != NULL)
+							{
+								b->enterBattlePhase();
+							}
+						}
 					}
 				}
 			}
@@ -732,6 +742,33 @@ void TWParser::onBattleStateChanged(tw::Match * m, BattleState state)
 		}
 	}
 }
+
+void TWParser::onPlayerTurnStart(tw::Match * match, tw::Player * player)
+{
+	Battle * b = (Battle *)match->getBattlePayload();
+	if (b != NULL)
+	{
+		if (match->playerIsInThisMatch(player))
+		{
+			std::string str = "Ct" + std::to_string((int)b->getIdForPlayer(player)) + "\n";
+			sendToMatch(match, str);
+		}
+	}
+}
+
+void TWParser::sendToMatch(tw::Match * match, std::string str)
+{
+	std::vector<tw::Player*> players = match->getPlayers();
+	for (int i = 0; i < players.size(); i++)
+	{
+		ClientState * c = getClientStateFromPlayer(players[i]);
+		if (c != NULL)
+		{
+			TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());
+		}
+	}
+}
+
 
 void TWParser::notifyBattleState(ClientState * c, Battle * battle)
 {
