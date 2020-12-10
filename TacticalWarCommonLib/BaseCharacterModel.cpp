@@ -5,6 +5,7 @@ using namespace tw;
 
 BaseCharacterModel::BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY)
 {
+	this->isReady = false;
 	this->neededAnimation = Animation::IDLE;
 	this->animationDuration = -1;
 	this->reinitViewTime = false;

@@ -299,25 +299,10 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 						if (p->getCharacter() == NULL)
 						{
 							tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
-							if (m != NULL)
+							if (m != NULL && m->playerIsInThisMatch(p))
 							{
+								tw::Point2D cell = m->getRandomAvailableCellForPlayer(p);
 								bool isTeam1 = m->playerIsInTeam1(p);
-
-								std::vector<tw::Player*> team = isTeam1 ? m->getTeam1() : m->getTeam2();
-								std::vector<tw::Point2D> alreadyUsedStartCells;
-								for (int i = 0; i < team.size(); i++)
-								{
-									tw::Player * coTeam = team[i];
-									if (coTeam != p)
-									{
-										if (coTeam->getCharacter() != NULL)
-										{
-											alreadyUsedStartCells.push_back(tw::Point2D(coTeam->getCharacter()->getCurrentX(), coTeam->getCharacter()->getCurrentY()));
-										}
-									}
-								}
-
-								tw::Point2D cell = m->getRandomAvailableCellForTeam((isTeam1 ? 1 : 2), alreadyUsedStartCells);
 
 								if (cell.getX() != -1 && cell.getY() != -1)
 								{
@@ -329,6 +314,7 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 									if (everybodyReadyForBattle(m))
 									{
 										Battle * b = new Battle(m);
+										b->addEventListener(this);
 										switchParticipantToBattleState(b);
 									}
 								}
@@ -342,9 +328,81 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 				}
 			}
 		}
+		else if (StringUtils::startsWith(toParse, "Cs"))	// Validation position (joueur prêt)
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && !p->getCharacter()->isPlayerReady())
+				{
+					p->getCharacter()->setReadyStatus(true);
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						Battle * b = (Battle*)m->getBattlePayload();
+						int playerId = b->getIdForPlayer(p);
+
+						std::vector<tw::Player*> players = b->getTimeline();
+						for (int i = 0; i < players.size(); i++)
+						{
+							ClientState * toNotify = getClientStateFromPlayer(players[i]);
+							if (toNotify != NULL)
+							{
+								notifyReadyState(toNotify, playerId, p);
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (StringUtils::startsWith(toParse, "CP"))		// Demande un changement de position de départ
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && !p->getCharacter()->isPlayerReady())
+				{
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						std::string data = toParse.substr(2);
+						std::vector<std::string> positionData = StringUtils::explode(data, ';');
+						int cellX = std::atoi(positionData[0].c_str());
+						int cellY = std::atoi(positionData[1].c_str());
+
+						Battle * b = (Battle*)m->getBattlePayload();
+						if (b != NULL && m->isStartCellAvailableForPlayer(p, cellX, cellY))
+						{
+							p->getCharacter()->setCurrentX(cellX);
+							p->getCharacter()->setCurrentY(cellY);
+							int playerId = b->getIdForPlayer(p);
+
+							std::vector<tw::Player*> players = b->getTimeline();
+							for (int i = 0; i < players.size(); i++)
+							{
+								ClientState * c = getClientStateFromPlayer(players[i]);
+								if (c != NULL)
+								{
+									notifyCharacterPositionChanged(c, playerId, p);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
+void TWParser::notifyCharacterPositionChanged(ClientState * toNotify, int playerId, tw::Player * characterWhosePositionChanged)
+{
+	std::string str = "CP"	+ std::to_string(playerId) + ";" 
+							+ std::to_string(characterWhosePositionChanged->getCharacter()->getCurrentX()) + ";"
+							+ std::to_string(characterWhosePositionChanged->getCharacter()->getCurrentY())
+							+ "\n";
+
+	TcpServer<TWParser, ClientState>::Send(toNotify, (char*)str.c_str(), str.size());
+}
 
 bool TWParser::everybodyReadyForBattle(tw::Match * m)
 {
@@ -407,9 +465,20 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 					std::string activeCharacterStr = "CS" + std::to_string(i) + "\n";
 					TcpServer<TWParser, ClientState>::Send(c, (char*)activeCharacterStr.c_str(), activeCharacterStr.size());
 				}
+
+				notifyReadyState(c, i, p);
 			}
+
+			notifyBattleState(c, b);
 		}
 	}
+}
+
+void TWParser::notifyReadyState(ClientState * c, int playerId, tw::Player * p)
+{
+	std::string readyStateStr = (p->getCharacter()->isPlayerReady()) ? "1" : "0";
+	std::string str = "Cs" + std::to_string(playerId) + ";" + readyStateStr + "\n";
+	TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());
 }
 
 void TWParser::enterBattleState(tw::Match * m, ClientState * c)
@@ -649,6 +718,25 @@ void TWParser::onMatchStatusChanged(tw::Match * match, tw::MatchStatus oldStatus
 
 	// Notify admin
 	notifyPlanifiedAndPlayingMatch(admin);
+}
+
+void TWParser::onBattleStateChanged(tw::Match * m, BattleState state)
+{
+	std::vector<tw::Player*> players = m->getPlayers();
+	for (int i = 0; i < players.size(); i++)
+	{
+		ClientState * c = getClientStateFromPlayer(players[i]);
+		if (c != NULL)
+		{
+			notifyBattleState(c, (Battle*)m->getBattlePayload());
+		}
+	}
+}
+
+void TWParser::notifyBattleState(ClientState * c, Battle * battle)
+{
+	std::string str = "BS" + std::to_string((int)battle->getBattleState()) + "\n";
+	TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());
 }
 
 

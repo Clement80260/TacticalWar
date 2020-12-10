@@ -15,6 +15,7 @@ using namespace tw;
 
 BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 {
+	readyToValidatePosition = false;
 	this->gui = NULL;
 	this->window = NULL;
 	
@@ -34,8 +35,23 @@ BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 
 	activeCharacter = NULL;
 
-	font.loadFromFile("./assets/font/arial.ttf");
+	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
 	FPS.setFont(font);
+
+
+	tgui::Button::Ptr readyButton = tgui::Button::create();
+	readyButton->setInheritedFont(font);
+	readyButton->setText("Valider position");
+	readyButton->setSize(200, 100);
+	readyButton->setVisible(false);
+	readyButton->connect("pressed", [&]() {
+		if (activeCharacter != NULL && !activeCharacter->isPlayerReady() && !readyToValidatePosition)
+		{
+			readyToValidatePosition = true;
+		}
+	});
+
+	gui->add(readyButton, "readyButton");
 
 	LinkToServer::getInstance()->addListener(this);
 	MusicManager::getInstance()->setBattleMusic();
@@ -50,12 +66,18 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 {	
 	this->window = window;
 	this->gui = gui;
+
+	tgui::Button::Ptr readyButton = gui->get<tgui::Button>("readyButton");
+	readyButton->setPosition(window->getSize().x / 2. - readyButton->getSize().x / 2., window->getSize().y - readyButton->getSize().y - 20);
+	if (activeCharacter != NULL)
+	{
+		readyButton->setVisible(!activeCharacter->isPlayerReady());
+	}
 }
 
 void BattleScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
-	LinkToServer::getInstance()->UpdateReceivedData();
 
 	for (int i = 0; i < characters.size(); i++)
 	{
@@ -66,6 +88,17 @@ void BattleScreen::update(float deltatime)
 	FPS.setString(std::to_string((int)fps));
 	FPS.setFillColor(sf::Color::Red);
 	FPS.setPosition(10, 10);
+
+	if (readyToValidatePosition)
+	{
+		if (activeCharacter != NULL && !activeCharacter->isPlayerReady())
+		{
+			LinkToServer::getInstance()->Send("Cs");
+		}
+	}
+
+
+	LinkToServer::getInstance()->UpdateReceivedData();
 }
 
 void BattleScreen::render(sf::RenderWindow * window)
@@ -107,25 +140,39 @@ void BattleScreen::onCellClicked(int cellX, int cellY)
 {
 	std::cout << "Cell x=" << cellX << ", y=" << cellY << " clicked !" << std::endl;
 	BaseCharacterModel * m = activeCharacter;
-	if (m != NULL && !m->hasTargetPosition())
+	if (colorator->getBattleState() == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN)
 	{
-		bool isInPathZone = false;
-		for (int i = 0; i < pathZone.size(); i++)
+		if (m != NULL && !m->hasTargetPosition())
 		{
-			if (pathZone[i].getX() == cellX && pathZone[i].getY() == cellY)
+			bool isInPathZone = false;
+			for (int i = 0; i < pathZone.size(); i++)
 			{
-				isInPathZone = true;
-				break;
+				if (pathZone[i].getX() == cellX && pathZone[i].getY() == cellY)
+				{
+					isInPathZone = true;
+					break;
+				}
+			}
+
+			if (isInPathZone)
+			{
+				Point2D startPosition(m->getCurrentX(), m->getCurrentY());
+				Point2D targetPosition(cellX, cellY);
+
+				std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPosition, targetPosition, environment, getDynamicObstacles());
+				m->setPath(path);
 			}
 		}
-		
-		if (isInPathZone)
+	}
+	else if (colorator->getBattleState() == BattleState::PREPARATION_PHASE)
+	{
+		if (m != NULL && !m->isPlayerReady())
 		{
-			Point2D startPosition(m->getCurrentX(), m->getCurrentY());
-			Point2D targetPosition(cellX, cellY);
-
-			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPosition, targetPosition, environment, getDynamicObstacles());
-			m->setPath(path);
+			CellData * cell = environment->getMapData(cellX, cellY);
+			if (cell->getTeamStartPointNumber() == m->getTeamId())
+			{
+				LinkToServer::getInstance()->Send("CP" + std::to_string(cellX) + ";" + std::to_string(cellY));
+			}
 		}
 	}
 }
@@ -275,6 +322,32 @@ void BattleScreen::onMessageReceived(std::string msg)
 		int characterId = std::atoi(str.substring(2).toAnsiString().c_str());
 		activeCharacter = characters[characterId];
 		onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
+	}
+	else if (str.substring(0, 2) == "BS")	// Set battle state
+	{
+		int state = std::atoi(str.substring(2).toAnsiString().c_str());
+		BattleState battleState = (BattleState)state;
+		colorator->setBattleState(battleState);
+	}
+	else if (str.substring(0, 2) == "Cs")	// Player ready status
+	{
+		std::string data = str.substring(2);
+		std::vector<std::string> splited = StringUtils::explode(data, ';');
+		int playerId = std::atoi(splited[0].c_str());
+		int status = std::atoi(splited[1].c_str());
+
+		characters[playerId]->setReadyStatus(status == 1);
+	}
+	else if (str.substring(0, 2) == "CP")	// Update character position 
+	{
+		std::string data = str.substring(2);
+		std::vector<std::string> splited = StringUtils::explode(data, ';');
+		int playerId = std::atoi(splited[0].c_str());
+		int cellX = std::atoi(splited[1].c_str());
+		int cellY = std::atoi(splited[2].c_str());
+
+		characters[playerId]->setCurrentX(cellX);
+		characters[playerId]->setCurrentY(cellY);
 	}
 }
 

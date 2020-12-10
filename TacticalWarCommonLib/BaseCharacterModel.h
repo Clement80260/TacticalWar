@@ -51,6 +51,8 @@ namespace tw
 		std::vector<Point2D> path;
 		//---------------------------------
 
+		bool isReady;
+
 		int currentLife;
 
 		void setNextPositionFromPath()
@@ -194,6 +196,16 @@ namespace tw
 			return currentY;
 		}
 
+		inline void setCurrentX(int x)
+		{
+			currentX = x;
+		}
+
+		inline void setCurrentY(int y)
+		{
+			currentY = y;
+		}
+
 		inline Environment* getEnvironment()
 		{
 			return environment;
@@ -204,6 +216,15 @@ namespace tw
 			return currentLife;
 		}
 
+		inline bool isPlayerReady()
+		{
+			return isReady;
+		}
+
+		inline void setReadyStatus(bool ready)
+		{
+			isReady = ready;
+		}
 
 
 		inline float getInterpolatedX()

@@ -35,6 +35,8 @@ namespace tw
 
 		std::vector<Obstacle> getDynamicObstacles();
 
+		bool readyToValidatePosition;
+
 	public:
 		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();

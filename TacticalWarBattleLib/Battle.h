@@ -9,7 +9,16 @@
 enum BattleState {
 	WAITING_PLAYER_PHASE,
 	PREPARATION_PHASE,
-	BATTLE_PHASE
+	BATTLE_PHASE,
+	BATTLE_PHASE_ACTIVE_PLAYER_TURN	 //For client side
+};
+
+class Battle;
+
+class BattleEventListener
+{
+public:
+	virtual void onBattleStateChanged(tw::Match * m, BattleState state) = 0;
 };
 
 class Battle
@@ -25,6 +34,16 @@ class Battle
 
 	tw::Environment * environment;
 	tw::Match * match;
+
+	std::vector<BattleEventListener*> listeners;
+
+	void notifyBattleStateChanged(BattleState state)
+	{
+		for (int i = 0; i < listeners.size(); i++)
+		{
+			listeners[i]->onBattleStateChanged(match, state);
+		}
+	}
 
 public:
 	// Server side constructor :
@@ -77,9 +96,31 @@ public:
 		turnToken = 0;
 	}
 
+	inline int getIdForPlayer(tw::Player * p)
+	{
+		for (int i = 0; i < timeline.size(); i++)
+		{
+			if (timeline[i] == p)
+				return i;
+		}
+
+		return -1;
+	}
+
 	inline bool isPreparationPhase()
 	{
 		return state == BattleState::PREPARATION_PHASE;
+	}
+
+	inline void enterBattlePhase()
+	{
+		state = BattleState::BATTLE_PHASE;
+		notifyBattleStateChanged(state);
+	}
+
+	inline BattleState getBattleState()
+	{
+		return state;
 	}
 
 	tw::Environment * getEnvironment()
@@ -110,5 +151,19 @@ public:
 
 		tw::Player * p = getActivePlayer();
 		
+	}
+
+	void addEventListener(BattleEventListener * l)
+	{
+		listeners.push_back(l);
+	}
+
+	void removeEventListener(BattleEventListener * l)
+	{
+		auto it = std::find(listeners.begin(), listeners.end(), l);
+		if (it != listeners.end())
+		{
+			listeners.erase(it);
+		}
 	}
 };
