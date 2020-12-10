@@ -9,6 +9,7 @@
 #include <StringUtils.h>
 #include <CharacterFactory.h>
 #include "MusicManager.h"
+#include "PlayerStatusView.h"
 
 
 using namespace tw;
@@ -52,6 +53,8 @@ BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 	});
 
 	gui->add(readyButton, "readyButton");
+
+	gui->add(PlayerStatusView::getInstance());
 
 	LinkToServer::getInstance()->addListener(this);
 	MusicManager::getInstance()->setBattleMusic();

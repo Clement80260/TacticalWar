@@ -161,6 +161,8 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 
 									// Retour en combat :
 									enterBattleState(b->getMatch(), client);
+									p->setHasJoinBattle(true);
+									notifyMatchConnectedPlayerChanged(match);
 									synchronizeBattleState(b->getMatch(), client);
 									
 									// TODO : Notify that the player is back.
@@ -180,8 +182,6 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 									{
 										notifyClassChoiceLocked(client);
 									}
-
-									//match->setMatchStatus(tw::MatchStatus::STARTED);	// For test purpose
 								}
 							}
 							else
@@ -779,7 +779,7 @@ void TWParser::notifyMatchConnectedPlayerChanged(tw::Match * match)
 		// Notify online players :
 		for (int i = 0; i < diffusionList.size(); i++)
 		{
-			ClientState * c = connectedPlayerMap[diffusionList[i]];
+			ClientState * c = getClientStateFromPlayer(diffusionList[i]);
 			if (c != NULL)
 			{
 				TcpServer<TWParser, ClientState>::Send(c, (char*)playerStatus.c_str(), playerStatus.size());
