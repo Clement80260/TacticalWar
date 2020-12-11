@@ -11,16 +11,18 @@ private:
 	bool moveAnimationFinished;
 	IScreenActionCallback * screen;
 	bool firstUpdate;
+	int damage;
 
 	bool hasResetAttackAnimation;
 public:
-	TakeDamage(IScreenActionCallback * screen, int persoId)
+	TakeDamage(IScreenActionCallback * screen, int persoId, int damage)
 	{
 		this->persoId = persoId;
 		this->screen = screen;
 		moveAnimationFinished = false;
 		firstUpdate = true;
 		hasResetAttackAnimation = false;
+		this->damage = damage;
 	}
 
 	virtual void update(float deltatime)
@@ -29,7 +31,16 @@ public:
 		if (firstUpdate)
 		{
 			tw::Player * srcPlayer = screen->getCharacter(persoId);
-			srcPlayer->getCharacter()->startTakeDmg(1);
+
+			srcPlayer->getCharacter()->modifyCurrentLife(-damage);
+			if (!srcPlayer->getCharacter()->isAlive())
+			{
+				srcPlayer->getCharacter()->startDieAction(1);
+			}
+			else
+			{
+				srcPlayer->getCharacter()->startTakeDmg(1);
+			}
 			firstUpdate = false;
 		}
 

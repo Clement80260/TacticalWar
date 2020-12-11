@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 		std::vector<Obstacle>());
 
 
-	AnimationManager::getInstance()->addAnimation(new TakeDamage(screen, 1));
+	AnimationManager::getInstance()->addAnimation(new TakeDamage(screen, 1, 5));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path1));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 2, 11, 11));
@@ -67,9 +67,9 @@ int main(int argc, char** argv)
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 4, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path3));
-	AnimationManager::getInstance()->addAnimation(new TakeDamage(screen, 1));
-	AnimationManager::getInstance()->addAnimation(new TakeDamage(screen, 1));
-	AnimationManager::getInstance()->addAnimation(new CharacterDieAction(screen, 1));
+	AnimationManager::getInstance()->addAnimation(new TakeDamage(screen, 1, 45));
+	AnimationManager::getInstance()->addAnimation(new TakeDamage(screen, 1, 45));
+	//AnimationManager::getInstance()->addAnimation(new CharacterDieAction(screen, 1));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 2, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path1));
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 4, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path3));
-	AnimationManager::getInstance()->addAnimation(new CharacterDieAction(screen, 1));
+	//AnimationManager::getInstance()->addAnimation(new CharacterDieAction(screen, 1));
 
 	Spell->loadAnimation("./assets/spellsprites/ballbig1_red");
 	while (window.isOpen())
