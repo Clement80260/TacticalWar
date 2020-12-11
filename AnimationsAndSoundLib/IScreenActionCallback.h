@@ -19,7 +19,7 @@ public:
 	virtual void applyCharacterMove(int persoId, std::vector<tw::Point2D> path, MoveActionAnimationEventListener * callback) = 0;
 	virtual void applyCharacterDisconnected(int persoId) = 0;
 	virtual void applyCharacterConnected(int persoId) = 0;
+	virtual void applyTakeDamage(int persoId) = 0;
 	virtual void applyCharacterPosition(int persoId, int x, int y) = 0;
 	virtual void applyEnterBattlePhase() = 0;
 };
-

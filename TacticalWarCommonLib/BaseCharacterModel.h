@@ -431,5 +431,17 @@ namespace tw
 			neededAnimation = Animation::IDLE;
 			animationDuration = -1;
 		}
+		void startDieAction(float duration)
+		{
+			neededAnimation = Animation::DIE;
+			animationDuration = duration;
+			reinitViewTime = true;
+		}
+		void startTakeDmg(float duration)
+		{
+			neededAnimation = Animation::TAKE_DAMAGE;
+			animationDuration = duration;
+			reinitViewTime = true;
+		}
 	};
 }
