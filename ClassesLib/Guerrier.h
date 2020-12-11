@@ -95,7 +95,7 @@ public:
 		return true;
 	}
 
-	//Sort 3 : Frappe bouclier (Mana : 2 / Zone 3x3 autour du joueur / DPS : 8 / Cd : 2t)
+	//Sort 3 : Frappe bouclier (Mana : 2 / Zone autour du joueur / DPS : 8 / Cd : 2t)
 	virtual bool doAttack4(int targetX, int targetY)
 	{
 		return true;
@@ -138,29 +138,29 @@ public:
 
 	virtual std::string getSpell1Name()
 	{
-		return "Guerrier sort 1";
+		return "Charge";
 	}
 
 	virtual std::string getSpell2Name()
 	{
-		return "Guerrier sort 2";
+		return "Rempart";
 	}
 
 	virtual std::string getSpell3Name()
 	{
-		return "Guerrier sort 3";
+		return "Frappe bouclier";
 	}
 
 	virtual std::string getSpell4Name()
 	{
-		return "Guerrier sort 4";
+		return "Attaque de baseè";
 	}
 
 
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
-		return "Guerrier, description sort 1 ...";
+		return "Charge pour infliger";
 	}
 
 	virtual std::string getSpell2Description()
@@ -234,12 +234,12 @@ public:
 	//------------------------------------
 	virtual int getSpell1ManaCost()
 	{
-		return 4;
+		return 3;
 	}
 
 	virtual int getSpell2ManaCost()
 	{
-		return 3;
+		return 4;
 	}
 
 	virtual int getSpell3ManaCost()
@@ -255,29 +255,29 @@ public:
 	//------------------------------------
 	virtual int getSpell1MinPO()
 	{
-		return 2;
+		return 1;
 	}
 
 	virtual int getSpell2MinPO()
 	{
-		return 1;
+		return 0;
 	}
 
 	virtual int getSpell3MinPO()
 	{
-		return 3;
+		return 1;
 	}
 
 	virtual int getSpell4MinPO()
 	{
-		return 4;
+		return 1;
 	}
 
 	//------------------------------------
 
 	virtual int getSpell1MaxPO()
 	{
-		return 5;
+		return 4;
 	}
 
 	virtual int getSpell2MaxPO()
@@ -287,12 +287,12 @@ public:
 
 	virtual int getSpell3MaxPO()
 	{
-		return 8;
+		return 1;
 	}
 
 	virtual int getSpell4MaxPO()
 	{
-		return 12;
+		return 1;
 	}
 
 	//------------------------------------

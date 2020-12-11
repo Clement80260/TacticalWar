@@ -90,13 +90,13 @@ public:
 		return true;
 	}
 
-	//Sort 2 : Flèche repousse (Mana : 3 / Ligne 3x1 / DPS : 4 / Repousse de 2 cases / Cd : 3t)
+	//Sort 2 : Flèche repousse (Mana : 3 / Ligne 2x1 / DPS : 4 / Repousse de 2 cases / Cd : 3t)
 	virtual bool doAttack3(int targetX, int targetY)
 	{
 		return true;
 	}
 
-	//Sort 3 : Tir précis (Mana : 2 / Ligne 4x1 / DPS : 7 / Cd : 1t)
+	//Sort 3 : Tir précis (Mana : 2 / Ciblable(zone 3x3) / DPS : 7 / Cd : 1t)
 	virtual bool doAttack4(int targetX, int targetY)
 	{
 		return true;
@@ -257,7 +257,7 @@ public:
 	//------------------------------------ PORTÉE MAX D'UNE SPELL
 	virtual int getSpell1MinPO()
 	{
-		return 2;
+		return 1;
 	}
 
 	virtual int getSpell2MinPO()
@@ -267,29 +267,29 @@ public:
 
 	virtual int getSpell3MinPO()
 	{
-		return 3;
+		return 1;
 	}
 
 	virtual int getSpell4MinPO()
 	{
-		return 4;
+		return 1;
 	}
 
 	//------------------------------------ PORTÉE MAX D'UN SPELL
 
 	virtual int getSpell1MaxPO()
 	{
-		return 5;
+		return 3;
 	}
 
 	virtual int getSpell2MaxPO()
 	{
-		return 3;
+		return 2;
 	}
 
 	virtual int getSpell3MaxPO()
 	{
-		return 8;
+		return 3;
 	}
 
 	virtual int getSpell4MaxPO()
