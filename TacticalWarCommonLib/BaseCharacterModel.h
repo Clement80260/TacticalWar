@@ -5,10 +5,10 @@
 #include "Effect.h"
 #include "TypeZoneLaunch.h"
 
-namespace tw
+	namespace tw
 {
 	class BaseCharacterModel;
-	
+
 	enum class Animation
 	{
 		IDLE,
@@ -283,7 +283,7 @@ namespace tw
 		inline void update(float deltatime)
 		{
 			float speed = 3;
-			
+
 			setNextPositionFromPath();
 
 			if (currentTargetX >= 0 && currentTargetY >= 0)
@@ -311,8 +311,8 @@ namespace tw
 				{
 					moveYVector = 1;
 				}
-				else if(currentY > currentTargetY)	
-				{ 
+				else if (currentY > currentTargetY)
+				{
 					moveYVector = -1;
 				}
 
@@ -321,8 +321,8 @@ namespace tw
 
 
 				bool isMoveFinished = (moveXVector > 0 && interpolatedX > currentTargetX || moveXVector < 0 && interpolatedX < currentTargetX)
-											||
-										(moveYVector > 0 && interpolatedY > currentTargetY || moveYVector < 0 && interpolatedY < currentTargetY);
+					||
+					(moveYVector > 0 && interpolatedY > currentTargetY || moveYVector < 0 && interpolatedY < currentTargetY);
 
 				if (isMoveFinished)
 				{
@@ -331,12 +331,12 @@ namespace tw
 
 					interpolatedX = currentX;
 					interpolatedY = currentY;
-					
+
 					setNoTargetPosition();
 
 					// On ne notifie qu'à la fin du déplacement (but : éviter les freeze à chaque
 					// changement de cellule).
-					if(path.size() == 0)
+					if (path.size() == 0)
 						notifyPositionChanged(currentX, currentY);
 
 					setNextPositionFromPath();
@@ -399,7 +399,7 @@ namespace tw
 			}
 		}
 
-		
+
 
 
 		Animation getNeededAnimation()

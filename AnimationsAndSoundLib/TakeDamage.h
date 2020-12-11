@@ -5,7 +5,6 @@
 
 class TakeDamage : public BattleActionToAnimation, MoveActionAnimationEventListener
 {
-
 private:
 	int persoId;
 	int x, y;

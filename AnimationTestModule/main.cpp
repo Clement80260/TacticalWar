@@ -1,5 +1,3 @@
-
-
 #include <Environment.h>
 #include <BaseCharacterModel.h>
 #include <vector>
