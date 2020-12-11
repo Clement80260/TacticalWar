@@ -59,6 +59,7 @@ int main(int argc, char** argv)
 		&environment,
 		std::vector<Obstacle>());
 
+
 	AnimationManager::getInstance()->addAnimation(new TakeDamage(screen, 1));
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path1));
