@@ -8,10 +8,9 @@
 #include <Battle.h>
 #include <Match.h>
 #include <Environment.h>
+#include <Battle.h>
 
-class ModbusOperation;
-
-class TWParser : public Parser<ClientState>, tw::MatchEventListener
+class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEventListener
 {
 	std::vector<tw::Environment*> environments;
 
@@ -30,6 +29,56 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener
 
 	void notifyPlayingMatchList(ClientState * c = NULL);
 	void notifyMatchConnectedPlayerChanged(tw::Match * match);
+	void notifyTeamList(ClientState * c);
+	void notifyMatchCreated(tw::Match * m);
+	void notifySwitchToClassSelectionToConnectedPlayer(std::vector<tw::Player*> team);
+	void notifyPlanifiedAndPlayingMatch(ClientState * c);
+
+	void notifyClassChoiceLocked(ClientState * c);
+
+	int isTeamAvailableForMatchCreation(int teamId);
+
+	bool everybodyReadyForBattle(tw::Match * m);
+	void synchronizeBattleState(tw::Match * m, ClientState * c);
+	void enterBattleState(tw::Match * m, ClientState * c);
+
+	void notifyBattleState(ClientState * c, Battle * battle);
+	void notifyReadyState(ClientState * c, int playerId, tw::Player * p);
+	void notifyCharacterPositionChanged(ClientState * toNotify, int playerId, tw::Player * characterWhosePositionChanged);
+
+	bool initRandom;
+
+
+	ClientState * getClientStateFromPlayer(tw::Player * p)
+	{
+		ClientState * c = NULL;
+		if (connectedPlayerMap.find(p) != connectedPlayerMap.end())
+		{
+			c = connectedPlayerMap[p];
+		}
+		return c;
+	}
+
+	tw::Player * getPlayerFromClientState(ClientState * c)
+	{
+		tw::Player * p = NULL;
+
+		if (c->getPseudo().size() > 0)
+		{
+			if (playersMap.find(c->getPseudo()) != playersMap.end())
+			{
+				p = playersMap[c->getPseudo()];
+			}
+		}
+
+		return p;
+	}
+
+	void switchParticipantToBattleState(Battle * b);
+
+	ClientState * admin;
+
+	void sendToMatch(tw::Match * match, std::string str);
 
 public:
 	TWParser();
@@ -45,5 +94,9 @@ public:
 
 	// MatchEventListener implementation :
 	virtual void onMatchStatusChanged(tw::Match * match, tw::MatchStatus oldStatus, tw::MatchStatus newStatus);
+
+	// BattleEventListener implementation :
+	virtual void onBattleStateChanged(tw::Match * m, BattleState state);
+	virtual void onPlayerTurnStart(tw::Match * match, tw::Player * player);
 };
 

@@ -27,7 +27,7 @@ public:
 
 	virtual std::string getGraphicsPath()
 	{
-		return "./assets/Warrior/";
+		return "./assets/Mage/";
 	}
 
 	// Retourne la valeur du maximum de point de vie de base (sans altération d'effet). C'est une caractéristique de base de la classe.
@@ -113,6 +113,7 @@ public:
 	Mage(tw::Environment * environment, int teamId, int currentX, int currentY)
 		: BaseCharacterModel(environment, teamId, currentX, currentY)
 	{
+		initializeValues();
 		compt1 = 3;
 		compt2 = 1;
 		compt3 = 4;

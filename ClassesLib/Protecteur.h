@@ -23,7 +23,7 @@ public:
 
 	virtual std::string getGraphicsPath()
 	{
-		return "./assets/Warrior/";
+		return "./assets/Protecteur/";
 	}
 
 	// Retourne la valeur du maximum de point de vie de base (sans altération d'effet). C'est une caractéristique de base de la classe.
@@ -110,6 +110,7 @@ public:
 	Protecteur(tw::Environment * environment, int teamId, int currentX, int currentY)
 		: BaseCharacterModel(environment, teamId, currentX, currentY)
 	{
+		initializeValues();
 		compt1 = 99;
 		compt2 = 3;
 		compt3 = 2;

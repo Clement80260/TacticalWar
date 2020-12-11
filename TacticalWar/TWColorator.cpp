@@ -3,22 +3,36 @@
 
 sf::Color TWColorator::getColorForCell(tw::CellData * cell)
 {
-	if (cell->getIsWalkable() && !cell->getIsObstacle())
+	if (state == BattleState::BATTLE_PHASE)
 	{
-		for (int i = 0; i < pathToHighlight.size(); i++)
+		if (cell->getIsWalkable() && !cell->getIsObstacle())
 		{
-			if ((*cell) == pathToHighlight[i])
+			for (int i = 0; i < pathToHighlight.size(); i++)
 			{
-				return getPathHighlightColor();
+				if ((*cell) == pathToHighlight[i])
+				{
+					return getPathHighlightColor();
+				}
+			}
+
+			for (int i = 0; i < pathZone.size(); i++)
+			{
+				if ((*cell) == pathZone[i])
+				{
+					return getPathZoneColor();
+				}
 			}
 		}
-
-		for (int i = 0; i < pathZone.size(); i++)
+	}
+	else if (state == BattleState::PREPARATION_PHASE)
+	{
+		if (cell->isTeam1StartPoint())
 		{
-			if ((*cell) == pathZone[i])
-			{
-				return getPathZoneColor();
-			}
+			return sf::Color(50, 200, 255);
+		}
+		else if (cell->isTeam2StartPoint())
+		{
+			return sf::Color(255, 50, 50);
 		}
 	}
 

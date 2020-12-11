@@ -66,3 +66,8 @@ void PlayerStatusView::onMessageReceived(std::string msg)
 		playerLabel->setText(toDisplay);
 	}
 }
+
+void PlayerStatusView::onDisconnected()
+{
+	// TODO
+}

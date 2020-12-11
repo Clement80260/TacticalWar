@@ -51,6 +51,8 @@ namespace tw
 		std::vector<Point2D> path;
 		//---------------------------------
 
+		bool isReady;
+
 		int currentLife;
 
 		void setNextPositionFromPath()
@@ -89,8 +91,32 @@ namespace tw
 		std::vector<Effect *> appliedEffects;
 
 	public:
-		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY);
-		virtual ~BaseCharacterModel();
+		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY)
+		{
+			this->isReady = false;
+			this->neededAnimation = Animation::IDLE;
+			this->animationDuration = -1;
+			this->reinitViewTime = false;
+
+			this->currentMoveCallback = NULL;
+
+			this->teamId = teamId;
+			this->environment = environment;
+			this->currentX = currentX;
+			this->currentY = currentY;
+
+			setNoTargetPosition();
+		}
+
+		void initializeValues()
+		{
+			this->currentLife = getBaseMaxLife();
+		}
+
+		virtual ~BaseCharacterModel()
+		{
+
+		}
 
 		std::vector<Effect *> getAppliedEffects()
 		{
@@ -103,6 +129,25 @@ namespace tw
 			// TODO ...
 		}
 
+		bool isAlive()
+		{
+			return currentLife > 0;
+		}
+
+		void modifyCurrentLife(int value)
+		{
+			currentLife += value;
+			if (currentLife > getBaseMaxLife())
+			{
+				currentLife = getBaseMaxLife();
+			}
+			else if (currentLife < 0)
+			{
+				currentLife = 0;
+			}
+		}
+
+		virtual void turnStart() = 0;
 
 		virtual int getClassId() = 0;
 		virtual std::string getGraphicsPath() = 0;
@@ -194,6 +239,16 @@ namespace tw
 			return currentY;
 		}
 
+		inline void setCurrentX(int x)
+		{
+			currentX = x;
+		}
+
+		inline void setCurrentY(int y)
+		{
+			currentY = y;
+		}
+
 		inline Environment* getEnvironment()
 		{
 			return environment;
@@ -204,6 +259,15 @@ namespace tw
 			return currentLife;
 		}
 
+		inline bool isPlayerReady()
+		{
+			return isReady;
+		}
+
+		inline void setReadyStatus(bool ready)
+		{
+			isReady = ready;
+		}
 
 
 		inline float getInterpolatedX()
