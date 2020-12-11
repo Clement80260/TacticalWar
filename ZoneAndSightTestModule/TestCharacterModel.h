@@ -74,6 +74,8 @@ namespace tw
 
 		}
 
+		virtual void turnStart() {}
+
 		// Méthodes rajoutées :
 
 		virtual std::string getClassName()

@@ -42,7 +42,11 @@ public:
 	{
 		cout << "applyCharacterDie()" << endl;
 	}
-	
+	virtual void applyTakeDamage(int persoId)
+	{
+		cout << "applyTakeDamage()" << endl;
+	}
+
 	virtual void applyCharacterLaunchSpell(int persoId, int x, int y, int spellId)
 	{
 		cout << "applyCharacterLaunchSpell()" << endl;
@@ -83,7 +87,20 @@ public:
 
 		cout << "applyCharacterMove()" << endl;
 	}
-	
+
+	virtual void CheckHpCharacter(int HP, int persoId)
+	{
+		if (HP == 0)
+		{
+			applyCharacterDie(persoId);
+		}
+		else
+		{
+			applyTakeDamage(persoId);
+
+		}
+	}
+
 	virtual void applyCharacterDisconnected(int persoId)
 	{
 		cout << "applyCharacterDisconnected()" << endl;
@@ -102,6 +119,15 @@ public:
 	virtual void applyEnterBattlePhase()
 	{
 		cout << "applyEnterBattlePhase()" << endl;
+	}
+	virtual void applyTakeDmgAnimation()
+	{
+		cout << "applyTakeDmgAnimation()" << endl;
+	}
+	
+	virtual void applyDieAnimation()
+	{
+		cout << "applyDieAnimation()" << endl;
 	}
 };
 
