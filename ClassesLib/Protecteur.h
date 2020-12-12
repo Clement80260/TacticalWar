@@ -110,6 +110,7 @@ public:
 	Protecteur(tw::Environment * environment, int teamId, int currentX, int currentY)
 		: BaseCharacterModel(environment, teamId, currentX, currentY)
 	{
+		initializeValues();
 		compt1 = 99;
 		compt2 = 3;
 		compt3 = 2;

@@ -5,10 +5,10 @@
 #include "Effect.h"
 #include "TypeZoneLaunch.h"
 
-namespace tw
+	namespace tw
 {
 	class BaseCharacterModel;
-	
+
 	enum class Animation
 	{
 		IDLE,
@@ -51,6 +51,8 @@ namespace tw
 		std::vector<Point2D> path;
 		//---------------------------------
 
+		bool isReady;
+
 		int currentLife;
 
 		void setNextPositionFromPath()
@@ -89,8 +91,32 @@ namespace tw
 		std::vector<Effect *> appliedEffects;
 
 	public:
-		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY);
-		virtual ~BaseCharacterModel();
+		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY)
+		{
+			this->isReady = false;
+			this->neededAnimation = Animation::IDLE;
+			this->animationDuration = -1;
+			this->reinitViewTime = false;
+
+			this->currentMoveCallback = NULL;
+
+			this->teamId = teamId;
+			this->environment = environment;
+			this->currentX = currentX;
+			this->currentY = currentY;
+
+			setNoTargetPosition();
+		}
+
+		void initializeValues()
+		{
+			this->currentLife = getBaseMaxLife();
+		}
+
+		virtual ~BaseCharacterModel()
+		{
+
+		}
 
 		std::vector<Effect *> getAppliedEffects()
 		{
@@ -103,6 +129,25 @@ namespace tw
 			// TODO ...
 		}
 
+		bool isAlive()
+		{
+			return currentLife > 0;
+		}
+
+		void modifyCurrentLife(int value)
+		{
+			currentLife += value;
+			if (currentLife > getBaseMaxLife())
+			{
+				currentLife = getBaseMaxLife();
+			}
+			else if (currentLife < 0)
+			{
+				currentLife = 0;
+			}
+		}
+
+		virtual void turnStart() = 0;
 
 		virtual int getClassId() = 0;
 		virtual std::string getGraphicsPath() = 0;
@@ -194,6 +239,16 @@ namespace tw
 			return currentY;
 		}
 
+		inline void setCurrentX(int x)
+		{
+			currentX = x;
+		}
+
+		inline void setCurrentY(int y)
+		{
+			currentY = y;
+		}
+
 		inline Environment* getEnvironment()
 		{
 			return environment;
@@ -204,6 +259,15 @@ namespace tw
 			return currentLife;
 		}
 
+		inline bool isPlayerReady()
+		{
+			return isReady;
+		}
+
+		inline void setReadyStatus(bool ready)
+		{
+			isReady = ready;
+		}
 
 
 		inline float getInterpolatedX()
@@ -219,7 +283,7 @@ namespace tw
 		inline void update(float deltatime)
 		{
 			float speed = 3;
-			
+
 			setNextPositionFromPath();
 
 			if (currentTargetX >= 0 && currentTargetY >= 0)
@@ -247,8 +311,8 @@ namespace tw
 				{
 					moveYVector = 1;
 				}
-				else if(currentY > currentTargetY)	
-				{ 
+				else if (currentY > currentTargetY)
+				{
 					moveYVector = -1;
 				}
 
@@ -257,8 +321,8 @@ namespace tw
 
 
 				bool isMoveFinished = (moveXVector > 0 && interpolatedX > currentTargetX || moveXVector < 0 && interpolatedX < currentTargetX)
-											||
-										(moveYVector > 0 && interpolatedY > currentTargetY || moveYVector < 0 && interpolatedY < currentTargetY);
+					||
+					(moveYVector > 0 && interpolatedY > currentTargetY || moveYVector < 0 && interpolatedY < currentTargetY);
 
 				if (isMoveFinished)
 				{
@@ -267,12 +331,12 @@ namespace tw
 
 					interpolatedX = currentX;
 					interpolatedY = currentY;
-					
+
 					setNoTargetPosition();
 
 					// On ne notifie qu'à la fin du déplacement (but : éviter les freeze à chaque
 					// changement de cellule).
-					if(path.size() == 0)
+					if (path.size() == 0)
 						notifyPositionChanged(currentX, currentY);
 
 					setNextPositionFromPath();
@@ -335,7 +399,7 @@ namespace tw
 			}
 		}
 
-		
+
 
 
 		Animation getNeededAnimation()
@@ -366,6 +430,18 @@ namespace tw
 		{
 			neededAnimation = Animation::IDLE;
 			animationDuration = -1;
+		}
+		void startDieAction(float duration)
+		{
+			neededAnimation = Animation::DIE;
+			animationDuration = duration;
+			reinitViewTime = true;
+		}
+		void startTakeDmg(float duration)
+		{
+			neededAnimation = Animation::TAKE_DAMAGE;
+			animationDuration = duration;
+			reinitViewTime = true;
 		}
 	};
 }

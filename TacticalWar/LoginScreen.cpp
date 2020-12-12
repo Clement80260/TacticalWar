@@ -192,9 +192,11 @@ void LoginScreen::onMessageReceived(std::string msg)
 
 	if (sentence.substring(0, 2) == "HG")
 	{
+		int environmentId = std::atoi(sentence.substring(2).toAnsiString().c_str());
+
 		readyForConnect = false;
 		gui->removeAllWidgets();
-		ScreenManager::getInstance()->setCurrentScreen(new BattleScreen(gui));
+		ScreenManager::getInstance()->setCurrentScreen(new BattleScreen(gui, environmentId));
 		delete this;
 	}
 	else if (sentence.substring(0, 2) == "HW")

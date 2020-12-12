@@ -15,7 +15,7 @@ private:
 
 	bool hasResetAttackAnimation;
 public:
-	LaunchSpellAction(IScreenActionCallback * screen, int persoId, int spellId, int x,int y)
+	LaunchSpellAction(IScreenActionCallback * screen, int persoId, int spellId, int x, int y)
 	{
 		this->persoId = persoId;
 		this->spellId = spellId;
@@ -51,7 +51,6 @@ public:
 		/*
 		if (hasResetAttackAnimation && !? ? ? ? )
 		{
-
 		}
 		*/
 	}

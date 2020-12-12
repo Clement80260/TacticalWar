@@ -111,6 +111,7 @@ public:
 	Archer(tw::Environment * environment, int teamId, int currentX, int currentY)
 		: BaseCharacterModel(environment, teamId, currentX, currentY)
 	{
+		initializeValues();
 		compt1 = 4;
 		compt2 = 3;
 		compt3 = 1;

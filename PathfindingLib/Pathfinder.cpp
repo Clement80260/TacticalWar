@@ -42,7 +42,7 @@ Orientation Pathfinder::getOrientationFromPosition(Point2D p1, Point2D p2)
 	return Orientation::BOTTOM_RIGHT;
 }
 
-std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosition, Environment * environment, std::vector<Obstacle*> obstacles)
+std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosition, Environment * environment, std::vector<Obstacle> obstacles)
 {
 	std::vector<Point2D> path;
 	std::map<CellData*, CellData*> Predecesseur;
@@ -59,17 +59,11 @@ std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosit
 			d[cell] = std::numeric_limits<float>::max(); //sommet à +infini
 			
 
-			if (cell->getIsObstacle() || !cell->getIsWalkable())
+			if (cell->getIsObstacle() || !cell->getIsWalkable() || !isNotDynamicObstacle(cell, obstacles))
 			{
 				P.push_back(cell);
 			}
 		}
-	}
-
-	for (int i = 0; i < obstacles.size(); i++)
-	{
-		Obstacle * o = obstacles[i];
-		P.push_back(environment->getMapData(o->getX(), o->getY()));
 	}
 
 	d[environment->getMapData(startPosition.getX(), startPosition.getY())] = 0;
@@ -193,13 +187,13 @@ std::vector<Point2D> Pathfinder::getPath(Point2D startPosition, Point2D endPosit
 	return path;
 }
 
-bool Pathfinder::isNotDynamicObstacle(CellData * voisin, std::vector<Obstacle*> obstacles)
+bool Pathfinder::isNotDynamicObstacle(CellData * voisin, std::vector<Obstacle> obstacles)
 {
 	bool isObstacle = false;
 	for (int i = 0; i < obstacles.size(); i++)
 	{
-		Obstacle * o = obstacles[i];
-		if ((*o) == (*voisin))
+		Obstacle o = obstacles[i];
+		if (o == (*voisin))
 		{
 			isObstacle = true;
 			break;

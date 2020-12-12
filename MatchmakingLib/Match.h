@@ -153,6 +153,17 @@ namespace tw
 			return playerIsInTeam1(p) || playerIsInTeam2(p);
 		}
 
+		std::vector<tw::Player *> getPlayers()
+		{
+			std::vector<tw::Player*> players;
+			for (int i = 0; i < getTeam1().size(); i++)
+				players.push_back(getTeam1()[i]);
+			for (int i = 0; i < getTeam2().size(); i++)
+				players.push_back(getTeam2()[i]);
+
+			return players;
+		}
+
 		MatchStatus getStatus()
 		{
 			return status;
@@ -225,42 +236,130 @@ namespace tw
 			}
 		}
 
-		tw::Point2D getRandomAvailableCellForTeam(int teamId, std::vector<tw::Point2D> alreadyUsed)
+		std::vector<Point2D> getAlreadyUsedCellInTeamOfPlayer(tw::Player * p)
+		{
+			std::vector<tw::Point2D> alreadyUsedStartCells;
+			
+			if (playerIsInThisMatch(p))
+			{
+				bool isTeam1 = playerIsInTeam1(p);
+
+				std::vector<tw::Player*> team = isTeam1 ? getTeam1() : getTeam2();
+				for (int i = 0; i < team.size(); i++)
+				{
+					tw::Player * coTeam = team[i];
+					if (coTeam != p)
+					{
+						if (coTeam->getCharacter() != NULL)
+						{
+							alreadyUsedStartCells.push_back(tw::Point2D(coTeam->getCharacter()->getCurrentX(), coTeam->getCharacter()->getCurrentY()));
+						}
+					}
+				}
+			}
+
+			return alreadyUsedStartCells;
+		}
+
+		bool isStartCellAvailableForPlayer(tw::Player * p, int cellX, int cellY)
+		{
+			if (playerIsInThisMatch(p))
+			{
+				bool isTeam1 = playerIsInTeam1(p);
+
+				std::vector<tw::Player*> team = isTeam1 ? getTeam1() : getTeam2();
+				std::vector<tw::Point2D> alreadyUsed = getAlreadyUsedCellInTeamOfPlayer(p);
+				
+				std::vector<tw::Point2D> sourceCells;
+				if (playerIsInTeam1(p))
+				{
+					sourceCells = availableStartPositionTeam1;
+				}
+				else
+				{
+					sourceCells = availableStartPositionTeam2;
+				}
+
+				for (int i = 0; i < sourceCells.size(); i++)
+				{
+					bool isAvailable = true;
+					
+					if (sourceCells[i].getX() == cellX && sourceCells[i].getY() == cellY)
+					{
+						for (int j = 0; j < alreadyUsed.size(); j++)
+						{
+							if (sourceCells[i] == alreadyUsed[j])
+							{
+								isAvailable = false;
+								break;
+							}
+						}
+
+						return isAvailable;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		tw::Point2D getRandomAvailableCellForPlayer(tw::Player * p)
 		{
 			tw::Point2D result(-1, -1);
 
-			std::vector<tw::Point2D> candidateCells;
-			std::vector<tw::Point2D> sourceCells;
-			if (teamId == 1)
+			if (p != NULL && playerIsInThisMatch(p))
 			{
-				sourceCells = availableStartPositionTeam1;
-			}
-			else
-			{
-				sourceCells = availableStartPositionTeam2;
-			}
-
-			for (int i = 0; i < sourceCells.size(); i++)
-			{
-				bool isAvailable = true;
-				for (int j = 0; j < alreadyUsed.size(); j++)
+				std::vector<tw::Point2D> alreadyUsed = getAlreadyUsedCellInTeamOfPlayer(p);
+				std::vector<tw::Point2D> candidateCells;
+				std::vector<tw::Point2D> sourceCells;
+				if (playerIsInTeam1(p))
 				{
-					if (sourceCells[i] == alreadyUsed[j])
+					sourceCells = availableStartPositionTeam1;
+				}
+				else
+				{
+					sourceCells = availableStartPositionTeam2;
+				}
+
+				for (int i = 0; i < sourceCells.size(); i++)
+				{
+					bool isAvailable = true;
+					for (int j = 0; j < alreadyUsed.size(); j++)
 					{
-						isAvailable = false;
-						break;
+						if (sourceCells[i] == alreadyUsed[j])
+						{
+							isAvailable = false;
+							break;
+						}
+					}
+
+					if (isAvailable)
+					{
+						candidateCells.push_back(sourceCells[i]);
 					}
 				}
 
-				if (isAvailable)
+				if (candidateCells.size() > 0)
 				{
-					candidateCells.push_back(sourceCells[i]);
+					result = candidateCells[rand() % candidateCells.size()];
 				}
 			}
 
-			if (candidateCells.size() > 0)
+			return result;
+		}
+
+		bool allPlayersReady()
+		{
+			bool result = true;
+			std::vector<tw::Player*> players = getPlayers();
+			for (int i = 0; i < players.size(); i++)
 			{
-				result = candidateCells[rand() % candidateCells.size()];
+				BaseCharacterModel * character = players[i]->getCharacter();
+				if (character == NULL || !character->isPlayerReady())
+				{
+					result = false;
+					break;
+				}
 			}
 
 			return result;

@@ -104,10 +104,16 @@ std::vector<sf::Sprite*> SpellView::loadAnimation(std::string filename)
 }
 sf::Sprite * SpellView::getImageToDraw()
 {
-	return nullptr;
+	double p = 0.5, time = elsetime;
+	int nbImg = animationsMap.size();
+	p /= nbImg;
+	int index;
+	index = fmod(time / p, nbImg);
+	return animationsMap[index];
 }
 
 
 void SpellView::update(float deltatime)
 {
+	elsetime += deltatime;
 }

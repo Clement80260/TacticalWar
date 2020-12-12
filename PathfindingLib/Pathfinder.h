@@ -58,8 +58,8 @@ namespace tw
 		static Pathfinder * getInstance();
 
 		Orientation getOrientationFromPosition(Point2D p1, Point2D p2);
-		std::vector<Point2D> getPath(Point2D startPosition, Point2D endPosition, Environment * environment, std::vector<Obstacle*> obstacles);
-		bool isNotDynamicObstacle(CellData * voisinDroite, std::vector<Obstacle*> obstacles);
+		std::vector<Point2D> getPath(Point2D startPosition, Point2D endPosition, Environment * environment, std::vector<Obstacle> obstacles);
+		bool isNotDynamicObstacle(CellData * voisinDroite, std::vector<Obstacle> obstacles);
 		int TotalCostFromStartToEnd();
 	};
 }

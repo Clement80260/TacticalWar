@@ -7,6 +7,7 @@
 #include "LoginScreen.h"
 #include <CharacterFactory.h>
 #include "PictureCharacterView.h"
+#include "BattleScreen.h"
 
 
 
@@ -227,7 +228,6 @@ void ClassSelectionScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * g
 void ClassSelectionScreen::update(float deltatime)
 {
 	Screen::update(deltatime);
-	LinkToServer::getInstance()->UpdateReceivedData();
 	ellapsedTime += deltatime;
 
 	bool changeOrientation = false;
@@ -252,6 +252,8 @@ void ClassSelectionScreen::update(float deltatime)
 		LinkToServer::getInstance()->Send("PC" + std::to_string(classesInstances[indexClass]->getClassId()));
 		readyToLock = false;
 	}
+
+	LinkToServer::getInstance()->UpdateReceivedData();
 }
 
 void ClassSelectionScreen::render(sf::RenderWindow * window)
@@ -323,6 +325,13 @@ void ClassSelectionScreen::onMessageReceived(std::string msg)
 				break;
 			}
 		}
+	}
+	else if (m.substring(0, 2) == "HG")
+	{
+		int environmentId = std::atoi(m.substring(2).toAnsiString().c_str());
+		gui->removeAllWidgets();
+		tw::ScreenManager::getInstance()->setCurrentScreen(new tw::BattleScreen(gui, environmentId));
+		delete this;
 	}
 }
 
