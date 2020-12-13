@@ -15,6 +15,7 @@
 
 using namespace tw;
 
+
 BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 {
 	hasInitSpellBar = false;
@@ -87,14 +88,7 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 			spellSlot1->setSize(tgui::Layout2d(100, 100));
 			spellSlot1->setPosition(tgui::Layout2d(150, window->getSize().y - 110));
 			spellSlot1->getSpellPicture()->connect("Clicked", [&]() {
-				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
-					activeCharacter->getCurrentX(),
-					activeCharacter->getCurrentY(),
-					activeCharacter->getSpell1MinPO(),
-					activeCharacter->getSpell1MaxPO(),
-					activeCharacter->getSpell1LaunchZoneType());
-
-				colorator->setSpellLaunchZone(targetZone);
+				setSelectedSpell(1);
 			});
 
 			std::shared_ptr<SpellSlot> spellSlot2 = std::make_shared<SpellSlot>(2, activeCharacter->getSpell2IconPath());
@@ -103,14 +97,7 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 			spellSlot2->setSize(tgui::Layout2d(100, 100));
 			spellSlot2->setPosition(tgui::Layout2d(150 + 110, window->getSize().y - 110));
 			spellSlot2->getSpellPicture()->connect("Clicked", [&]() {
-				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
-					activeCharacter->getCurrentX(),
-					activeCharacter->getCurrentY(),
-					activeCharacter->getSpell2MinPO(),
-					activeCharacter->getSpell2MaxPO(),
-					activeCharacter->getSpell2LaunchZoneType());
-
-				colorator->setSpellLaunchZone(targetZone);
+				setSelectedSpell(2);
 			});
 
 			std::shared_ptr<SpellSlot> spellSlot3 = std::make_shared<SpellSlot>(3, activeCharacter->getSpell3IconPath());
@@ -119,14 +106,7 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 			spellSlot3->setSize(tgui::Layout2d(100, 100));
 			spellSlot3->setPosition(tgui::Layout2d(150 + 220, window->getSize().y - 110));
 			spellSlot3->getSpellPicture()->connect("Clicked", [&]() {
-				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
-					activeCharacter->getCurrentX(),
-					activeCharacter->getCurrentY(),
-					activeCharacter->getSpell3MinPO(),
-					activeCharacter->getSpell3MaxPO(),
-					activeCharacter->getSpell3LaunchZoneType());
-
-				colorator->setSpellLaunchZone(targetZone);
+				setSelectedSpell(3);
 			});
 
 			std::shared_ptr<SpellSlot> spellSlot4 = std::make_shared<SpellSlot>(4, activeCharacter->getSpell4IconPath());
@@ -135,18 +115,60 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 			spellSlot4->setSize(tgui::Layout2d(100, 100));
 			spellSlot4->setPosition(tgui::Layout2d(150 + 330, window->getSize().y - 110));
 			spellSlot4->getSpellPicture()->connect("Clicked", [&]() {
-				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
-					activeCharacter->getCurrentX(),
-					activeCharacter->getCurrentY(),
-					activeCharacter->getSpell4MinPO(),
-					activeCharacter->getSpell4MaxPO(),
-					activeCharacter->getSpell4LaunchZoneType());
-
-				colorator->setSpellLaunchZone(targetZone);
+				setSelectedSpell(4);
 			});
 
 			hasInitSpellBar = true;
 		}
+	}
+}
+
+void tw::BattleScreen::calculateAndSetSpellZone()
+{
+	int spellMinPO = -1;
+	int spellMaxPO = -1;
+	TypeZoneLaunch zoneType = TypeZoneLaunch::NORMAL;
+	
+	if (activeCharacter != NULL)
+	{
+		switch (selectedSpell)
+		{
+		case 1:
+			spellMinPO = activeCharacter->getSpell1MinPO();
+			spellMaxPO = activeCharacter->getSpell1MaxPO();
+			zoneType = activeCharacter->getSpell1LaunchZoneType();
+			break;
+
+		case 2:
+			spellMinPO = activeCharacter->getSpell2MinPO();
+			spellMaxPO = activeCharacter->getSpell2MaxPO();
+			zoneType = activeCharacter->getSpell2LaunchZoneType();
+			break;
+
+		case 3:
+			spellMinPO = activeCharacter->getSpell3MinPO();
+			spellMaxPO = activeCharacter->getSpell3MaxPO();
+			zoneType = activeCharacter->getSpell3LaunchZoneType();
+			break;
+
+		case 4:
+			spellMinPO = activeCharacter->getSpell4MinPO();
+			spellMaxPO = activeCharacter->getSpell4MaxPO();
+			zoneType = activeCharacter->getSpell4LaunchZoneType();
+			break;
+		}
+	}
+
+	if (activeCharacter != NULL && selectedSpell != -1)
+	{
+		std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
+			activeCharacter->getCurrentX(),
+			activeCharacter->getCurrentY(),
+			spellMinPO,
+			spellMaxPO,
+			zoneType);
+
+		colorator->setSpellLaunchZone(targetZone);
 	}
 }
 
@@ -215,9 +237,35 @@ void BattleScreen::onCellClicked(int cellX, int cellY)
 {
 	std::cout << "Cell x=" << cellX << ", y=" << cellY << " clicked !" << std::endl;
 	BaseCharacterModel * m = activeCharacter;
-	if (colorator->getBattleState() == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN)
+	if (colorator->getBattleState() == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN /* Temporaire : */|| colorator->getBattleState() == BattleState::BATTLE_PHASE)
 	{
-		if (m != NULL && !m->hasTargetPosition())
+		std::vector<tw::Point2D> spellZone = colorator->getSpellLaunchZone();
+
+		// Ciblage :
+		if(spellZone.size() > 0)
+		{
+			bool isInSpellZone = false;
+
+			for (int i = 0; i < spellZone.size(); i++)
+			{
+				if (spellZone[i].getX() == cellX && spellZone[i].getY() == cellY)
+				{
+					isInSpellZone = true;
+					break;
+				}
+			}
+
+			if (!isInSpellZone)
+			{
+				setSelectedSpell(-1);
+			}
+			else
+			{
+				// TODO : Launch spell ...
+			}
+		}
+		// Déplacement :
+		else if (m != NULL && !m->hasTargetPosition())
 		{
 			bool isInPathZone = false;
 			for (int i = 0; i < pathZone.size(); i++)
@@ -320,6 +368,29 @@ void BattleScreen::onEvent(void * e)
 				window->setView(view);
 			}
 		}
+		else if (event->type == sf::Event::KeyPressed)
+		{
+			if (event->key.code == sf::Keyboard::Num1)
+			{
+				setSelectedSpell(1);
+			}
+			else if (event->key.code == sf::Keyboard::Num2)
+			{
+				setSelectedSpell(2);
+			}
+			else if (event->key.code == sf::Keyboard::Num3)
+			{
+				setSelectedSpell(3);
+			}
+			else if (event->key.code == sf::Keyboard::Num4)
+			{
+				setSelectedSpell(4);
+			}
+			else if (event->key.code == sf::Keyboard::Escape)
+			{
+				setSelectedSpell(-1);
+			}
+		}
 
 		if(gui != NULL)
 			gui->handleEvent(*event);
@@ -403,6 +474,14 @@ void BattleScreen::onMessageReceived(std::string msg)
 		int state = std::atoi(str.substring(2).toAnsiString().c_str());
 		BattleState battleState = (BattleState)state;
 		colorator->setBattleState(battleState);
+
+		if (battleState == BattleState::BATTLE_PHASE)
+		{
+			if (activeCharacter != NULL)
+			{
+				onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
+			}
+		}
 	}
 	else if (str.substring(0, 2) == "Cs")	// Player ready status
 	{

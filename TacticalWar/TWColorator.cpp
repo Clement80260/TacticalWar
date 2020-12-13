@@ -5,21 +5,34 @@ sf::Color TWColorator::getColorForCell(tw::CellData * cell)
 {
 	if (state == BattleState::BATTLE_PHASE)
 	{
-		if (cell->getIsWalkable() && !cell->getIsObstacle())
+		if (spellLaunchZone.size() > 0)
 		{
-			for (int i = 0; i < pathToHighlight.size(); i++)
+			for (int i = 0; i < spellLaunchZone.size(); i++)
 			{
-				if ((*cell) == pathToHighlight[i])
+				if ((*cell) == spellLaunchZone[i])
 				{
-					return getPathHighlightColor();
+					return sf::Color(50, 200, 255);
 				}
 			}
-
-			for (int i = 0; i < pathZone.size(); i++)
+		}
+		else
+		{
+			if (cell->getIsWalkable() && !cell->getIsObstacle())
 			{
-				if ((*cell) == pathZone[i])
+				for (int i = 0; i < pathToHighlight.size(); i++)
 				{
-					return getPathZoneColor();
+					if ((*cell) == pathToHighlight[i])
+					{
+						return getPathHighlightColor();
+					}
+				}
+
+				for (int i = 0; i < pathZone.size(); i++)
+				{
+					if ((*cell) == pathZone[i])
+					{
+						return getPathZoneColor();
+					}
 				}
 			}
 		}
@@ -33,14 +46,6 @@ sf::Color TWColorator::getColorForCell(tw::CellData * cell)
 		else if (cell->isTeam2StartPoint())
 		{
 			return sf::Color(255, 50, 50);
-		}
-	}
-
-	for (int i = 0; i < spellLaunchZone.size(); i++)
-	{
-		if ((*cell) == spellLaunchZone[i])
-		{
-			return sf::Color(50, 200, 255);
 		}
 	}
 

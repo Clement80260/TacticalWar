@@ -55,5 +55,10 @@ public:
 	{
 		spellLaunchZone = zone;
 	}
+
+	std::vector<tw::Point2D> getSpellLaunchZone()
+	{
+		return spellLaunchZone;
+	}
 };
 
