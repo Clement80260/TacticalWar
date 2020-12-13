@@ -36,5 +36,13 @@ sf::Color TWColorator::getColorForCell(tw::CellData * cell)
 		}
 	}
 
+	for (int i = 0; i < spellLaunchZone.size(); i++)
+	{
+		if ((*cell) == spellLaunchZone[i])
+		{
+			return sf::Color(50, 200, 255);
+		}
+	}
+
 	return sf::Color::White;
 }

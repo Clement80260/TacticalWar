@@ -39,6 +39,8 @@ namespace tw
 
 		int turnToken;
 
+		bool hasInitSpellBar;
+
 	public:
 		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();

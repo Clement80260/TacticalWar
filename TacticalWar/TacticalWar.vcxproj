@@ -168,6 +168,7 @@
     <ClCompile Include="ScreenManager.cpp" />
     <ClCompile Include="ServerMessageListener.cpp" />
     <ClCompile Include="SpectatorModeScreen.cpp" />
+    <ClCompile Include="SpellSlot.cpp" />
     <ClCompile Include="TestCharacterModel.cpp" />
     <ClCompile Include="TWColorator.cpp" />
     <ClCompile Include="WaitMatchScreen.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="ScreenManager.h" />
     <ClInclude Include="ServerMessageListener.h" />
     <ClInclude Include="SpectatorModeScreen.h" />
+    <ClInclude Include="SpellSlot.h" />
     <ClInclude Include="TestCharacterModel.h" />
     <ClInclude Include="TWColorator.h" />
     <ClInclude Include="WaitMatchScreen.h" />

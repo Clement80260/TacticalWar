@@ -10,12 +10,14 @@
 #include <CharacterFactory.h>
 #include "MusicManager.h"
 #include "PlayerStatusView.h"
+#include "SpellSlot.h"
 
 
 using namespace tw;
 
 BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 {
+	hasInitSpellBar = false;
 	turnToken = -1;
 	readyToValidatePosition = false;
 	this->gui = NULL;
@@ -76,6 +78,75 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 	if (activeCharacter != NULL)
 	{
 		readyButton->setVisible(!activeCharacter->isPlayerReady());
+
+		if(!hasInitSpellBar)
+		{
+			std::shared_ptr<SpellSlot> spellSlot1 = std::make_shared<SpellSlot>(1, activeCharacter->getSpell1IconPath());
+			gui->add(spellSlot1, "spellSlot1");
+			gui->add(spellSlot1->getSpellPicture(), "spellSlot1Picture");
+			spellSlot1->setSize(tgui::Layout2d(100, 100));
+			spellSlot1->setPosition(tgui::Layout2d(150, window->getSize().y - 110));
+			spellSlot1->getSpellPicture()->connect("Clicked", [&]() {
+				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
+					activeCharacter->getCurrentX(),
+					activeCharacter->getCurrentY(),
+					activeCharacter->getSpell1MinPO(),
+					activeCharacter->getSpell1MaxPO(),
+					activeCharacter->getSpell1LaunchZoneType());
+
+				colorator->setSpellLaunchZone(targetZone);
+			});
+
+			std::shared_ptr<SpellSlot> spellSlot2 = std::make_shared<SpellSlot>(2, activeCharacter->getSpell2IconPath());
+			gui->add(spellSlot2, "spellSlot2");
+			gui->add(spellSlot2->getSpellPicture(), "spellSlot2Picture");
+			spellSlot2->setSize(tgui::Layout2d(100, 100));
+			spellSlot2->setPosition(tgui::Layout2d(150 + 110, window->getSize().y - 110));
+			spellSlot2->getSpellPicture()->connect("Clicked", [&]() {
+				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
+					activeCharacter->getCurrentX(),
+					activeCharacter->getCurrentY(),
+					activeCharacter->getSpell2MinPO(),
+					activeCharacter->getSpell2MaxPO(),
+					activeCharacter->getSpell2LaunchZoneType());
+
+				colorator->setSpellLaunchZone(targetZone);
+			});
+
+			std::shared_ptr<SpellSlot> spellSlot3 = std::make_shared<SpellSlot>(3, activeCharacter->getSpell3IconPath());
+			gui->add(spellSlot3, "spellSlot3");
+			gui->add(spellSlot3->getSpellPicture(), "spellSlot3Picture");
+			spellSlot3->setSize(tgui::Layout2d(100, 100));
+			spellSlot3->setPosition(tgui::Layout2d(150 + 220, window->getSize().y - 110));
+			spellSlot3->getSpellPicture()->connect("Clicked", [&]() {
+				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
+					activeCharacter->getCurrentX(),
+					activeCharacter->getCurrentY(),
+					activeCharacter->getSpell3MinPO(),
+					activeCharacter->getSpell3MaxPO(),
+					activeCharacter->getSpell3LaunchZoneType());
+
+				colorator->setSpellLaunchZone(targetZone);
+			});
+
+			std::shared_ptr<SpellSlot> spellSlot4 = std::make_shared<SpellSlot>(4, activeCharacter->getSpell4IconPath());
+			gui->add(spellSlot4, "spellSlot4");
+			gui->add(spellSlot4->getSpellPicture(), "spellSlot4Picture");
+			spellSlot4->setSize(tgui::Layout2d(100, 100));
+			spellSlot4->setPosition(tgui::Layout2d(150 + 330, window->getSize().y - 110));
+			spellSlot4->getSpellPicture()->connect("Clicked", [&]() {
+				std::vector<Point2D> targetZone = ZoneAndSightCalculator::getInstance()->generateZone(
+					activeCharacter->getCurrentX(),
+					activeCharacter->getCurrentY(),
+					activeCharacter->getSpell4MinPO(),
+					activeCharacter->getSpell4MaxPO(),
+					activeCharacter->getSpell4LaunchZoneType());
+
+				colorator->setSpellLaunchZone(targetZone);
+			});
+
+			hasInitSpellBar = true;
+		}
 	}
 }
 
