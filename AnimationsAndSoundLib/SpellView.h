@@ -3,7 +3,6 @@
 #include <AbstractSpellView.h>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <Pathfinder.h>
 #include <deque>
 #include <map>
 
@@ -21,7 +20,7 @@ public:
 	SpellView(int x, int y);
 	virtual ~SpellView();
 	std::vector<sf::Sprite*> loadAnimation(std::string filename);
-	virtual sf::Sprite * getImageToDraw();
+	virtual sf::Sprite* getImageToDraw();
 	virtual void update(float deltatime);
 
 };

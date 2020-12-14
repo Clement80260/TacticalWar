@@ -26,7 +26,7 @@ namespace tw
 		AbstractRenderer();
 		virtual ~AbstractRenderer();
 
-		virtual void render(Environment* environment, std::vector<BaseCharacterModel*> & characters, std::vector<AbstractSpellView<T*>> spells, float deltatime) = 0;
+		virtual void render(Environment* environment, std::vector<BaseCharacterModel*> & characters, std::vector<AbstractSpellView<T*> *> spells, float deltatime) = 0;
 		void addEventListener(RendererEventListener * listener);
 		bool removeEventListener(RendererEventListener * listener);
 	};

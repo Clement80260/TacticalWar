@@ -101,7 +101,8 @@ std::vector<sf::Sprite*> SpellView::loadAnimation(std::string filename)
 	return anim;
 
 }
-sf::Sprite * SpellView::getImageToDraw()
+
+sf::Sprite* SpellView::getImageToDraw()
 {
 	double p = 0.5, time = elsetime;
 	int nbImg = animationsMap.size();

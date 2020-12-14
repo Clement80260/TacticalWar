@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 		*/
 
 		window.clear();
-		renderer.render(&environment, characters, std::vector<AbstractSpellView<sf::Sprite*>>(), deltatime);
+		renderer.render(&environment, characters, std::vector<AbstractSpellView<sf::Sprite*>*>(), deltatime);
 		window.display();
 	}
 

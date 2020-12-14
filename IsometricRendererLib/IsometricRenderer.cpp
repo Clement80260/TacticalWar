@@ -148,7 +148,7 @@ sf::Vector2i IsometricRenderer::screenCoordinatesToIsoGridCoordinates(int screen
 	return sf::Vector2i(calcX, calcY);
 }
 
-void IsometricRenderer::render(Environment* environment, std::vector<BaseCharacterModel*> & characters, std::vector<AbstractSpellView<sf::Sprite*>> spells, float deltatime)
+void IsometricRenderer::render(Environment* environment, std::vector<BaseCharacterModel*> & characters, std::vector<AbstractSpellView<sf::Sprite*> *> spells, float deltatime)
 {
 	manageEvents(environment, characters);
 
