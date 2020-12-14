@@ -30,6 +30,11 @@ namespace tw
 		sf::Texture textureStone;
 		sf::Texture textureTree;
 
+		sf::Sprite spriteGrass;
+		sf::Sprite spriteStone;
+		sf::Sprite spriteWater;
+		sf::Sprite spriteTree;
+
 		sf::Vector2i screenCoordinatesToIsoGridCoordinates(int screenX, int screenY);
 
 	public:

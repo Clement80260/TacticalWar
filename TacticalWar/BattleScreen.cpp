@@ -168,7 +168,20 @@ void tw::BattleScreen::calculateAndSetSpellZone()
 			spellMaxPO,
 			zoneType);
 
-		colorator->setSpellLaunchZone(targetZone);
+		std::vector<Obstacle> obstacles;
+		std::vector<Obstacle> environmentObstacles = environment->getObstacles();
+		std::vector<Obstacle> dynamicsObstacles = getDynamicObstacles();
+		obstacles.insert(obstacles.end(), environmentObstacles.begin(), environmentObstacles.end());
+		obstacles.insert(obstacles.end(), dynamicsObstacles.begin(), dynamicsObstacles.end());
+
+		std::vector<Point2D> targettable = ZoneAndSightCalculator::getInstance()->processLineOfSight(
+			activeCharacter->getCurrentX(),
+			activeCharacter->getCurrentY(),
+			targetZone,
+			obstacles
+		);
+
+		colorator->setSpellLaunchZone(targettable);
 	}
 }
 

@@ -10,15 +10,20 @@ IsometricRenderer::IsometricRenderer(sf::RenderWindow * window)
 {
 	hasFocus = true;
 	forcedFocus = false;
-	if (!textureGrass.loadFromFile("assets/tiles/Grass_01.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
-	if (!textureWater.loadFromFile("assets/tiles/Water_01.png")) { std::cout << "Impossible de charger Water texture" << std::endl; }
-	if (!textureStone.loadFromFile("assets/tiles/Stone_02.png")) { std::cout << "Impossible de charger Stone texture" << std::endl; }
-	if (!textureTree.loadFromFile("assets/tiles/Tree_01.png")) { std::cout << "Impossible de charger Tree texture" << std::endl; }
+	if (!textureGrass.loadFromFile("assets/tiles/resized/Grass_01.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
+	if (!textureWater.loadFromFile("assets/tiles/resized/Water_01.png")) { std::cout << "Impossible de charger Water texture" << std::endl; }
+	if (!textureStone.loadFromFile("assets/tiles/resized/Stone_02.png")) { std::cout << "Impossible de charger Stone texture" << std::endl; }
+	if (!textureTree.loadFromFile("assets/tiles/resized/Tree_01.png")) { std::cout << "Impossible de charger Tree texture" << std::endl; }
 
 	textureGrass.setSmooth(true);
 	textureWater.setSmooth(true);
 	textureStone.setSmooth(true);
 	textureTree.setSmooth(true);
+
+	spriteGrass.setTexture(textureGrass);
+	spriteWater.setTexture(textureWater);
+	spriteStone.setTexture(textureStone);
+	spriteTree.setTexture(textureTree);
 
 	this->window = window;
 	this->colorator = NULL;
@@ -154,19 +159,10 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 	view.setCenter(viewCenterX + 60.0, viewCenterY + 30.0);
 	window->setView(view);
 
-	sf::Sprite spriteGrass;
-	sf::Sprite spriteStone;
-	sf::Sprite spriteWater;
-	sf::Sprite spriteTree;
-	sf::Sprite spriteToDraw;
+	sf::Sprite * spriteToDraw;
 
-	spriteGrass.setTexture(textureGrass);
-	spriteWater.setTexture(textureWater);
-	spriteStone.setTexture(textureStone);
-	spriteTree.setTexture(textureTree);
-	
-	spriteGrass.setPosition(-127*0.05, -309 * 0.05);
-	spriteGrass.setScale(0.05, 0.05);
+	//spriteGrass.setPosition(-127*0.05, -309 * 0.05);
+	//spriteGrass.setScale(0.05, 0.05);
 
 	int borderX;
 	int borderY;
@@ -178,13 +174,13 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			CellData * cell = environment->getMapData(i, j);
 			if (cell->getIsObstacle())
 			{
-				spriteToDraw = spriteStone;
+				spriteToDraw = &spriteStone;
 				borderY = -590 * 0.05;
 				borderX = -202 * 0.05;
 			}
 			else if (cell->getIsWalkable())
 			{
-				spriteToDraw = spriteGrass;
+				spriteToDraw = &spriteGrass;
 				borderX = -128 * 0.05;
 				borderY = -310 * 0.05;
 			}
@@ -192,7 +188,7 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			{
 				borderX = -194 * 0.05;
 				borderY = -260 * 0.05;
-				spriteToDraw = spriteWater;
+				spriteToDraw = &spriteWater;
 				borderY += 10;
 			}
 
@@ -205,10 +201,10 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 				toApply = colorator->getColorForCell(cell);
 			}
 
-			spriteToDraw.setColor(toApply);
-			spriteToDraw.setScale(0.05, 0.05);
-			spriteToDraw.setPosition(borderX+isoX, borderY+isoY); 
-			window->draw(spriteToDraw);
+			spriteToDraw->setColor(toApply);
+			//spriteToDraw.setScale(0.05, 0.05);
+			spriteToDraw->setPosition(borderX+isoX, borderY+isoY); 
+			window->draw(*spriteToDraw);
 		}
 	}
 	
