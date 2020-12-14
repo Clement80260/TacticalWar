@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	std::vector<BaseCharacterModel*> characters;
 	
 	ScreenCallbackTest * screen = new ScreenCallbackTest(&environment);
-	SpellView * Spell = new SpellView();
+	SpellView * Spell = new SpellView(10, 10);
 	characters.push_back(screen->getCharacter(1)->getCharacter());
 	characters.push_back(screen->getCharacter(2)->getCharacter());
 	
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 		*/
 
 		window.clear();
-		renderer.render(&environment, characters, deltatime);
+		renderer.render(&environment, characters, std::vector<AbstractSpellView<sf::Sprite*>>(), deltatime);
 		window.display();
 	}
 

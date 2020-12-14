@@ -26,9 +26,9 @@ sf::Texture * SpellView::getCachedTexture(std::string path)
 	return texture;
 }
 
-SpellView::SpellView()
+SpellView::SpellView(int x, int y)
+	: AbstractSpellView<sf::Sprite*>(x, y)
 {
-
 }
 
 SpellView::~SpellView()
