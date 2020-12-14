@@ -7,6 +7,7 @@
 #include <Pathfinder.h>
 #include <deque>
 #include <map>
+#include <BaseCharacterModel.h>
 
 namespace tw
 {

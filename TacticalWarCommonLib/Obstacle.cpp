@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Obstacle.h"
 
+#include "CellData.h"
+#include "BaseCharacterModel.h"
+
 using namespace tw;
 
 Obstacle::Obstacle(CellData * cell)

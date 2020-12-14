@@ -5,7 +5,7 @@
 #include "Effect.h"
 #include "TypeZoneLaunch.h"
 
-	namespace tw
+namespace tw
 {
 	class BaseCharacterModel;
 
