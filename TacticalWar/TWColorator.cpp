@@ -3,7 +3,7 @@
 
 sf::Color TWColorator::getColorForCell(tw::CellData * cell)
 {
-	if (state == BattleState::BATTLE_PHASE)
+	if (state == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN)
 	{
 		if (spellLaunchZone.size() > 0)
 		{

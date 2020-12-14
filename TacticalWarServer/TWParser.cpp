@@ -7,6 +7,7 @@
 #include <Match.h>
 #include <CharacterFactory.h>
 #include <EnvironmentManager.h>
+#include <Pathfinder.h>
 
 
 TWParser::TWParser()
@@ -401,6 +402,35 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 				}
 			}
 		}
+		else if (StringUtils::startsWith(toParse, "Cm"))
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && p->getCharacter()->isPlayerReady())
+				{
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						Battle * b = (Battle*)m->getBattlePayload();
+						if (b != NULL && !b->isPreparationPhase())
+						{
+							// Si c'est le tour du joueur :
+							if (b->getActivePlayer() == p)
+							{
+								std::string data = toParse.substr(2);
+								std::vector<tw::Point2D> path = tw::Pathfinder::deserializePath(data);
+								
+								// TODO : Check if player has enough PM & consume its PM.
+
+								std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
+								sendToMatch(m, str);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -480,7 +510,26 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 			}
 
 			notifyBattleState(c, b);
+
+			if (b->getBattleState() == BattleState::BATTLE_PHASE)
+			{
+				notifyPlayerTurnToken(b, c);
+			}
 		}
+	}
+}
+
+void TWParser::notifyPlayerTurnToken(Battle * b, ClientState * c = NULL)
+{
+	std::string str = "Ct" + std::to_string(b->getIdForPlayer(b->getActivePlayer())) + "\n";
+
+	if (c != NULL)
+	{
+		TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());	
+	}
+	else
+	{
+		sendToMatch(b->getMatch(), str);
 	}
 }
 
@@ -750,8 +799,7 @@ void TWParser::onPlayerTurnStart(tw::Match * match, tw::Player * player)
 	{
 		if (match->playerIsInThisMatch(player))
 		{
-			std::string str = "Ct" + std::to_string((int)b->getIdForPlayer(player)) + "\n";
-			sendToMatch(match, str);
+			notifyPlayerTurnToken(b);
 		}
 	}
 }

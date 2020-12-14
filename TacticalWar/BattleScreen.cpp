@@ -250,7 +250,7 @@ void BattleScreen::onCellClicked(int cellX, int cellY)
 {
 	std::cout << "Cell x=" << cellX << ", y=" << cellY << " clicked !" << std::endl;
 	BaseCharacterModel * m = activeCharacter;
-	if (colorator->getBattleState() == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN /* Temporaire : */|| colorator->getBattleState() == BattleState::BATTLE_PHASE)
+	if (colorator->getBattleState() == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN)
 	{
 		std::vector<tw::Point2D> spellZone = colorator->getSpellLaunchZone();
 
@@ -296,9 +296,15 @@ void BattleScreen::onCellClicked(int cellX, int cellY)
 				Point2D targetPosition(cellX, cellY);
 
 				std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPosition, targetPosition, environment, getDynamicObstacles());
-				m->setPath(path);
+				//m->setPath(path);
+				std::string str = "Cm" + Pathfinder::serializePath(path);
+				LinkToServer::getInstance()->Send(str);
 			}
 		}
+	}
+	else if (colorator->getBattleState() == BattleState::BATTLE_PHASE)
+	{
+		
 	}
 	else if (colorator->getBattleState() == BattleState::PREPARATION_PHASE)
 	{
@@ -522,6 +528,24 @@ void BattleScreen::onMessageReceived(std::string msg)
 		int playerId = std::atoi(data.c_str());
 		turnToken = playerId;
 		characters[playerId]->turnStart();
+
+		if (characters[playerId] == activeCharacter)
+		{
+			colorator->setBattleState(BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN);
+		}
+		else
+		{
+			colorator->setBattleState(BattleState::BATTLE_PHASE);
+		}
+	}
+	else if (str.substring(0, 2) == "Cm")	// Mouvement d'un joueur
+	{
+		std::string data = str.substring(2);
+		std::vector<std::string> splited = StringUtils::explode(data, ';');
+		int playerId = std::atoi(splited[0].c_str());
+		std::string pathStr = splited[1];
+		std::vector<Point2D> path = Pathfinder::deserializePath(pathStr);
+		characters[playerId]->setPath(path);
 	}
 }
 
