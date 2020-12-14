@@ -199,7 +199,7 @@ void LoginScreen::onMessageReceived(std::string msg)
 		ScreenManager::getInstance()->setCurrentScreen(new BattleScreen(gui, environmentId));
 		delete this;
 	}
-	else if (sentence.substring(0, 2) == "HW")
+	else if (sentence.substring(0, 2) == "HC")
 	{
 		readyForConnect = false;
 		gui->removeAllWidgets();
