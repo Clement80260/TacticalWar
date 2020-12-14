@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ZoneAndSightCalculator.h"
 #include <iostream>
+#include <TypeZoneLaunch.h>
 
 using namespace tw;
 
