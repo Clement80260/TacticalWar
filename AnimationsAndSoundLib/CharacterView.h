@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pch.h"
-#include "AbstractCharacterView.h"
+#include <AbstractCharacterView.h>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <Pathfinder.h>

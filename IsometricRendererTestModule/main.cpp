@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "TestColorator.h"
 #include <iostream>
+
 using namespace tw;
 
 int main(int argc, char** argv)
@@ -58,7 +59,7 @@ int main(int argc, char** argv)
 		}
 
 		window.clear();
-		renderer.render(&environment, characters, deltatime);
+		renderer.render(&environment, characters, std::vector<AbstractSpellView<sf::Sprite*>>(), deltatime);
 		window.display();
 	}
 	

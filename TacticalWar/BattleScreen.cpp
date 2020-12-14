@@ -221,7 +221,7 @@ void BattleScreen::render(sf::RenderWindow * window)
 		aliveCharacters.push_back((*it).second);
 	}
 
-	renderer->render(environment, aliveCharacters, getDeltatime());
+	renderer->render(environment, aliveCharacters, std::vector<AbstractSpellView<sf::Sprite*>>(), getDeltatime());
 	window->draw(FPS);
 }
 

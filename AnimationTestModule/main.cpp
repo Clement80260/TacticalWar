@@ -25,12 +25,12 @@ int main(int argc, char** argv)
 	IsometricRenderer renderer(&window);
 	Environment environment(20, 20, 0);
 	std::vector<BaseCharacterModel*> characters;
-
+	
 	ScreenCallbackTest * screen = new ScreenCallbackTest(&environment);
-	SpellView * Spell = new SpellView();
+	SpellView * Spell = new SpellView(10, 10);
 	characters.push_back(screen->getCharacter(1)->getCharacter());
 	characters.push_back(screen->getCharacter(2)->getCharacter());
-
+	
 	environment.getMapData(5, 7)->setIsObstacle(true);
 	environment.getMapData(6, 7)->setIsWalkable(false);
 	environment.getMapData(7, 7)->setIsObstacle(true);
@@ -80,14 +80,15 @@ int main(int argc, char** argv)
 	AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(screen, 1, 1, 11, 11));
 	AnimationManager::getInstance()->addAnimation(new CharacterMoveAction(screen, 1, path3));
 	//AnimationManager::getInstance()->addAnimation(new CharacterDieAction(screen, 1));
-
 	Spell->loadAnimation("./assets/spellsprites/ballbig1_red");
+	Spell->getImageToDraw();
+	//AnimationManager::getInstance()->addAnimation();
 	while (window.isOpen())
 	{
 		float deltatime = deltaClock.restart().asSeconds();
 
 		AnimationManager::getInstance()->update(deltatime);
-
+		
 		for (int i = 0; i < characters.size(); i++)
 			characters[i]->update(deltatime);
 
@@ -101,7 +102,7 @@ int main(int argc, char** argv)
 		*/
 
 		window.clear();
-		renderer.render(&environment, characters, deltatime);
+		renderer.render(&environment, characters, std::vector<AbstractSpellView<sf::Sprite*>>(), deltatime);
 		window.display();
 	}
 

@@ -33,16 +33,15 @@ int main(int argc, char** argv)
 
 	/* Couleur d'armure qui definie une equipe
 
-	Color(222, 199, 31) -> jaune 
+	
 	Color(75, 101, 222) -> bleu 
 	Color(120,17,17) -> rouge 
 	*/
 	/* Couleur aleatoire appliquer sur les cheveux 
 
-	Color(255, 203, 96) -> blond 
+	
 	Color(108,70,35) -> chatain 
-	Color(38,33,24) -> brun 
-	Color(173,79,9) -> roux 
+
 	*/
 	/* Couleur de base de la peau
 
