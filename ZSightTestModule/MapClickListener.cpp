@@ -1,6 +1,7 @@
 #include "MapClickListener.h"
 #include <ZoneAndSightCalculator.h>
 #include <iostream>
+#include <Point2D.h>
 
 MapClickListener::MapClickListener(tw::Environment * e, TestColorator * colorator)
 {
@@ -26,9 +27,9 @@ void MapClickListener::onCellClicked(int x, int y)
 		startCell.setY(y);
 		startPointSelected = true;
 	}
-	//colorator->setPathToHighlight();
-	colorator->setPathToHighlight(tw::ZoneAndSightCalculator::getInstance()->generateZone(x, y, 0, 8, TypeZoneLaunch::LINE));
 
+	std::vector<tw::Point2D> zoneToTest = tw::ZoneAndSightCalculator::getInstance()->generateZone(x, y, 0, 10, tw::TypeZoneLaunch::STAR);
+	colorator->setPathToHighlight(tw::ZoneAndSightCalculator::getInstance()->processLineOfSight(x, y, zoneToTest, environment->getObstacles()));
 	/*
 	else if (!endPointSelected)
 	{
