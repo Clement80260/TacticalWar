@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 {
 	sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Tactical War"/*, sf::Style::Fullscreen*/);
 	tgui::Gui gui{ window };
-	window.setVerticalSyncEnabled(true);
+	window.setVerticalSyncEnabled(false);
 	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(&gui));
 	//tw::Screen * battle = new tw::BattleScreen(&gui);
 	sf::Clock deltaClock;

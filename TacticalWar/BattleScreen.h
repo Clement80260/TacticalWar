@@ -39,6 +39,30 @@ namespace tw
 
 		int turnToken;
 
+		bool hasInitSpellBar;
+
+		void calculateAndSetSpellZone();
+		void clearSpellZone()
+		{
+			colorator->setSpellLaunchZone(std::vector<tw::Point2D>());
+		}
+
+		int selectedSpell = -1;
+		void setSelectedSpell(int spellNumber)
+		{
+			selectedSpell = -1;
+			if (spellNumber > 0 && spellNumber <= 4)
+			{
+				selectedSpell = spellNumber;
+				calculateAndSetSpellZone();
+			}
+
+			if (selectedSpell == -1)
+			{
+				clearSpellZone();
+			}
+		}
+
 	public:
 		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();
