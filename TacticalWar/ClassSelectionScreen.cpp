@@ -86,7 +86,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Button::Ptr buttonLock = tgui::Button::create();
 	buttonLock->setInheritedFont(font);
 	buttonLock->setText("Verrouiller mon choix");
-	buttonLock->setSize(300, 100);
+	buttonLock->setSize(200, 50);
 
 	buttonSuivant->connect("pressed", [&]() {
 		int currentValue = this->getIdxClass();
@@ -100,15 +100,11 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 		currentValue--;
 		this->setIdxClass(currentValue);
 	});
-<<<<<<< HEAD
-	
-=======
 
 	buttonLock->connect("pressed", [&]() {
 		readyToLock = true;
 	});
 
->>>>>>> e8ba348522297d6dab8e74d22a99d28f18ee8a1c
 	m_matchListpanel = tgui::ScrollablePanel::create();
 	m_matchListpanel->setSize(1500, 700);
 	m_matchListpanel->setPosition(230, 250);
@@ -132,6 +128,9 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Label::Ptr atkLabel = tgui::Label::create();
 	atkLabel->setInheritedFont(font);
 
+	tgui::Label::Ptr pmLabel = tgui::Label::create();
+	pmLabel->setInheritedFont(font);
+
 	gui->add(m_matchListpanel);
 	gui->add(warriorpanel);
 	gui->add(statsPanel);
@@ -139,12 +138,12 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	gui->add(classCharacterView, "classCharacterView");	
 	gui->add(buttonSuivant, "buttonSuivant");
 	gui->add(buttonPrecedent, "buttonPrecedent");
-<<<<<<< HEAD
+
 	gui->add(classeNameLabel, "classeNameLabel");
 	gui->add(atkLabel, "atkLabel");
-=======
+	gui->add(pmLabel, "pmLabel");
 	gui->add(buttonLock, "buttonLock");
->>>>>>> e8ba348522297d6dab8e74d22a99d28f18ee8a1c
+
 
 	setClassView();
 }
@@ -164,15 +163,18 @@ void ClassSelectionScreen::setClassView()
 	std::string classeName = model->getClassName();
 	tgui::Label::Ptr classeNameLabel = gui->get<tgui::Label>("classeNameLabel");
 	classeNameLabel->setText(classeName);
-	//classeNameLabel->set
-	classeNameLabel->setPosition(PositionOfCardX + SizeOfCardX - 100, PositionOfCardY + SizeOfCardY - 20);
-
-	int atk = model->getBaseAttack();
+	classeNameLabel->setPosition(500,500/*PositionOfCardX + SizeOfCardX - 100, PositionOfCardY + SizeOfCardY - 200*/);
+	
+	std::string atk = std::to_string(model->getBaseAttack());
 	tgui::Label::Ptr atkLabel = gui->get<tgui::Label>("atkLabel");
-	classeNameLabel->setText(atk);
-	//classeNameLabel->set
-	classeNameLabel->setPosition(PositionOfCardX + SizeOfCardX - 300, PositionOfCardY + SizeOfCardY - 200);
-	/*
+	atkLabel->setText("ATK :" + atk);
+	atkLabel->setPosition(PositionOfCardX + SizeOfCardX - 300, PositionOfCardY + SizeOfCardY - 20);
+	
+	std::string pm = std::to_string(model->getBasePm());
+	tgui::Label::Ptr pmLabel = gui->get<tgui::Label>("pmLabel");
+	pmLabel->setText("PM :" + pm);
+	pmLabel->setPosition(PositionOfCardX + SizeOfCardX - 320, PositionOfCardY + SizeOfCardY - 20);
+	
 	std::shared_ptr<tgui::Picture> classCharacterView = gui->get<tgui::Picture>("classCharacterView");
 	std::shared_ptr<PictureCharacterView> convertedCharacterView = std::dynamic_pointer_cast<PictureCharacterView>(classCharacterView);
 
@@ -278,12 +280,9 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 	tgui::Button::Ptr btnPrecedent = gui->get<tgui::Button>("buttonPrecedent");
 	btnPrecedent->setPosition(0, windowSize.y/2);
 
-
 	tgui::Button::Ptr btnLock = gui->get<tgui::Button>("buttonLock");
-	btnLock->setPosition(window->getSize().x / 2. - btnLock->getSize().x / 2, 800);
+	btnLock->setPosition(window->getSize().x / 2. - btnLock->getSize().x / 2, 900);
 	
-
-	// TODO envoyer une tram contenant PC + L'id de la classe ex (PC2 pour archer) lorsque le joueur verouille son choix !
 	std::shared_ptr<tgui::Picture> classCharacterView = gui->get<tgui::Picture>("classCharacterView");
 	std::shared_ptr<PictureCharacterView> convertedCharacterView = std::dynamic_pointer_cast<PictureCharacterView>(classCharacterView);
 
