@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include <SFML/Graphics.hpp>
 #include "CharacterView.h"
 #include <iostream>
 #include <string>
@@ -65,7 +66,13 @@ CharacterView::CharacterView(BaseCharacterModel * model)
 
 std::vector<sf::Sprite*> CharacterView::loadAnimation(std::string filename, bool flip)
 {
+	
 	std::vector<sf::Sprite *> anim;
+	sf::Shader shader;
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/fragment.frag");
+
+
+
 	sf::Texture *testCharacterTexture = getCachedTexture(filename + ".png");
 	sf::FileInputStream stream;
 	string str;
