@@ -167,7 +167,7 @@ public:
 			turnToken = 0;
 
 		tw::Player * p = getActivePlayer();
-		
+		playerStartTurn(p);
 	}
 
 	void addEventListener(BattleEventListener * l)

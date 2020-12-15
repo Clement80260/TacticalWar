@@ -402,7 +402,40 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 				}
 			}
 		}
-		else if (StringUtils::startsWith(toParse, "Cm"))
+		else if (StringUtils::startsWith(toParse, "Cm"))	// Demande de déplacement (mouvement)
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && p->getCharacter()->isPlayerReady() && !p->getCharacter()->isMoving())
+				{
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						Battle * b = (Battle*)m->getBattlePayload();
+						if (b != NULL && !b->isPreparationPhase())
+						{
+							// Si c'est le tour du joueur :
+							if (b->getActivePlayer() == p)
+							{
+								std::string data = toParse.substr(2);
+								std::vector<tw::Point2D> path = tw::Pathfinder::deserializePath(data);
+								
+								// Si le personnage a assez de PM :
+								if (p->getCharacter()->hasEnoughPM(path.size()))
+								{
+									p->getCharacter()->serverSetPath(path);
+
+									std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
+									sendToMatch(m, str);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (StringUtils::startsWith(toParse, "Ct"))	// Le client indique qu'il a terminé son tour
 		{
 			if (client->getPseudo().size() > 0)
 			{
@@ -418,13 +451,10 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 							// Si c'est le tour du joueur :
 							if (b->getActivePlayer() == p)
 							{
-								std::string data = toParse.substr(2);
-								std::vector<tw::Point2D> path = tw::Pathfinder::deserializePath(data);
-								
-								// TODO : Check if player has enough PM & consume its PM.
+								b->changeTurn();
 
-								std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
-								sendToMatch(m, str);
+								//std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
+								//sendToMatch(m, str);
 							}
 						}
 					}
@@ -514,9 +544,21 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 			if (b->getBattleState() == BattleState::BATTLE_PHASE)
 			{
 				notifyPlayerTurnToken(b, c);
+
+				notifyActivePlayerPMNumber(b, c);
 			}
 		}
 	}
+}
+
+void TWParser::notifyActivePlayerPMNumber(Battle * b, ClientState * c)
+{
+	tw::Player * activePlayer = b->getActivePlayer();
+	int playerId = b->getIdForPlayer(activePlayer);
+	int currentPM = activePlayer->getCharacter()->getCurrentPM();
+
+	std::string str = "Cp" + std::to_string(playerId) + ";" + std::to_string(currentPM) +"\n";
+	TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());
 }
 
 void TWParser::notifyPlayerTurnToken(Battle * b, ClientState * c = NULL)

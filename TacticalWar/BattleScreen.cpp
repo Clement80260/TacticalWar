@@ -76,6 +76,9 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 
 	tgui::Button::Ptr readyButton = gui->get<tgui::Button>("readyButton");
 	readyButton->setPosition(window->getSize().x / 2. - readyButton->getSize().x / 2., window->getSize().y - readyButton->getSize().y - 20);
+
+	
+
 	if (activeCharacter != NULL)
 	{
 		readyButton->setVisible(!activeCharacter->isPlayerReady());
@@ -118,7 +121,22 @@ void BattleScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 				setSelectedSpell(4);
 			});
 
+			tgui::Button::Ptr skipTurnBtn = tgui::Button::create("Passer le tour");
+			gui->add(skipTurnBtn, "skipTurnBtn");
+			skipTurnBtn->setSize(200, 100);
+			skipTurnBtn->setPosition(tgui::Layout2d(150 + 440, window->getSize().y - 110));
+			skipTurnBtn->setVisible(false);
+			skipTurnBtn->connect("pressed", [&]() {
+				LinkToServer::getInstance()->Send("Ct");
+			});
+
 			hasInitSpellBar = true;
+		}
+		else
+		{
+			tgui::Button::Ptr skipTurnButton = gui->get<tgui::Button>("skipTurnBtn");
+			// Le bouton n'est visible que pendant notre tour.
+			skipTurnButton->setVisible(colorator->getBattleState() == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN);
 		}
 	}
 }
@@ -353,7 +371,7 @@ void BattleScreen::onCellHover(int cellX, int cellY)
 		if (needToReprocess)
 		{
 			std::vector<Point2D> pathToHighlight = Pathfinder::getInstance()->getPath(lastStartPosition, lastTargetPosition, environment, getDynamicObstacles());
-			if (pathToHighlight.size() <= 2)
+			if (pathToHighlight.size() <= activeCharacter->getCurrentPM())
 			{
 				colorator->setPathToHighlight(pathToHighlight);
 			}
@@ -426,19 +444,19 @@ void BattleScreen::onPositionChanged(BaseCharacterModel * c, int newPositionX, i
 {
 	sf::Clock test;
 	// Refresh the position :
-	if (c == activeCharacter && activeCharacter != NULL)
+	if (activeCharacter != NULL && colorator->getBattleState() == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN)
 	{
 		int x = c->getCurrentX();
 		int y = c->getCurrentY();
 
 		Point2D startPoint(x, y);
 
-		std::vector<Point2D> zone = ZoneAndSightCalculator::getInstance()->generateZone(x, y, 1, 4, TypeZoneLaunch::STAR);
+		std::vector<Point2D> zone = ZoneAndSightCalculator::getInstance()->generateZone(x, y, 1, activeCharacter->getCurrentPM(), TypeZoneLaunch::STAR);
 		std::vector<Point2D> realZone;
 		for (int i = 0; i < zone.size(); i++)
 		{
 			std::vector<Point2D> path = Pathfinder::getInstance()->getPath(startPoint, zone[i], environment, getDynamicObstacles());
-			if (path.size() > 0 && path.size() <= 2)
+			if (path.size() > 0 && path.size() <= activeCharacter->getCurrentPM())
 			{
 				realZone.push_back(zone[i]);
 			}
@@ -532,6 +550,13 @@ void BattleScreen::onMessageReceived(std::string msg)
 		if (characters[playerId] == activeCharacter)
 		{
 			colorator->setBattleState(BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN);
+			invalidatePathZone();
+			
+			// To reprocess the path zone with new obstacles configuration :
+			if (activeCharacter != NULL)
+			{
+				onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
+			}
 		}
 		else
 		{
@@ -547,11 +572,28 @@ void BattleScreen::onMessageReceived(std::string msg)
 		std::vector<Point2D> path = Pathfinder::deserializePath(pathStr);
 		characters[playerId]->setPath(path);
 	}
+	else if (str.substring(0, 2) == "Cp")	// Synchro nombre de PM
+	{
+		std::string data = str.substring(2);
+		std::vector<std::string> splited = StringUtils::explode(data, ';');
+		int playerId = std::atoi(splited[0].c_str());
+		int pm = std::atoi(splited[1].c_str());
+		characters[playerId]->setCurrentPM(pm);
+
+		// To reprocess the path zone with new obstacles configuration :
+		if (activeCharacter != NULL && characters[playerId] == activeCharacter)
+		{
+			onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
+		}
+	}
 }
 
 void tw::BattleScreen::onDisconnected()
 {
 	gui->removeAllWidgets();
+
+	window->setView(window->getDefaultView());
+
 	tw::ScreenManager::getInstance()->setCurrentScreen(new tw::LoginScreen(gui));
 	delete this;
 }

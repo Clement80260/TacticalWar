@@ -5,6 +5,11 @@
 #include "Effect.h"
 #include "TypeZoneLaunch.h"
 
+
+#include <chrono>
+#include <iostream>
+#include <ctime>
+
 namespace tw
 {
 	class BaseCharacterModel;
@@ -54,6 +59,26 @@ namespace tw
 		bool isReady;
 
 		int currentLife;
+		int currentPM;
+		int currentPA;
+
+		void consumePM(int nb)
+		{
+			currentPM -= nb;
+			if (currentPM < 0)
+			{
+				currentPM = 0;
+			}
+		}
+
+		void consumePA(int nb)
+		{
+			currentPA -= nb;
+			if (currentPA < 0)
+			{
+				currentPA = 0;
+			}
+		}
 
 		void setNextPositionFromPath()
 		{
@@ -90,6 +115,9 @@ namespace tw
 		// Liste des effets appliqués sur le personnage :
 		std::vector<Effect *> appliedEffects;
 
+		// Gestion du mouvement (server side) :
+		long long lastMoveEndTime;
+
 	public:
 		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY)
 		{
@@ -106,11 +134,14 @@ namespace tw
 			this->currentY = currentY;
 
 			setNoTargetPosition();
+			lastMoveEndTime = 0;
 		}
 
 		void initializeValues()
 		{
 			this->currentLife = getBaseMaxLife();
+			this->currentPA = getBasePa();
+			this->currentPM = getBasePm();
 		}
 
 		virtual ~BaseCharacterModel()
@@ -147,7 +178,46 @@ namespace tw
 			}
 		}
 
-		virtual void turnStart() = 0;
+		bool hasEnoughPM(int neededPM)
+		{
+			return currentPM >= neededPM;
+		}
+
+		bool hasEnoughPA(int neededPA)
+		{
+			return currentPA >= neededPA;
+		}
+
+		int getCurrentPM()
+		{
+			return currentPM;
+		}
+
+		void setCurrentPM(int pm)
+		{
+			currentPM = pm;
+		}
+
+		int getCurrentPA()
+		{
+			return currentPA;
+		}
+
+		void resetPM()
+		{
+			currentPM = getBasePm();
+		}
+
+		void resetPA()
+		{
+			currentPA = getBasePa();
+		}
+
+		virtual void turnStart()
+		{
+			resetPA();
+			resetPM();
+		}
 
 		virtual int getClassId() = 0;
 		virtual std::string getGraphicsPath() = 0;
@@ -280,9 +350,14 @@ namespace tw
 			return interpolatedY;
 		}
 
+		inline float getSpeed()
+		{
+			return 3.0;
+		}
+
 		inline void update(float deltatime)
 		{
-			float speed = 3;
+			float speed = getSpeed();
 
 			setNextPositionFromPath();
 
@@ -349,10 +424,33 @@ namespace tw
 			}
 		}
 
+		inline long long getLastMoveEndTime()
+		{
+			return lastMoveEndTime;
+		}
+
+		// Le mouvement n'est pas terminé si le temps n'est pas dépassé.
+		inline bool isMoving()
+		{
+			return lastMoveEndTime > std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		}
+
+		void serverSetPath(std::vector<Point2D> path)
+		{
+			if (path.size() > 0)
+			{
+				setCurrentX(path[0].getX());
+				setCurrentY(path[0].getY());
+				consumePM(path.size());
+				long long currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+				lastMoveEndTime = currentTime + (path.size() * (1000.0 / getSpeed()));
+			}
+		}
 
 
 		void setPath(std::vector<Point2D> path, MoveActionAnimationEventListener * callback = NULL)
 		{
+			consumePM(path.size());
 			this->path = path;
 			this->currentMoveCallback = callback;
 		}

@@ -46,6 +46,7 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEvent
 	void notifyReadyState(ClientState * c, int playerId, tw::Player * p);
 	void notifyCharacterPositionChanged(ClientState * toNotify, int playerId, tw::Player * characterWhosePositionChanged);
 	void notifyPlayerTurnToken(Battle * b, ClientState * c);
+	void notifyActivePlayerPMNumber(Battle * b, ClientState * c);
 
 	bool initRandom;
 

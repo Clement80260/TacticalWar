@@ -71,6 +71,8 @@ public:
 
 	virtual void turnStart()
 	{
+		BaseCharacterModel::turnStart();
+
 		// Décrémentation des cooldowns :
 		if (compt1 > 0)
 			compt1--;
