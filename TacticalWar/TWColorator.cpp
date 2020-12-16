@@ -5,6 +5,17 @@ sf::Color TWColorator::getColorForCell(tw::CellData * cell)
 {
 	if (state == BattleState::BATTLE_PHASE_ACTIVE_PLAYER_TURN)
 	{
+		if(spellLaunchZone.size() > 0 && spellImpactZone.size() > 0)
+		{ 
+			for (int i = 0; i < spellImpactZone.size(); i++)
+			{
+				if ((*cell) == spellImpactZone[i])
+				{
+					return sf::Color(255, 50, 50);
+				}
+			}
+		}
+
 		if (spellLaunchZone.size() > 0)
 		{
 			for (int i = 0; i < spellLaunchZone.size(); i++)

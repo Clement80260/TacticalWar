@@ -52,20 +52,20 @@ public:
 		cout << "applyCharacterLaunchSpell()" << endl;
 	}
 
-	virtual tw::Player* getCharacter(int persoId)
+	virtual tw::BaseCharacterModel* getCharacter(int persoId)
 	{
 		if (persoId == 1)
-			return p1;
+			return p1->getCharacter();
 		else if (persoId == 2)
-			return p2;
+			return p2->getCharacter();
 
 		return NULL;
 	}
 
-	virtual std::vector <tw::Player*> getAliveCharacters() {
-		std::vector<tw::Player*> players;
-		players.push_back(p1);
-		players.push_back(p2);
+	virtual std::vector <tw::BaseCharacterModel*> getAliveCharacters() {
+		std::vector<tw::BaseCharacterModel*> players;
+		players.push_back(p1->getCharacter());
+		players.push_back(p2->getCharacter());
 		return players;
 	}
 
@@ -128,6 +128,21 @@ public:
 	virtual void applyDieAnimation()
 	{
 		cout << "applyDieAnimation()" << endl;
+	}
+
+	virtual void applyTeleport(int playerId, int cellX, int cellY)
+	{
+
+	}
+
+	virtual void applySynchroPA(int playerId, int pa)
+	{
+
+	}
+
+	virtual void applySynchroPM(int playerId, int pm)
+	{
+
 	}
 };
 

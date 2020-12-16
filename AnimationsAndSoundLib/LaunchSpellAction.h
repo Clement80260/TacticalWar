@@ -32,15 +32,15 @@ public:
 		elapseTime(deltatime);
 		if (firstUpdate)
 		{
-			tw::Player * srcPlayer = screen->getCharacter(persoId);
-			srcPlayer->getCharacter()->startAttack1Animation(1);
+			tw::BaseCharacterModel * srcPlayer = screen->getCharacter(persoId);
+			srcPlayer->startAttack1Animation(1);
 			firstUpdate = false;
 		}
 
 		if (getEllapsedTime() > 1000 && !hasResetAttackAnimation)
 		{
-			tw::Player * srcPlayer = screen->getCharacter(persoId);
-			srcPlayer->getCharacter()->resetAnimation();
+			tw::BaseCharacterModel * srcPlayer = screen->getCharacter(persoId);
+			srcPlayer->resetAnimation();
 			hasResetAttackAnimation = true;
 
 			screen->applyCharacterLaunchSpell(persoId, x, y, spellId);

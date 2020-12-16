@@ -28,8 +28,8 @@ int main(int argc, char** argv)
 	
 	ScreenCallbackTest * screen = new ScreenCallbackTest(&environment);
 	SpellView * Spell = new SpellView(10, 10);
-	characters.push_back(screen->getCharacter(1)->getCharacter());
-	characters.push_back(screen->getCharacter(2)->getCharacter());
+	characters.push_back(screen->getCharacter(1));
+	characters.push_back(screen->getCharacter(2));
 	
 	environment.getMapData(5, 7)->setIsObstacle(true);
 	environment.getMapData(6, 7)->setIsWalkable(false);
@@ -42,18 +42,18 @@ int main(int argc, char** argv)
 	environment.getMapData(12, 12)->setIsWalkable(false);
 	environment.getMapData(13, 13)->setIsObstacle(true);
 
-	std::vector<Point2D> path1 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY()),
-																	tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY() + 1),
+	std::vector<Point2D> path1 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCurrentX(), screen->getCharacter(1)->getCurrentY()),
+																	tw::Point2D(screen->getCharacter(1)->getCurrentX(), screen->getCharacter(1)->getCurrentY() + 1),
 																	&environment,
 																	std::vector<Obstacle>());
 
-	std::vector<Point2D> path2 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY() + 1),
-		tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX() - 1, screen->getCharacter(1)->getCharacter()->getCurrentY()),
+	std::vector<Point2D> path2 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCurrentX(), screen->getCharacter(1)->getCurrentY() + 1),
+		tw::Point2D(screen->getCharacter(1)->getCurrentX() - 1, screen->getCharacter(1)->getCurrentY()),
 		&environment,
 		std::vector<Obstacle>());
 
-	std::vector<Point2D> path3 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX() - 1, screen->getCharacter(1)->getCharacter()->getCurrentY()),
-		tw::Point2D(screen->getCharacter(1)->getCharacter()->getCurrentX(), screen->getCharacter(1)->getCharacter()->getCurrentY()),
+	std::vector<Point2D> path3 = Pathfinder::getInstance()->getPath(tw::Point2D(screen->getCharacter(1)->getCurrentX() - 1, screen->getCharacter(1)->getCurrentY()),
+		tw::Point2D(screen->getCharacter(1)->getCurrentX(), screen->getCharacter(1)->getCurrentY()),
 		&environment,
 		std::vector<Obstacle>());
 

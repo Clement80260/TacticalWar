@@ -73,6 +73,42 @@ public:
 		return compt3;
 	}
 
+	virtual bool canDoAttack(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1 <= 0;
+		}
+		else if (spellId == 2)
+		{
+			return compt2 <= 0;
+		}
+		else if (spellId == 3)
+		{
+			return compt3 <= 0;
+		}
+
+		return true;
+	}
+
+	virtual int getAttackCooldown(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1;
+		}
+		else if (spellId == 2)
+		{
+			return compt2;
+		}
+		else if (spellId == 3)
+		{
+			return compt3;
+		}
+
+		return 0;
+	}
+
 	virtual void turnStart()
 	{
 		BaseCharacterModel::turnStart();

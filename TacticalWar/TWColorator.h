@@ -10,7 +10,7 @@ class TWColorator : public tw::CellColorator
 	std::vector<tw::Point2D> pathToHighlight;
 
 	std::vector<tw::Point2D> spellLaunchZone;
-
+	std::vector<tw::Point2D> spellImpactZone;
 
 	sf::Color pathZoneColor;
 	sf::Color pathHighlightColor;
@@ -59,6 +59,16 @@ public:
 	std::vector<tw::Point2D> getSpellLaunchZone()
 	{
 		return spellLaunchZone;
+	}
+
+	void setSpellImpactZone(std::vector<tw::Point2D> zone)
+	{
+		spellImpactZone = zone;
+	}
+
+	std::vector<tw::Point2D> getSpellImpactZone()
+	{
+		return spellImpactZone;
 	}
 };
 

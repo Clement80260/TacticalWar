@@ -308,7 +308,8 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 								if (cell.getX() != -1 && cell.getY() != -1)
 								{
 									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY()));
-									
+									p->getCharacter()->setPseudo(p->getPseudo());
+
 									notifyClassChoiceLocked(client);
 									
 									// Si tout le monde est prêt : démarrage du combat.
@@ -461,6 +462,48 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 				}
 			}
 		}
+		else if (StringUtils::startsWith(toParse, "CL"))	// Le client indique qu'il veut lancer un sort
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && p->getCharacter()->isPlayerReady() && !p->getCharacter()->isMoving())
+				{
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						Battle * b = (Battle*)m->getBattlePayload();
+						if (b != NULL && !b->isPreparationPhase())
+						{
+							// Si c'est le tour du joueur :
+							if (b->getActivePlayer() == p)
+							{
+								std::string data = toParse.substr(2);
+								std::vector<std::string> spellData = StringUtils::explode(data, ';');
+								int spellId = std::atoi(spellData[0].c_str());
+								int cellX = std::atoi(spellData[1].c_str());
+								int cellY = std::atoi(spellData[2].c_str());
+
+								if (p->getCharacter()->canDoAttack(spellId))
+								{
+									int attackPA = -1;
+									attackPA = p->getCharacter()->getAttackPACost(spellId);
+
+									// Si le personnage a assez de PA :
+									if (attackPA != -1 && p->getCharacter()->hasEnoughPA(attackPA))
+									{
+										p->getCharacter()->doAttack(spellId, cellX, cellY);
+
+										std::string str = "CL" + std::to_string(b->getIdForPlayer(p)) + ";" + std::to_string(spellId) + ";" + std::to_string(cellX) + ";" + std::to_string(cellY) + "\n";
+										sendToMatch(m, str);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -525,7 +568,11 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 												+ std::to_string(model->getClassId()) + ";" 
 												+ std::to_string(model->getTeamId()) + ";"
 												+ std::to_string(model->getCurrentX()) + ";"
-												+ std::to_string(model->getCurrentY())
+												+ std::to_string(model->getCurrentY()) + ";"
+												+ std::to_string(model->getCurrentLife()) + ";"
+												+ std::to_string(model->getCurrentPA()) + ";"
+												+ std::to_string(model->getCurrentPM()) + ";"
+												+ model->getPseudo()
 												+ "\n";
 				TcpServer<TWParser, ClientState>::Send(c, (char*)addPlayerStr.c_str(), addPlayerStr.size());
 
@@ -545,10 +592,21 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 			{
 				notifyPlayerTurnToken(b, c);
 
+				notifyActivePlayerPANumber(b, c);
 				notifyActivePlayerPMNumber(b, c);
 			}
 		}
 	}
+}
+
+void TWParser::notifyActivePlayerPANumber(Battle * b, ClientState * c)
+{
+	tw::Player * activePlayer = b->getActivePlayer();
+	int playerId = b->getIdForPlayer(activePlayer);
+	int currentPA = activePlayer->getCharacter()->getCurrentPA();
+
+	std::string str = "Ca" + std::to_string(playerId) + ";" + std::to_string(currentPA) + "\n";
+	TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());
 }
 
 void TWParser::notifyActivePlayerPMNumber(Battle * b, ClientState * c)

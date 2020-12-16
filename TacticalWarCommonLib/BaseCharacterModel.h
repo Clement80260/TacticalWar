@@ -58,6 +58,7 @@ namespace tw
 
 		bool isReady;
 
+		std::string pseudo;
 		int currentLife;
 		int currentPM;
 		int currentPA;
@@ -137,6 +138,16 @@ namespace tw
 			lastMoveEndTime = 0;
 		}
 
+		std::string getPseudo()
+		{
+			return pseudo;
+		}
+
+		void setPseudo(std::string pseudo)
+		{
+			this->pseudo = pseudo;
+		}
+
 		void initializeValues()
 		{
 			this->currentLife = getBaseMaxLife();
@@ -178,6 +189,11 @@ namespace tw
 			}
 		}
 
+		void setCurrentLife(int life)
+		{
+			currentLife = life;
+		}
+
 		bool hasEnoughPM(int neededPM)
 		{
 			return currentPM >= neededPM;
@@ -201,6 +217,11 @@ namespace tw
 		int getCurrentPA()
 		{
 			return currentPA;
+		}
+
+		void setCurrentPA(int pa)
+		{
+			currentPA = pa;
 		}
 
 		void resetPM()
@@ -291,6 +312,10 @@ namespace tw
 		virtual int getBasePa() = 0;
 		virtual int getBasePm() = 0;
 
+
+		// Ces méthodes permettent de lancer les attaques 
+		// (c'est à dire appliquer le cooldown quand il y en a un, 
+		// trouver les cibles et leur appliquer les effets, etc...)
 		virtual bool doAttack1(int targetX, int targetY) = 0;
 		virtual bool doAttack2(int targetX, int targetY) = 0;
 		virtual bool doAttack3(int targetX, int targetY) = 0;
@@ -540,6 +565,68 @@ namespace tw
 			neededAnimation = Animation::TAKE_DAMAGE;
 			animationDuration = duration;
 			reinitViewTime = true;
+		}
+
+		// A redefinir dans les classes filles pour la gestion des cooldowns :
+		// Cette méthode ne prend pas en compte le nombre de PA disponible.
+		// Elle ne permet que de savoir si le cooldown est passé.
+		virtual bool canDoAttack(int spellId) {
+			return true;
+		}
+
+		// A redefinir dans les classes filles pour la gestion des cooldowns :
+		virtual int getAttackCooldown(int spellId)
+		{
+			return 0;
+		}
+
+		int getAttackPACost(int spellId)
+		{
+			if (spellId == 1)
+			{
+				return getSpell1ManaCost();
+			}
+			else if (spellId == 2)
+			{
+				return getSpell2ManaCost();
+			}
+			else if (spellId == 3)
+			{
+				return getSpell3ManaCost();
+			}
+			else if (spellId == 4)
+			{
+				return getSpell4ManaCost();
+			}
+
+			return -1;
+		}
+
+		bool doAttack(int spellId, int targetX, int targetY)
+		{
+			int paCost = getAttackPACost(spellId);
+			if (paCost != -1)
+			{
+				consumePA(paCost);
+				if (spellId == 1)
+				{
+					return doAttack1(targetX, targetY);
+				}
+				else if (spellId == 2)
+				{
+					return doAttack2(targetX, targetY);
+				}
+				else if (spellId == 3)
+				{
+					return doAttack3(targetX, targetY);
+				}
+				else if (spellId == 4)
+				{
+					return doAttack4(targetX, targetY);
+				}
+			}
+
+			return false;
 		}
 	};
 }
