@@ -115,46 +115,42 @@ public:
 	}
 
 	//Passif : -50% d'HP -> +15% de dégâts ; -35% d'HP -> +25% de dégâts
-	virtual bool doAttack1(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack1(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 1 : Charge (Mana : 3 / Sort en ligne 4x1 / DPS : 10 / Cd : 3t)
-	virtual bool doAttack2(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack2(int targetX, int targetY)
 	{
-
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 2 : Rempart (Mana : 4 / Zone 3x3 autour + Soi-même / DPS : 0 / Cd : 4t) : -30% de dégâts reçus sur soi-même / -15% de dégâts reçus sur les alliés
-	virtual bool doAttack3(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack3(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 3 : Frappe bouclier (Mana : 2 / Zone 3x3 autour du joueur / DPS : 8 / Cd : 2t)
-	virtual bool doAttack4(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack4(int targetX, int targetY)
 	{
+		std::vector<tw::AttackDamageResult> result;
 		std::vector<tw::Point2D> impactZone = getImpactZoneForSpell(4, targetX, targetY);
 		std::vector<tw::BaseCharacterModel*> impactedEntities = getMapKnowledge()->getAliveCharactersInZone(impactZone);
 
 		for (int i = 0; i < impactedEntities.size(); i++)
 		{
-			impactedEntities[i]->modifyCurrentLife(-7);
-			if (impactedEntities[i]->isAlive())
-				impactedEntities[i]->startTakeDmg(1);
-			else
-				impactedEntities[i]->startDieAction(1);
+			result.push_back(tw::AttackDamageResult(impactedEntities[i], 7));
 		}
 
-		return true;
+		return result;
 	}
 
 	//Auto attaque (Mana : 0 / Corps à corps / DPS : 5 / Cd : 0t)
-	virtual bool doAttack5(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack5(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	Guerrier(tw::Environment * environment, int teamId, int currentX, int currentY, tw::IMapKnowledge * map)

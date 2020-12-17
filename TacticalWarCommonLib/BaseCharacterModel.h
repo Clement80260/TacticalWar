@@ -32,6 +32,35 @@ namespace tw
 		virtual void onPositionChanged(BaseCharacterModel * c, int newPositionX, int newPositionY) = 0;
 	};
 
+	class AttackDamageResult
+	{
+	private:
+		BaseCharacterModel * character;
+		int damage;
+
+	public:
+		AttackDamageResult()
+		{
+			character = NULL;
+			damage = 0;
+		}
+
+		AttackDamageResult(BaseCharacterModel * character, int damage)
+		{
+			this->character = character;
+			this->damage = damage;
+		}
+
+		BaseCharacterModel * getCharacter()
+		{
+			return character;
+		}
+
+		int getDamage()
+		{
+			return damage;
+		}
+	};
 
 	class BaseCharacterModel
 	{
@@ -377,11 +406,11 @@ namespace tw
 		// Ces méthodes permettent de lancer les attaques 
 		// (c'est à dire appliquer le cooldown quand il y en a un, 
 		// trouver les cibles et leur appliquer les effets, etc...)
-		virtual bool doAttack1(int targetX, int targetY) = 0;
-		virtual bool doAttack2(int targetX, int targetY) = 0;
-		virtual bool doAttack3(int targetX, int targetY) = 0;
-		virtual bool doAttack4(int targetX, int targetY) = 0;
-		virtual bool doAttack5(int targetX, int targetY) = 0;
+		virtual std::vector<AttackDamageResult> doAttack1(int targetX, int targetY) = 0;
+		virtual std::vector<AttackDamageResult> doAttack2(int targetX, int targetY) = 0;
+		virtual std::vector<AttackDamageResult> doAttack3(int targetX, int targetY) = 0;
+		virtual std::vector<AttackDamageResult> doAttack4(int targetX, int targetY) = 0;
+		virtual std::vector<AttackDamageResult> doAttack5(int targetX, int targetY) = 0;
 
 		inline int getTeamId() {
 			return teamId;
@@ -663,7 +692,7 @@ namespace tw
 			return -1;
 		}
 
-		bool doAttack(int spellId, int targetX, int targetY)
+		std::vector<AttackDamageResult> doAttack(int spellId, int targetX, int targetY)
 		{
 			int paCost = getAttackPACost(spellId);
 			if (paCost != -1)
@@ -687,7 +716,7 @@ namespace tw
 				}
 			}
 
-			return false;
+			return std::vector<AttackDamageResult>();
 		}
 	};
 }

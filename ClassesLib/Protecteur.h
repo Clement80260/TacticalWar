@@ -115,46 +115,43 @@ public:
 	}
 
 	//Passif : +3 HP sur soi-même pour chaque auto attaque
-	virtual bool doAttack1(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack1(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 1 : Réanimation (Mana : 5 / Ciblé / DPS : 0 / Cd : usage unique)
-	virtual bool doAttack2(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack2(int targetX, int targetY)
 	{
 
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 2 : Heal (Mana : 5 / Ciblé / Heal : +20% des HP max / Cd : 3t / )
-	virtual bool doAttack3(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack3(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 3 : Purification d'âme (Mana : 2 / Pigme (4) / DPS : 10 / Cd : 2t) Supprime 1 tour de malus chez les alliés touchés
-	virtual bool doAttack4(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack4(int targetX, int targetY)
 	{
+		std::vector<tw::AttackDamageResult> result;
 		std::vector<tw::Point2D> impactZone = getImpactZoneForSpell(4, targetX, targetY);
 		std::vector<tw::BaseCharacterModel*> impactedEntities = getMapKnowledge()->getAliveCharactersInZone(impactZone);
 
 		for (int i = 0; i < impactedEntities.size(); i++)
 		{
-			impactedEntities[i]->modifyCurrentLife(-7);
-			if (impactedEntities[i]->isAlive())
-				impactedEntities[i]->startTakeDmg(1);
-			else
-				impactedEntities[i]->startDieAction(1);
+			result.push_back(tw::AttackDamageResult(impactedEntities[i], 7));
 		}
 
-		return true;
+		return result;
 	}
 
 	//Auto attaque (Mana : 0 / Corps à corps / DPS : 5 / Cd : 0t)
-	virtual bool doAttack5(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack5(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	Protecteur(tw::Environment * environment, int teamId, int currentX, int currentY, tw::IMapKnowledge * map)

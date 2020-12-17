@@ -43,29 +43,29 @@ namespace tw
 			return 4;
 		}
 
-		virtual bool doAttack1(int targetX, int targetY)
+		virtual std::vector<tw::AttackDamageResult> doAttack1(int targetX, int targetY)
 		{
-			return true;
+			return std::vector<tw::AttackDamageResult>();
 		}
 
-		virtual bool doAttack2(int targetX, int targetY)
+		virtual std::vector<tw::AttackDamageResult> doAttack2(int targetX, int targetY)
 		{
-			return true;
+			return std::vector<tw::AttackDamageResult>();
 		}
 
-		virtual bool doAttack3(int targetX, int targetY)
+		virtual std::vector<tw::AttackDamageResult> doAttack3(int targetX, int targetY)
 		{
-			return true;
+			return std::vector<tw::AttackDamageResult>();
 		}
 
-		virtual bool doAttack4(int targetX, int targetY)
+		virtual std::vector<tw::AttackDamageResult> doAttack4(int targetX, int targetY)
 		{
-			return true;
+			return std::vector<tw::AttackDamageResult>();
 		}
 
-		virtual bool doAttack5(int targetX, int targetY)
+		virtual std::vector<tw::AttackDamageResult> doAttack5(int targetX, int targetY)
 		{
-			return true;
+			return std::vector<tw::AttackDamageResult>();
 		}
 
 		TestCharacterModel(Environment * environment, int teamId, int currentX, int currentY)

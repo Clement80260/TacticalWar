@@ -429,6 +429,12 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 
 									std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
 									sendToMatch(m, str);
+
+									// Si plus d'actions possibles, passage du tour automatique :
+									if (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0)
+									{
+										b->changeTurn();
+									}
 								}
 							}
 						}
@@ -453,9 +459,6 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 							if (b->getActivePlayer() == p)
 							{
 								b->changeTurn();
-
-								//std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
-								//sendToMatch(m, str);
 							}
 						}
 					}
@@ -492,62 +495,23 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 									// Si le personnage a assez de PA :
 									if (attackPA != -1 && p->getCharacter()->hasEnoughPA(attackPA))
 									{
-										p->getCharacter()->doAttack(spellId, cellX, cellY);
-
+										std::vector<tw::AttackDamageResult> impactedEntities = p->getCharacter()->doAttack(spellId, cellX, cellY);
+										for (int i = 0; i < impactedEntities.size(); i++)
+										{
+											impactedEntities[i].getCharacter()->modifyCurrentLife(-impactedEntities[i].getDamage());
+										}
+										
 										std::string str = "CL" + std::to_string(b->getIdForPlayer(p)) + ";" + std::to_string(spellId) + ";" + std::to_string(cellX) + ";" + std::to_string(cellY) + "\n";
 										sendToMatch(m, str);
 
-										std::vector<tw::Player*> team1 = m->getTeam1();
-										std::vector<tw::Player*> team2 = m->getTeam2();
-
-										bool aliveInTeam1 = false;
-										bool aliveInTeam2 = false;
-
-										for (int i = 0; i < team1.size(); i++)
+										// Si le personnage est mort pendant son tour ou qu'il n'y a plus d'action possible :
+										if (!p->getCharacter()->isAlive() || (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0))
 										{
-											if (team1[i]->getCharacter()->isAlive())
-											{
-												aliveInTeam1 = true;
-												break;
-											}
+											// Passage automatique du tour ...
+											b->changeTurn();
 										}
 
-										for (int i = 0; i < team2.size(); i++)
-										{
-											if (team2[i]->getCharacter()->isAlive())
-											{
-												aliveInTeam2 = true;
-												break;
-											}
-										}
-
-										bool endOfBattle = false;
-										if (!aliveInTeam1)
-										{
-											str = "BE" + std::to_string(team2[0]->getTeamNumber()) + "\n";
-											sendToMatch(m, str);
-											m->setWinnerTeam(2);
-											endOfBattle = true;
-										}
-										
-										if (!aliveInTeam2)
-										{
-											str = "BE" + std::to_string(team1[0]->getTeamNumber()) + "\n";
-											sendToMatch(m, str);
-											m->setWinnerTeam(1);
-											endOfBattle = true;
-										}
-
-										if (endOfBattle)
-										{
-											std::vector<tw::Player*> players = m->getPlayers();
-											for (int i = 0; i < players.size(); i++)
-											{
-												tw::BaseCharacterModel * character = players[i]->getCharacter();
-												delete character;
-												players[i]->setCharacter(NULL);
-											}
-										}
+										checkBattleEnd(m);
 									}
 								}
 							}
@@ -555,6 +519,62 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 					}
 				}
 			}
+		}
+	}
+}
+
+void TWParser::checkBattleEnd(tw::Match * m)
+{
+	std::string str = "";
+	std::vector<tw::Player*> team1 = m->getTeam1();
+	std::vector<tw::Player*> team2 = m->getTeam2();
+
+	bool aliveInTeam1 = false;
+	bool aliveInTeam2 = false;
+
+	for (int i = 0; i < team1.size(); i++)
+	{
+		if (team1[i]->getCharacter()->isAlive())
+		{
+			aliveInTeam1 = true;
+			break;
+		}
+	}
+
+	for (int i = 0; i < team2.size(); i++)
+	{
+		if (team2[i]->getCharacter()->isAlive())
+		{
+			aliveInTeam2 = true;
+			break;
+		}
+	}
+
+	bool endOfBattle = false;
+	if (!aliveInTeam1)
+	{
+		str = "BE" + std::to_string(team2[0]->getTeamNumber()) + "\n";
+		sendToMatch(m, str);
+		m->setWinnerTeam(2);
+		endOfBattle = true;
+	}
+
+	if (!aliveInTeam2)
+	{
+		str = "BE" + std::to_string(team1[0]->getTeamNumber()) + "\n";
+		sendToMatch(m, str);
+		m->setWinnerTeam(1);
+		endOfBattle = true;
+	}
+
+	if (endOfBattle)
+	{
+		std::vector<tw::Player*> players = m->getPlayers();
+		for (int i = 0; i < players.size(); i++)
+		{
+			tw::BaseCharacterModel * character = players[i]->getCharacter();
+			delete character;
+			players[i]->setCharacter(NULL);
 		}
 	}
 }

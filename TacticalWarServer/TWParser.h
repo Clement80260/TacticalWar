@@ -49,6 +49,8 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEvent
 	void notifyActivePlayerPANumber(Battle * b, ClientState * c);
 	void notifyActivePlayerPMNumber(Battle * b, ClientState * c);
 
+	void checkBattleEnd(tw::Match * m);
+
 	bool initRandom;
 
 

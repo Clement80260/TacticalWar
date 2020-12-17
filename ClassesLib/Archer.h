@@ -116,46 +116,43 @@ public:
 	}
 
 	//Passif : +1 de PD - fonction inutilisée
-	virtual bool doAttack1(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack1(int targetX, int targetY)
 	{
-		return false;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 1 : Flèche toxique : (Mana : 4 / Ligne 3x1 / DPS : 10 / Malus -3 HP / tour pendant 2 tour / Cd : 4t)
-	virtual bool doAttack2(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack2(int targetX, int targetY)
 	{
 
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 2 : Flèche repousse (Mana : 3 / Ligne 3x1 / DPS : 4 / Repousse de 2 cases / Cd : 3t)
-	virtual bool doAttack3(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack3(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 3 : Tir précis (Mana : 2 / Ligne 4x1 / DPS : 7 / Cd : 1t)
-	virtual bool doAttack4(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack4(int targetX, int targetY)
 	{
+		std::vector<tw::AttackDamageResult> result;
 		std::vector<tw::Point2D> impactZone = getImpactZoneForSpell(4, targetX, targetY);
 		std::vector<tw::BaseCharacterModel*> impactedEntities = getMapKnowledge()->getAliveCharactersInZone(impactZone);
 
 		for (int i = 0; i < impactedEntities.size(); i++)
 		{
-			impactedEntities[i]->modifyCurrentLife(-7);
-			if (impactedEntities[i]->isAlive())
-				impactedEntities[i]->startTakeDmg(1);
-			else
-				impactedEntities[i]->startDieAction(1);
+			result.push_back(tw::AttackDamageResult(impactedEntities[i], 7));
 		}
 
-		return true;
+		return result;
 	}
 
 	//Auto attaque (Mana : 0 / Corps à corps / DPS : 5 / Cd : 0t)
-	virtual bool doAttack5(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack5(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	Archer(tw::Environment * environment, int teamId, int currentX, int currentY, tw::IMapKnowledge * map)

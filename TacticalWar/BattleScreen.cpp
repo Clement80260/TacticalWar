@@ -805,7 +805,7 @@ void tw::BattleScreen::applyCharacterDie(int idPerso)
 
 void tw::BattleScreen::applyCharacterLaunchSpell(int persoId, int x, int y, int spellId)
 {
-	characters[persoId]->doAttack(spellId, x, y);
+	// TODO : Ajouter un log des événements de combat ...
 }
 
 tw::BaseCharacterModel* tw::BattleScreen::getCharacter(int persoId)
