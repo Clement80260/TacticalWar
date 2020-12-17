@@ -774,6 +774,8 @@ void tw::BattleScreen::applyEndOfBattle(int winnerTeam)
 	endLabel->getRenderer()->setTextOutlineColor(tgui::Color::Black);
 	endLabel->getRenderer()->setTextOutlineThickness(1.0);
 	gui->add(endLabel, "endLabel");
+
+	colorator->setBattleState(BattleState::END_PHASE);
 }
 
 void tw::BattleScreen::applyChangeTurn(float remaining, int idPerso, std::string message)
