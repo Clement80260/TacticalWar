@@ -136,6 +136,18 @@ public:
 	//Sort 3 : Frappe bouclier (Mana : 2 / Zone 3x3 autour du joueur / DPS : 8 / Cd : 2t)
 	virtual bool doAttack4(int targetX, int targetY)
 	{
+		std::vector<tw::Point2D> impactZone = getImpactZoneForSpell(4, targetX, targetY);
+		std::vector<tw::BaseCharacterModel*> impactedEntities = getMapKnowledge()->getAliveCharactersInZone(impactZone);
+
+		for (int i = 0; i < impactedEntities.size(); i++)
+		{
+			impactedEntities[i]->modifyCurrentLife(-7);
+			if (impactedEntities[i]->isAlive())
+				impactedEntities[i]->startTakeDmg(1);
+			else
+				impactedEntities[i]->startDieAction(1);
+		}
+
 		return true;
 	}
 
@@ -145,8 +157,8 @@ public:
 		return true;
 	}
 
-	Guerrier(tw::Environment * environment, int teamId, int currentX, int currentY)
-		: BaseCharacterModel(environment, teamId, currentX, currentY)
+	Guerrier(tw::Environment * environment, int teamId, int currentX, int currentY, tw::IMapKnowledge * map)
+		: BaseCharacterModel(environment, teamId, currentX, currentY, map)
 	{
 		initializeValues();
 		compt1 = 3;

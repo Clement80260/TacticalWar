@@ -307,7 +307,7 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 
 								if (cell.getX() != -1 && cell.getY() != -1)
 								{
-									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY()));
+									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY(), m));
 									p->getCharacter()->setPseudo(p->getPseudo());
 
 									notifyClassChoiceLocked(client);
@@ -496,6 +496,44 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 
 										std::string str = "CL" + std::to_string(b->getIdForPlayer(p)) + ";" + std::to_string(spellId) + ";" + std::to_string(cellX) + ";" + std::to_string(cellY) + "\n";
 										sendToMatch(m, str);
+
+										std::vector<tw::Player*> team1 = m->getTeam1();
+										std::vector<tw::Player*> team2 = m->getTeam2();
+
+										bool aliveInTeam1 = false;
+										bool aliveInTeam2 = false;
+
+										for (int i = 0; i < team1.size(); i++)
+										{
+											if (team1[i]->getCharacter()->isAlive())
+											{
+												aliveInTeam1 = true;
+												break;
+											}
+										}
+
+										for (int i = 0; i < team1.size(); i++)
+										{
+											if (team2[i]->getCharacter()->isAlive())
+											{
+												aliveInTeam2 = true;
+												break;
+											}
+										}
+
+										if (!aliveInTeam1)
+										{
+											str = "BE" + std::to_string(team2[0]->getTeamNumber()) + "\n";
+											sendToMatch(m, str);
+											m->setWinnerTeam(2);
+										}
+										
+										if (!aliveInTeam2)
+										{
+											str = "BE" + std::to_string(team1[0]->getTeamNumber()) + "\n";
+											sendToMatch(m, str);
+											m->setWinnerTeam(1);
+										}
 									}
 								}
 							}

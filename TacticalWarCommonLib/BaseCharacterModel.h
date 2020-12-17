@@ -4,6 +4,8 @@
 #include "MoveActionAnimationEventListener.h"
 #include "Effect.h"
 #include "TypeZoneLaunch.h"
+#include "IMapKnowledge.h"
+#include "IZoneAndSightCalculator.h"
 
 
 #include <chrono>
@@ -119,9 +121,63 @@ namespace tw
 		// Gestion du mouvement (server side) :
 		long long lastMoveEndTime;
 
-	public:
-		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY)
+		IMapKnowledge * map;
+		IZoneAndSightCalculator * zoneCalculator;
+
+	protected:
+		IMapKnowledge * getMapKnowledge()
 		{
+			return map;
+		}
+
+		std::vector<Point2D> getImpactZoneForSpell(int spellId, int targetX, int targetY)
+		{
+			int spellMinPO = -1;
+			int spellMaxPO = -1;
+			TypeZoneLaunch zoneType = TypeZoneLaunch::NORMAL;
+
+			switch (spellId)
+			{
+			case 1:
+				spellMinPO = getSpell1ImpactZoneMinPO();
+				spellMaxPO = getSpell1ImpactZoneMaxPO();
+				zoneType = getSpell1ImpactZoneType();
+				break;
+
+			case 2:
+				spellMinPO = getSpell2ImpactZoneMinPO();
+				spellMaxPO = getSpell2ImpactZoneMaxPO();
+				zoneType = getSpell2ImpactZoneType();
+				break;
+
+			case 3:
+				spellMinPO = getSpell3ImpactZoneMinPO();
+				spellMaxPO = getSpell3ImpactZoneMaxPO();
+				zoneType = getSpell3ImpactZoneType();
+				break;
+
+			case 4:
+				spellMinPO = getSpell4ImpactZoneMinPO();
+				spellMaxPO = getSpell4ImpactZoneMaxPO();
+				zoneType = getSpell4ImpactZoneType();
+				break;
+			}
+			
+
+			std::vector<Point2D> impactZone = zoneCalculator->generateZone(
+				targetX,
+				targetY,
+				spellMinPO,
+				spellMaxPO,
+				zoneType);
+
+			return impactZone;
+		}
+
+	public:
+		BaseCharacterModel(Environment* environment, int teamId, int currentX, int currentY, IMapKnowledge * map = NULL)
+		{
+			this->map = map;
 			this->isReady = false;
 			this->neededAnimation = Animation::IDLE;
 			this->animationDuration = -1;
@@ -136,6 +192,11 @@ namespace tw
 
 			setNoTargetPosition();
 			lastMoveEndTime = 0;
+		}
+
+		void setZoneCalculator(IZoneAndSightCalculator * calculator)
+		{
+			this->zoneCalculator = calculator;
 		}
 
 		std::string getPseudo()

@@ -20,6 +20,7 @@
 #include <SynchroPAAction.h>
 #include <SynchroPMAction.h>
 #include <LaunchSpellAction.h>
+#include <BattleEndAction.h>
 
 
 using namespace tw;
@@ -267,7 +268,7 @@ std::vector<Obstacle> tw::BattleScreen::getDynamicObstacles()
 
 	for (auto it = characters.begin(); it != characters.end(); it++)
 	{
-		if(activeCharacter != (*it).second)
+		if(activeCharacter != (*it).second && (*it).second->isAlive())
 			obstacles.push_back(Obstacle((*it).second));
 	}
 
@@ -608,7 +609,7 @@ void BattleScreen::onMessageReceived(std::string msg)
 		int currentPM = std::atoi(splitedData[i++].c_str());
 		std::string pseudo = splitedData[i++];
 
-		BaseCharacterModel * c = CharacterFactory::getInstance()->constructCharacter(environment, classId, teamId, currentX, currentY);
+		BaseCharacterModel * c = CharacterFactory::getInstance()->constructCharacter(environment, classId, teamId, currentX, currentY, this);
 		characters[characterId] = c;
 		c->setCurrentLife(currentLife);
 		c->setCurrentPA(currentPA);
@@ -718,6 +719,13 @@ void BattleScreen::onMessageReceived(std::string msg)
 
 		AnimationManager::getInstance()->addAnimation(new LaunchSpellAction(this, playerId, spellId, cellX, cellY));
 	}
+	else if (str.substring(0, 2) == "BE")	// Fin du combat
+	{
+		std::string data = str.substring(2);
+		int winnerTeamId = std::atoi(data.c_str());
+
+		AnimationManager::getInstance()->addAnimation(new BattleEndAction(this, winnerTeamId));
+	}
 }
 
 void tw::BattleScreen::onDisconnected()
@@ -736,9 +744,36 @@ void tw::BattleScreen::onDisconnected()
 //----------------------------------------------------------
 // IScreenActionCallback implementation :
 //----------------------------------------------------------
-void tw::BattleScreen::applyEndOfBattle()
+void tw::BattleScreen::applyEndOfBattle(int winnerTeam)
 {
+	std::vector<BaseCharacterModel*> winners;
 
+	std::string msg = "";
+	int i = 0;
+
+	auto it = characters.begin();
+	for (; it != characters.end(); it++)
+	{
+		if ((*it).second->getTeamId() == winnerTeam)
+		{
+			if (i > 0)
+				msg += " et ";
+
+			msg += (*it).second->getPseudo();
+			winners.push_back((*it).second);
+			i++;
+		}
+	}
+
+	msg += " ont gagné !";
+
+	tgui::Label::Ptr endLabel = tgui::Label::create(msg);
+	endLabel->setInheritedFont(font);
+	endLabel->setPosition(window->getSize().x / 2.0 - endLabel->getSize().x / 2.0, window->getSize().y / 2.0 - endLabel->getSize().y / 2.0);
+	endLabel->getRenderer()->setTextColor(tgui::Color::Red);
+	endLabel->getRenderer()->setTextOutlineColor(tgui::Color::Black);
+	endLabel->getRenderer()->setTextOutlineThickness(1.0);
+	gui->add(endLabel, "endLabel");
 }
 
 void tw::BattleScreen::applyChangeTurn(float remaining, int idPerso, std::string message)
@@ -847,4 +882,37 @@ void tw::BattleScreen::applySynchroPM(int playerId, int pm)
 		onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
 	}
 }
+//----------------------------------------------------------
+
+
+
+
+//----------------------------------------------------------
+// IMapKnowledge :
+//----------------------------------------------------------
+
+std::vector<tw::BaseCharacterModel*> BattleScreen::getAliveCharactersInZone(std::vector<tw::Point2D> zone)
+{
+	std::vector<tw::BaseCharacterModel*> result;
+
+	auto it = characters.begin();
+	for ( ; it != characters.end(); it++)
+	{
+		BaseCharacterModel * m = (*it).second;
+		if (m->isAlive())
+		{
+			for (int i = 0; i < zone.size(); i++)
+			{
+				if (m->getCurrentX() == zone[i].getX() && m->getCurrentY() == zone[i].getY())
+				{
+					result.push_back(m);
+					break;
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 //----------------------------------------------------------

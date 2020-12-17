@@ -8,10 +8,11 @@
 #include "LinkToServer.h"
 #include <Obstacle.h>
 #include <IScreenActionCallback.h>
+#include <IMapKnowledge.h>
 
 namespace tw
 {
-	class BattleScreen : public Screen, RendererEventListener, CharacterEventListener, ServerMessageListener, IScreenActionCallback
+	class BattleScreen : public Screen, RendererEventListener, CharacterEventListener, ServerMessageListener, IScreenActionCallback, IMapKnowledge
 	{
 	private:
 		IsometricRenderer * renderer;
@@ -90,7 +91,7 @@ namespace tw
 		virtual void onDisconnected();
 
 		// IScreenActionCallback :
-		virtual void applyEndOfBattle();
+		virtual void applyEndOfBattle(int winnerTeam);
 		virtual void applyChangeTurn(float remaining, int idPerso, std::string message);
 		virtual void applyCharacterDie(int idPerso);
 		virtual void applyCharacterLaunchSpell(int persoId, int x, int y, int spellId);
@@ -106,6 +107,9 @@ namespace tw
 		virtual void applyTeleport(int playerId, int cellX, int cellY);
 		virtual void applySynchroPA(int playerId, int pa);
 		virtual void applySynchroPM(int playerId, int pm);
+
+		// IMapKnowledge
+		virtual std::vector<tw::BaseCharacterModel*> getAliveCharactersInZone(std::vector<tw::Point2D> zone);
 	};
 }
 

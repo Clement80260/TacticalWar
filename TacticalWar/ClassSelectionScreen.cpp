@@ -62,7 +62,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	
 	for (int i = 0; i < classesIds.size(); i++)
 	{
-		classesInstances.push_back(CharacterFactory::getInstance()->constructCharacter(NULL, classesIds[i], 1, 0, 0));
+		classesInstances.push_back(CharacterFactory::getInstance()->constructCharacter(NULL, classesIds[i], 1, 0, 0, NULL));
 	}
 
 	indexClass = 0;

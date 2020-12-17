@@ -161,6 +161,8 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="IMapKnowledge.h" />
+    <ClInclude Include="IZoneAndSightCalculator.h" />
     <ClInclude Include="MoveActionAnimationEventListener.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="pch.h" />
@@ -174,6 +176,8 @@
     <ClCompile Include="CellData.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="IMapKnowledge.cpp" />
+    <ClCompile Include="IZoneAndSightCalculator.cpp" />
     <ClCompile Include="MoveActionAnimationEventListener.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="pch.cpp">
