@@ -32,47 +32,47 @@ std::vector<Point2D> ZoneAndSightCalculator::generateZone(int x, int y, int minP
 
 	if (type == TypeZoneLaunch::LINE){
 
-		for (i = x+minPO+1; i <= x + minPO + maxPO; i++) {
+		for (i = x+minPO; i <= x + minPO + ( maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(i, y));
 		}
-		for (i = x-minPO-1; i >= x - minPO - maxPO; i--) {
+		for (i = x-minPO; i >= x - minPO - ( maxPO - minPO); i--) {
 			targettableCells.push_back(Point2D(i, y));
 		}
-		for (i = y+minPO+1; i <= y + minPO + maxPO; i++) {
+		for (i = y+minPO; i <= y + minPO + (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x, i));
 		}
-		for (i = y-minPO-1; i >= y - minPO -maxPO; i--) {
+		for (i = y-minPO; i >= y - minPO - (maxPO - minPO); i--) {
 			targettableCells.push_back(Point2D(x, i));
 		}
 	}
 
 	if (type == TypeZoneLaunch::DIAGONAL) {
-		int x1 = x + minPO + 1;
-		int y1 = y + minPO + 1;
-		for (i = 0; i < maxPO; i++) {
+		int x1 = x + minPO;
+		int y1 = y + minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 + 1;
 			y1 = y1 + 1;
 		}
-		x1 = x - minPO - 1;
-		y1 = y - minPO - 1;
-		for (i = 0; i < maxPO; i++) {
+		x1 = x - minPO;
+		y1 = y - minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 - 1;
 			y1 = y1 - 1;
 
 		}
-		x1 = x + minPO + 1;
-		y1 = y - minPO - 1;
-		for (i = 0; i < maxPO; i++) {
+		x1 = x + minPO;
+		y1 = y - minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 + 1;
 			y1 = y1 - 1;
 
 		}
-		x1 = x - minPO - 1;
-		y1 = y + minPO + 1;
-		for (i = 0; i < maxPO; i++) {
+		x1 = x - minPO;
+		y1 = y + minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 - 1;
 			y1 = y1 + 1;
@@ -81,53 +81,53 @@ std::vector<Point2D> ZoneAndSightCalculator::generateZone(int x, int y, int minP
 	}
 
 	if (type == TypeZoneLaunch::STAR) {
-		int x1 = x + minPO + 1;
-		int y1 = y + minPO + 1;
-		for (i = 0; i < maxPO; i++) {
+		for (i = x + minPO; i <= x + minPO + (maxPO - minPO); i++) {
+			targettableCells.push_back(Point2D(i, y));
+		}
+		for (i = x - minPO; i >= x - minPO - (maxPO - minPO); i--) {
+			targettableCells.push_back(Point2D(i, y));
+		}
+		for (i = y + minPO; i <= y + minPO + (maxPO - minPO); i++) {
+			targettableCells.push_back(Point2D(x, i));
+		}
+		for (i = y - minPO; i >= y - minPO - (maxPO - minPO); i--) {
+			targettableCells.push_back(Point2D(x, i));
+		}
+
+		int x1 = x + minPO;
+		int y1 = y + minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 + 1;
 			y1 = y1 + 1;
 		}
-		x1 = x - minPO - 1;
-		y1 = y - minPO - 1;
-		for (i = 0; i < maxPO; i++) {
+		x1 = x - minPO;
+		y1 = y - minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 - 1;
 			y1 = y1 - 1;
 
 		}
-		x1 = x + minPO + 1;
-		y1 = y - minPO - 1;
-		for (i = 0; i < maxPO; i++) {
+		x1 = x + minPO;
+		y1 = y - minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 + 1;
 			y1 = y1 - 1;
 
 		}
-		x1 = x - minPO - 1;
-		y1 = y + minPO + 1;
-		for (i = 0; i < maxPO; i++) {
+		x1 = x - minPO;
+		y1 = y + minPO;
+		for (i = 0; i <= (maxPO - minPO); i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 - 1;
 			y1 = y1 + 1;
 
-		}
-
-		for (i = x + minPO + 1; i <= x + minPO + maxPO; i++) {
-			targettableCells.push_back(Point2D(i, y));
-		}
-		for (i = x - minPO - 1; i >= x - minPO - maxPO; i--) {
-			targettableCells.push_back(Point2D(i, y));
-		}
-		for (i = y + minPO + 1; i <= y + minPO + maxPO; i++) {
-			targettableCells.push_back(Point2D(x, i));
-		}
-		for (i = y - minPO - 1; i >= y - minPO - maxPO; i--) {
-			targettableCells.push_back(Point2D(x, i));
 		}
 	}
 	if (type == TypeZoneLaunch::NORMAL) {
-		for (i = y + minPO + 1; i < y + minPO + maxPO + 1; i++) {
+		/*for (i = y + minPO + 1; i < y + minPO + maxPO + 1; i++) {
 			for (int j = x - minPO - maxPO; j < x + minPO + maxPO + 1; j++) {
 				targettableCells.push_back(Point2D(j, i));
 			}
@@ -147,9 +147,65 @@ std::vector<Point2D> ZoneAndSightCalculator::generateZone(int x, int y, int minP
 				targettableCells.push_back(Point2D(i, j));
 			}
 		}
+
+
+
+
+		int j = x, k = x;
+		for (i = y + minPO; i > y - minPO; i--) {
+			if (i >= y) {
+				if (j < x + minPO) {
+					targettableCells.push_back(Point2D(j, i));
+					j++;
+				}
+				if (k > x - minPO) {
+					targettableCells.push_back(Point2D(k, i));
+					k--;
+				}
+			}
+			if (i < y) {
+				if (j > x) {
+					targettableCells.push_back(Point2D(j, i));
+					j--;
+				}
+				if (k < x) {
+					targettableCells.push_back(Point2D(k, i));
+					k++;
+				}
+			}
+		}*/
+		/*int j = y;
+		int k = y;
+		for (i = x - minPO; i < x; i++) {
+			targettableCells.push_back(Point2D(i, j));
+			targettableCells.push_back(Point2D(i, k));
+			j++;
+			k--;
+		}
+		for (i = x; i <= x + minPO; i++) {
+			targettableCells.push_back(Point2D(i, j));
+			targettableCells.push_back(Point2D(i, k));
+			j--;
+			k++;
+		}*/
+		for (int l = 0; l <= maxPO - minPO; l++) {
+			int j = y;
+			int k = y;
+			for (i = x - minPO - l; i < x; i++) {
+				targettableCells.push_back(Point2D(i, j));
+				targettableCells.push_back(Point2D(i, k));
+				j++;
+				k--;
+			}
+			for (i = x; i <= x + minPO + l; i++) {
+				targettableCells.push_back(Point2D(i, j));
+				targettableCells.push_back(Point2D(i, k));
+				j--;
+				k++;
+			}
+		}
+		
 	}
-
-
 
 	return targettableCells;
 }
