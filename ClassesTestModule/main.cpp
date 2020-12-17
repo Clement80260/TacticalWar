@@ -12,16 +12,16 @@ using namespace std;
 int main(int argc, char ** argv)
 {
 	tw::Environment * environment1 = tw::EnvironmentManager::getInstance()->getRandomEnvironment();
-	Mage * mageTest = new Mage(environment1, 1, 0, 0);
+	Mage * mageTest = new Mage(environment1, 1, 0, 0, NULL);
 
 	tw::Environment * environment2 = tw::EnvironmentManager::getInstance()->getRandomEnvironment();
-	Guerrier * guerrierTest = new Guerrier(environment2, 1, 0, 0);
+	Guerrier * guerrierTest = new Guerrier(environment2, 1, 0, 0, NULL);
 
 	tw::Environment * environment3 = tw::EnvironmentManager::getInstance()->getRandomEnvironment();
-	Archer * archerTest = new Archer(environment3, 1, 0, 0);
+	Archer * archerTest = new Archer(environment3, 1, 0, 0, NULL);
 
 	tw::Environment * environment4 = tw::EnvironmentManager::getInstance()->getRandomEnvironment();
-	Protecteur * protecteurTest = new Protecteur(environment4, 1, 0, 0);
+	Protecteur * protecteurTest = new Protecteur(environment4, 1, 0, 0, NULL);
 
 	int i = 0, x;
 
