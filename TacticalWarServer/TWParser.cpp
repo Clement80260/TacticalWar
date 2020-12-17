@@ -644,6 +644,10 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 												+ std::to_string(model->getCurrentLife()) + ";"
 												+ std::to_string(model->getCurrentPA()) + ";"
 												+ std::to_string(model->getCurrentPM()) + ";"
+												+ std::to_string(model->getAttackCooldown(1)) + ";"
+												+ std::to_string(model->getAttackCooldown(2)) + ";"
+												+ std::to_string(model->getAttackCooldown(3)) + ";"
+												+ std::to_string(model->getAttackCooldown(4)) + ";"
 												+ model->getPseudo()
 												+ "\n";
 				TcpServer<TWParser, ClientState>::Send(c, (char*)addPlayerStr.c_str(), addPlayerStr.size());

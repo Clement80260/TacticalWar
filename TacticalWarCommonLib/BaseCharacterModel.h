@@ -670,6 +670,11 @@ namespace tw
 			return 0;
 		}
 
+		virtual void setAttackCooldown(int spellId, int value)
+		{
+
+		}
+
 		int getAttackPACost(int spellId)
 		{
 			if (spellId == 1)

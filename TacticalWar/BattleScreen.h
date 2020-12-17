@@ -55,10 +55,13 @@ namespace tw
 		void setSelectedSpell(int spellNumber)
 		{
 			selectedSpell = -1;
-			if (spellNumber > 0 && spellNumber <= 4)
+			if (activeCharacter != NULL)
 			{
-				selectedSpell = spellNumber;
-				calculateAndSetSpellZone();
+				if (spellNumber > 0 && spellNumber <= 4 && activeCharacter->canDoAttack(spellNumber))
+				{
+					selectedSpell = spellNumber;
+					calculateAndSetSpellZone();
+				}
 			}
 
 			if (selectedSpell == -1)
