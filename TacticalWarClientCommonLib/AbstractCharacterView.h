@@ -18,7 +18,6 @@ namespace tw
 		}
 
 		virtual ConcreteSpriteType getImageToDraw() = 0;
-		virtual ConcreteSpriteType getMaskToDraw() = 0;
 		virtual void update(float deltatime) = 0;
 	};
 

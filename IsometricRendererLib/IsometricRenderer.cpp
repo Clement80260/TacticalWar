@@ -219,6 +219,7 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			CharacterView & v = getCharacterView(m);
 			v.update(deltatime);
 			sf::Sprite * s = v.getImageToDraw();
+			sf::Texture * mask = v.getMaskToDraw();
 			sf::Text * pseudoTxt = v.getPseudoText();
 			sf::Text * paTxt = v.getPaText();
 			sf::Text * pmTxt = v.getPmText();
@@ -250,7 +251,20 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			float scaleX = 0.4;
 			float scaleY = 0.4;
 			s->setScale(flipped ? -scaleX : scaleX, scaleY);
+
+			sf::Color toApplyarmure = sf::Color(120, 17, 17);
+			sf::Color toApplycheveux = sf::Color(108, 70, 35);
+			sf::Color toApplypeau = sf::Color(202, 165, 150);
+
+			
+			sf::Shader::bind(&shader);
+			shader.setUniform("mask", *mask);
+			shader.setUniform("color1", sf::Glsl::Vec4(toApplyarmure));
+			shader.setUniform("color2", sf::Glsl::Vec4(toApplycheveux));
+			shader.setUniform("color3", sf::Glsl::Vec4(toApplypeau));
+			
 			window->draw(*s);
+			sf::Shader::bind(NULL);
 
 			if (pseudoTxt->getString().getSize() > 0)
 			{
