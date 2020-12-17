@@ -9,6 +9,7 @@ using namespace tw;
 
 IsometricRenderer::IsometricRenderer(sf::RenderWindow * window)
 {
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/fragment.frag");
 	hasFocus = true;
 	forcedFocus = false;
 	if (!textureGrass.loadFromFile("assets/tiles/resized/Grass_01.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }

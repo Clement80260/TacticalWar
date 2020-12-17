@@ -20,15 +20,17 @@ namespace tw
 		Orientation orientation;
 		Animation animation;
 		std::map<Orientation, std::map<Animation, std::vector<sf::Sprite*> > > animationsMap;
+		std::map<Orientation, std::map<Animation, std::vector<sf::Sprite*> > > animationsMaskMap;
 		
 		double elsetime = 0;
 		
-		std::vector<sf::Sprite*> loadAnimation(std::string filename, bool flip = false);
+		std::vector<sf::Sprite*> loadAnimation(std::string filename, bool flip = false, bool mask = false);
 
 	public:
 		CharacterView(BaseCharacterModel * model);
 		virtual ~CharacterView();
 		virtual sf::Sprite * getImageToDraw();
+		virtual sf::Sprite * getMaskToDraw();
 		virtual void update(float deltatime);
 		void setAnimation(Animation animation) {
 			this->animation = animation;
