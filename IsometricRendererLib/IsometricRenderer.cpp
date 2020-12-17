@@ -213,22 +213,68 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 	for (int i = 0; i < characters.size(); i++)
 	{
 		BaseCharacterModel * m = characters[i];
-		CharacterView & v = getCharacterView(m);
-		v.update(deltatime);
-		sf::Sprite * s = v.getImageToDraw();
 
-		int isoX = (m->getInterpolatedX() * 120 - m->getInterpolatedY() * 120) / 2;
-		int isoY = (m->getInterpolatedX() * 60 + m->getInterpolatedY() * 60) / 2;
+		if (m->isAlive())	// On dessine pas les morts !
+		{
+			CharacterView & v = getCharacterView(m);
+			v.update(deltatime);
+			sf::Sprite * s = v.getImageToDraw();
+			sf::Text * pseudoTxt = v.getPseudoText();
+			sf::Text * paTxt = v.getPaText();
+			sf::Text * pmTxt = v.getPmText();
+			sf::Text * lifeTxt = v.getLifeText();
 
-		s->setPosition(isoX + 60, isoY + 30);
-	
+			sf::Sprite * lifeBg = v.getLifeBackground();
+			sf::Sprite * paBg = v.getPaBackground();
+			sf::Sprite * pmBg = v.getPmBackground();
 
-		sf::IntRect rect = s->getTextureRect();
-		bool flipped = s->getScale().x < 0;
-		float scaleX = 0.4;
-		float scaleY = 0.4;
-		s->setScale(flipped ? -scaleX : scaleX, scaleY);
-		window->draw(*s);
+			int fontSize = 16;
+			pseudoTxt->setCharacterSize(fontSize);
+			paTxt->setCharacterSize(12);
+			pmTxt->setCharacterSize(12);
+			lifeTxt->setCharacterSize(12);
+
+			int isoX = (m->getInterpolatedX() * 120 - m->getInterpolatedY() * 120) / 2;
+			int isoY = (m->getInterpolatedX() * 60 + m->getInterpolatedY() * 60) / 2;
+
+			s->setPosition(isoX + 60, isoY + 30);
+			float height = v.getHeight();
+			if (pseudoTxt->getString().getSize() > 0)
+			{
+				pseudoTxt->setPosition(isoX + 60 - (pseudoTxt->getGlobalBounds().width / 2.0), isoY + 30 - height + 5);
+				pseudoTxt->setOutlineColor(sf::Color::Black);
+				pseudoTxt->setOutlineThickness(1);
+			}
+			sf::IntRect rect = s->getTextureRect();
+			bool flipped = s->getScale().x < 0;
+			float scaleX = 0.4;
+			float scaleY = 0.4;
+			s->setScale(flipped ? -scaleX : scaleX, scaleY);
+			window->draw(*s);
+
+			if (pseudoTxt->getString().getSize() > 0)
+			{
+				float lifeBgY = isoY + 30 - height - pseudoTxt->getGlobalBounds().height - lifeBg->getGlobalBounds().height + 20;
+				lifeBg->setPosition(isoX + 60 - (lifeBg->getGlobalBounds().width / 2.0), lifeBgY);
+				lifeTxt->setPosition(isoX + 60 - (lifeTxt->getGlobalBounds().width / 2.0), lifeBgY + lifeBg->getGlobalBounds().height / 2.0 - lifeTxt->getGlobalBounds().height / 2.0 - 8);
+				window->draw(*lifeBg);
+				window->draw(*lifeTxt);
+
+				paBg->setScale(0.75, 0.75);
+				paBg->setPosition(isoX + 60 - (lifeBg->getGlobalBounds().width / 2.0) - (paBg->getGlobalBounds().width / 2.0) + 2, lifeBgY - 5 + (paBg->getGlobalBounds().height / 2.0));
+				paTxt->setPosition(isoX + 60 - (lifeBg->getGlobalBounds().width / 2.0) - (paTxt->getGlobalBounds().width / 2.0) + 2, lifeBgY - 5 + (paBg->getGlobalBounds().height / 2.0) + (paBg->getGlobalBounds().height / 2.0) - (paTxt->getGlobalBounds().height / 2.0));
+				window->draw(*paBg);
+				window->draw(*paTxt);
+
+				pmBg->setScale(0.75, 0.75);
+				pmBg->setPosition(isoX + 60 + (lifeBg->getGlobalBounds().width / 2.0) - (pmBg->getGlobalBounds().width / 2.0), lifeBgY + (pmBg->getGlobalBounds().height / 2.0));
+				pmTxt->setPosition(isoX + 60 + (lifeBg->getGlobalBounds().width / 2.0) - (pmTxt->getGlobalBounds().width / 2.0), lifeBgY - 5 + (pmBg->getGlobalBounds().height / 2.0) + (pmBg->getGlobalBounds().height / 2.0) - (pmTxt->getGlobalBounds().height / 2.0));
+				window->draw(*pmBg);
+				window->draw(*pmTxt);
+
+				window->draw(*pseudoTxt);
+			}
+		}
 	}
 }
 

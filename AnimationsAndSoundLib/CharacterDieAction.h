@@ -26,15 +26,15 @@ public:
 		elapseTime(deltatime);
 		if (firstUpdate)
 		{
-			tw::Player * srcPlayer = screen->getCharacter(persoId);
-			srcPlayer->getCharacter()->startDieAction(1);
+			tw::BaseCharacterModel * srcPlayer = screen->getCharacter(persoId);
+			srcPlayer->startDieAction(1);
 			firstUpdate = false;
 		}
 
 		if (getEllapsedTime() > 1000 && !hasResetAttackAnimation)
 		{
-			tw::Player * srcPlayer = screen->getCharacter(persoId);
-			srcPlayer->getCharacter()->resetAnimation();
+			tw::BaseCharacterModel * srcPlayer = screen->getCharacter(persoId);
+			srcPlayer->resetAnimation();
 			hasResetAttackAnimation = true;
 
 			screen->applyCharacterDie(persoId);

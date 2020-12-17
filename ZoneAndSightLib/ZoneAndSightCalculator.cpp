@@ -47,32 +47,32 @@ std::vector<Point2D> ZoneAndSightCalculator::generateZone(int x, int y, int minP
 	}
 
 	if (type == TypeZoneLaunch::DIAGONAL) {
-		int x1 = x;
-		int y1 = y;
-		for (i = 0; i <= maxPO; i++) {
+		int x1 = x + minPO + 1;
+		int y1 = y + minPO + 1;
+		for (i = 0; i < maxPO; i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 + 1;
 			y1 = y1 + 1;
 		}
-		x1 = x;
-		y1 = y;
-		for (i = 0; i <= maxPO; i++) {
+		x1 = x - minPO - 1;
+		y1 = y - minPO - 1;
+		for (i = 0; i < maxPO; i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 - 1;
 			y1 = y1 - 1;
 
 		}
-		x1 = x;
-		y1 = y;
-		for (i = 0; i <= maxPO; i++) {
+		x1 = x + minPO + 1;
+		y1 = y - minPO - 1;
+		for (i = 0; i < maxPO; i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 + 1;
 			y1 = y1 - 1;
 
 		}
-		x1 = x;
-		y1 = y;
-		for (i = 0; i <= maxPO; i++) {
+		x1 = x - minPO - 1;
+		y1 = y + minPO + 1;
+		for (i = 0; i < maxPO; i++) {
 			targettableCells.push_back(Point2D(x1, y1));
 			x1 = x1 - 1;
 			y1 = y1 + 1;
@@ -81,73 +81,72 @@ std::vector<Point2D> ZoneAndSightCalculator::generateZone(int x, int y, int minP
 	}
 
 	if (type == TypeZoneLaunch::STAR) {
-		/*int x1, y1;
+		int x1 = x + minPO + 1;
+		int y1 = y + minPO + 1;
+		for (i = 0; i < maxPO; i++) {
+			targettableCells.push_back(Point2D(x1, y1));
+			x1 = x1 + 1;
+			y1 = y1 + 1;
+		}
+		x1 = x - minPO - 1;
+		y1 = y - minPO - 1;
+		for (i = 0; i < maxPO; i++) {
+			targettableCells.push_back(Point2D(x1, y1));
+			x1 = x1 - 1;
+			y1 = y1 - 1;
 
-		for (i = x; i <= x + 2; i++) {
+		}
+		x1 = x + minPO + 1;
+		y1 = y - minPO - 1;
+		for (i = 0; i < maxPO; i++) {
+			targettableCells.push_back(Point2D(x1, y1));
+			x1 = x1 + 1;
+			y1 = y1 - 1;
+
+		}
+		x1 = x - minPO - 1;
+		y1 = y + minPO + 1;
+		for (i = 0; i < maxPO; i++) {
+			targettableCells.push_back(Point2D(x1, y1));
+			x1 = x1 - 1;
+			y1 = y1 + 1;
+
+		}
+
+		for (i = x + minPO + 1; i <= x + minPO + maxPO; i++) {
 			targettableCells.push_back(Point2D(i, y));
 		}
-		for (i = x; i >= x - 2; i--) {
+		for (i = x - minPO - 1; i >= x - minPO - maxPO; i--) {
 			targettableCells.push_back(Point2D(i, y));
 		}
-		for (i = y; i <= y + 2; i++) {
+		for (i = y + minPO + 1; i <= y + minPO + maxPO; i++) {
 			targettableCells.push_back(Point2D(x, i));
 		}
-		for (i = y; i >= y - 2; i--) {
+		for (i = y - minPO - 1; i >= y - minPO - maxPO; i--) {
 			targettableCells.push_back(Point2D(x, i));
-		}
-
-		for (i = 0; i <= 1; i++) {
-			targettableCells.push_back(Point2D(x, y));
-
-			x1 = x + 1;
-			y1 = y + 1;
-			targettableCells.push_back(Point2D(x1, y1));
-
-			x1 = x - 1;
-			y1 = y - 1;
-			targettableCells.push_back(Point2D(x1, y1));
-
-			x1 = x + 1;
-			y1 = y - 1;
-			targettableCells.push_back(Point2D(x1, y1));
-
-			x1 = x - 1;
-			y1 = y + 1;
-			targettableCells.push_back(Point2D(x1, y1));
-
-		for (i = x-maxPO; i < x + maxPO; i++) {
-			for (int j = y-maxPO; j < y + maxPO; j++) {
-				targettableCells.push_back(Point2D(i,j));
-			}
-		}
-		int i = x + maxPO;
-		for (int j = y - maxPO; j < y + maxPO; j++) {
-			targettableCells.push_back(Point2D(i, j));
-		}
-		i = x - maxPO;
-		for (int j = y - maxPO; j < y + maxPO; j++) {
-			targettableCells.push_back(Point2D(i, j));
-		}
-		int j = y + maxPO;
-		for (i = x - maxPO; i < x + maxPO; i++) {
-			targettableCells.push_back(Point2D(i, j));
-		}
-		j = y - maxPO;
-		for (i = x - maxPO; i < x + maxPO; i++) {
-			targettableCells.push_back(Point2D(i, j));
-		}*/
-
-		for (int i = x - maxPO; i <= x + maxPO; i++) {
-			for (int j = y - maxPO; j <= y + maxPO; j++) {
-				targettableCells.push_back(Point2D(i, j));
-			}
 		}
 	}
 	if (type == TypeZoneLaunch::NORMAL) {
-		targettableCells.push_back(Point2D(x + 3, y + 2));
-		targettableCells.push_back(Point2D(x + 3, y - 2));
-		targettableCells.push_back(Point2D(x + 1, y + 2));
-		targettableCells.push_back(Point2D(x + 1, y - 2));
+		for (i = y + minPO + 1; i < y + minPO + maxPO + 1; i++) {
+			for (int j = x - minPO - maxPO; j < x + minPO + maxPO + 1; j++) {
+				targettableCells.push_back(Point2D(j, i));
+			}
+		}
+		for (i = y - minPO - 1; i > y - minPO - maxPO - 1; i--) {
+			for (int j = x - minPO - maxPO; j < x + minPO + maxPO + 1; j++) {
+				targettableCells.push_back(Point2D(j, i));
+			}
+		}
+		for (i = x + minPO + 1; i < x + minPO + maxPO + 1; i++) {
+			for (int j = y - minPO - maxPO; j < y + minPO + maxPO; j++) {
+				targettableCells.push_back(Point2D(i, j));
+			}
+		}
+		for (i = x - minPO - 1; i > x - minPO - maxPO - 1; i--) {
+			for (int j = y - minPO - maxPO; j < y + minPO + maxPO + 1; j++) {
+				targettableCells.push_back(Point2D(i, j));
+			}
+		}
 	}
 
 
@@ -155,14 +154,19 @@ std::vector<Point2D> ZoneAndSightCalculator::generateZone(int x, int y, int minP
 	return targettableCells;
 }
 
-bool ZoneAndSightCalculator::isObstacle(int x, int y, std::vector<Obstacle> obstacles)
+int ZoneAndSightCalculator::isObstacle(int x, int y, std::vector<Obstacle> obstacles)
 {
-	bool bObstacle = false;
+	int bObstacle = 0;
 	for (int i = 0; i < obstacles.size(); i++)
 	{
 		if (obstacles[i].getX() == x && obstacles[i].getY() == y)
 		{
-			bObstacle = true;
+			if (obstacles[i].getIsTargettable() == true) {
+				bObstacle = 2;
+			}
+			else {
+				bObstacle = 1;
+			}
 			break;
 		}
 	}
@@ -173,116 +177,6 @@ bool ZoneAndSightCalculator::isObstacle(int x, int y, std::vector<Obstacle> obst
 std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, int launcherY, std::vector<Point2D> cellsToTest, std::vector<Obstacle> obstacles)
 {
 	std::vector<Point2D> targettableCells;
-
-	/*int targetX, targetY = 0;
-	int screenSizeX, screenSizeY, a, b, y;
-	for (targetX = 0; targetX < screenSizeX; targetX++) {
-		a = (targetY - launcherY) / (targetX - launcherX);
-		b = launcherY - (launcherX * a);
-		if (targetX > launcherX) {
-			for (int i = launcherX; i < targetX; i++) {
-				y = a * i + b;
-				if (this->isObstacle(i,y,obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-		if (targetX < launcherX) {
-			for (int i = launcherX; i > targetX; i--) {
-				y = a * i + b;
-				if (this->isObstacle(i, y, obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-	}
-	targetY = screenSizeY;
-	for (targetX = 0; targetX < screenSizeX; targetX++) {
-		a = (targetY - launcherY) / (targetX - launcherX);
-		b = launcherY - (launcherX * a);
-		if (targetX > launcherX) {
-			for (int i = launcherX; i < targetX; i++) {
-				y = a * i + b;
-				if (this->isObstacle(i, y, obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-		if (targetX < launcherX) {
-			for (int i = launcherX; i > targetX; i--) {
-				y = a * i + b;
-				if (this->isObstacle(i, y, obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-	}
-	targetX = 0;
-	for (targetY = 0; targetY < screenSizeY; targetY++) {
-		a = (targetY - launcherY) / (targetX - launcherX);
-		b = launcherY - (launcherX * a);
-		if (targetY > launcherY) {
-			for (int i = launcherY; i < targetY; i++) {
-				y = a * i + b;
-				if (this->isObstacle(i, y, obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-		if (targetY < launcherY) {
-			for (int i = launcherY; i > targetY; i--) {
-				y = a * i + b;
-				if (this->isObstacle(i, y, obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-	}
-	targetX = screenSizeX;
-	for (targetY = 0; targetY < screenSizeY; targetY++) {
-		a = (targetY - launcherY) / (targetX - launcherX);
-		b = launcherY - (launcherX * a);
-		if (targetY > launcherY) {
-			for (int i = launcherY; i < targetY; i++) {
-				y = a * i + b;
-				if (this->isObstacle(i, y, obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-		if (targetY < launcherY) {
-			for (int i = launcherY; i > targetY; i--) {
-				y = a * i + b;
-				if (this->isObstacle(i, y, obstacles) == true) {
-					break;
-				}
-				else {
-					targettableCells.push_back(Point2D(i, y));
-				}
-			}
-		}
-	}*/
 
 	for (int i = 0; i < cellsToTest.size(); i++) {
 		int targetX = cellsToTest[i].getX();
@@ -301,7 +195,11 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 			for (int x = launcherX; x <= targetX; x++) {
 				if (a > -0.5 && a < 0.5) {
 					y = floor(a * x + b);
-					if (this->isObstacle(x, y, obstacles) == true) {
+					if (this->isObstacle(x, y, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(x, y, obstacles) == 2) {
+						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
 					else if (x == targetX && y == targetY) {
@@ -311,13 +209,21 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 				else {
 					y = ceil(a * x + b);
 					y1 = floor(a * x + b);
-					if (this->isObstacle(x, y, obstacles) == true) {
+					if (this->isObstacle(x, y, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(x, y, obstacles) == 2) {
+						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
 					else if (x == targetX && y == targetY) {
 						targettableCells.push_back(Point2D(x, y));
 					}
-					if (this->isObstacle(x, y1, obstacles) == true) {
+					if (this->isObstacle(x, y1, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(x, y, obstacles) == 2) {
+						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
 					else if (x == targetX && y1 == targetY) {
@@ -330,7 +236,11 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 			for (int x = launcherX; x >= targetX; x--) {
 				if (a > -0.5 && a < 0.5) {
 					y = floor(a * x + b);
-					if (this->isObstacle(x, y, obstacles) == true) {
+					if (this->isObstacle(x, y, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(x, y, obstacles) == 2) {
+						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
 					else if(x == targetX && y == targetY){
@@ -340,13 +250,21 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 				else {
 					y = ceil(a * x + b);
 					y1 = floor(a * x + b);
-					if (this->isObstacle(x, y, obstacles) == true) {
+					if (this->isObstacle(x, y, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(x, y, obstacles) == 2) {
+						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
 					else if (x == targetX && y == targetY) {
 						targettableCells.push_back(Point2D(x, y));
 					}
-					if (this->isObstacle(x, y1, obstacles) == true) {
+					if (this->isObstacle(x, y1, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(x, y1, obstacles) == 2) {
+						targettableCells.push_back(Point2D(x, y1));
 						break;
 					}
 					else if (x == targetX && y1 == targetY) {
@@ -358,7 +276,11 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 		else if (targetX == launcherX) {
 			if (targetY > launcherY) {
 				for (int y = launcherY; y <= targetY; y++) {
-					if (this->isObstacle(targetX, y, obstacles) == true) {
+					if (this->isObstacle(targetX, y, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(targetX, y, obstacles) == 2) {
+						targettableCells.push_back(Point2D(targetX, y));
 						break;
 					}
 					else if (y == targetY) {
@@ -368,7 +290,11 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 			}
 			else if (targetY < launcherY) {
 				for (int y = launcherY; y >= targetY; y--) {
-					if (this->isObstacle(targetX, y, obstacles) == true) {
+					if (this->isObstacle(targetX, y, obstacles) == 1) {
+						break;
+					}
+					else if (this->isObstacle(targetX, y, obstacles) == 2) {
+						targettableCells.push_back(Point2D(targetX, y));
 						break;
 					}
 					else if (y == targetY) {

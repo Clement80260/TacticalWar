@@ -12,7 +12,7 @@ private:
 public:
 	static CharacterFactory * getInstance();
 
-	tw::BaseCharacterModel * constructCharacter(tw::Environment * environment, int classId, int teamId, int posX, int posY);
+	tw::BaseCharacterModel * constructCharacter(tw::Environment * environment, int classId, int teamId, int posX, int posY, tw::IMapKnowledge * map);
 
 	std::vector<int> getClassesIds()
 	{

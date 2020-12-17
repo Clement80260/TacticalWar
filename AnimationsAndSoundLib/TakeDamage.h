@@ -30,24 +30,24 @@ public:
 		elapseTime(deltatime);
 		if (firstUpdate)
 		{
-			tw::Player * srcPlayer = screen->getCharacter(persoId);
+			tw::BaseCharacterModel * srcPlayer = screen->getCharacter(persoId);
 
-			srcPlayer->getCharacter()->modifyCurrentLife(-damage);
-			if (!srcPlayer->getCharacter()->isAlive())
+			srcPlayer->modifyCurrentLife(-damage);
+			if (!srcPlayer->isAlive())
 			{
-				srcPlayer->getCharacter()->startDieAction(1);
+				srcPlayer->startDieAction(1);
 			}
 			else
 			{
-				srcPlayer->getCharacter()->startTakeDmg(1);
+				srcPlayer->startTakeDmg(1);
 			}
 			firstUpdate = false;
 		}
 
 		if (getEllapsedTime() > 1000 && !hasResetAttackAnimation)
 		{
-			tw::Player * srcPlayer = screen->getCharacter(persoId);
-			srcPlayer->getCharacter()->resetAnimation();
+			tw::BaseCharacterModel * srcPlayer = screen->getCharacter(persoId);
+			srcPlayer->resetAnimation();
 			hasResetAttackAnimation = true;
 			screen->applyTakeDamage(persoId);
 			notifyAnimationFinished(0);

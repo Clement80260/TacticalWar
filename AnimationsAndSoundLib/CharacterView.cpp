@@ -86,6 +86,25 @@ CharacterView::CharacterView(BaseCharacterModel * model)
 	animationsMaskMap[Orientation::TOP_LEFT][Animation::ATTACK2] = loadAnimation(model->getGraphicsPath() + "mask/topright-physical_attack-sheet", true, true);
 	animationsMaskMap[Orientation::TOP_RIGHT][Animation::TAKE_DAMAGE] = loadAnimation(model->getGraphicsPath() + "mask/topright-take_damage-sheet", false, true);
 	animationsMaskMap[Orientation::TOP_LEFT][Animation::TAKE_DAMAGE] = loadAnimation(model->getGraphicsPath() + "mask/topright-take_damage-sheet", true, true);
+	
+	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
+	pseudoTxt.setFont(font);
+	pseudoTxt.setString(model->getPseudo());
+
+	lifeTxt.setFont(font);
+	paTxt.setFont(font);
+	pmTxt.setFont(font);
+
+	sf::Texture * lifeTexture = getCachedTexture("./assets/ui/characterdata/life_bg.png");
+	sf::Texture * paTexture = getCachedTexture("./assets/ui/characterdata/pa_bg.png");
+	sf::Texture * pmTexture = getCachedTexture("./assets/ui/characterdata/pm_bg.png");
+	lifeTexture->setSmooth(true);
+	paTexture->setSmooth(true);
+	pmTexture->setSmooth(true);
+
+	lifeBg.setTexture(*lifeTexture, true);
+	paBg.setTexture(*paTexture, true);
+	pmBg.setTexture(*pmTexture, true);
 }
 
 std::vector<sf::Sprite*> CharacterView::loadAnimation(std::string filename, bool flip, bool mask)

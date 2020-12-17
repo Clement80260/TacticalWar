@@ -162,12 +162,16 @@ public:
 
 	void changeTurn()
 	{
-		turnToken++;
-		if (turnToken >= timeline.size())
-			turnToken = 0;
+		do
+		{
+			turnToken++;
+			if (turnToken >= timeline.size())
+				turnToken = 0;
+
+		} while (!getActivePlayer()->getCharacter()->isAlive());
 
 		tw::Player * p = getActivePlayer();
-		
+		playerStartTurn(p);
 	}
 
 	void addEventListener(BattleEventListener * l)

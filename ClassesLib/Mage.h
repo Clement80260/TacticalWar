@@ -73,8 +73,46 @@ public:
 		return compt3;
 	}
 
+	virtual bool canDoAttack(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1 <= 0;
+		}
+		else if (spellId == 2)
+		{
+			return compt2 <= 0;
+		}
+		else if (spellId == 3)
+		{
+			return compt3 <= 0;
+		}
+
+		return true;
+	}
+
+	virtual int getAttackCooldown(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1;
+		}
+		else if (spellId == 2)
+		{
+			return compt2;
+		}
+		else if (spellId == 3)
+		{
+			return compt3;
+		}
+
+		return 0;
+	}
+
 	virtual void turnStart()
 	{
+		BaseCharacterModel::turnStart();
+
 		// Décrémentation des cooldowns :
 		if (compt1 > 0)
 			compt1--;
@@ -102,6 +140,17 @@ public:
 	//Sort 3 : Blizzard (Mana : 3 / Joueur au centre : carré de 3x3 autour du joueur / DPS : )
 	virtual bool doAttack4(int targetX, int targetY)
 	{
+		std::vector<tw::Point2D> impactZone = getImpactZoneForSpell(4, targetX, targetY);
+		std::vector<tw::BaseCharacterModel*> impactedEntities = getMapKnowledge()->getAliveCharactersInZone(impactZone);
+
+		for (int i = 0; i < impactedEntities.size(); i++)
+		{
+			impactedEntities[i]->modifyCurrentLife(-7);
+			if (impactedEntities[i]->isAlive())
+				impactedEntities[i]->startTakeDmg(1);
+			else
+				impactedEntities[i]->startDieAction(1);
+		}
 		return true;
 	}
 
@@ -110,8 +159,8 @@ public:
 		return true;
 	}
 
-	Mage(tw::Environment * environment, int teamId, int currentX, int currentY)
-		: BaseCharacterModel(environment, teamId, currentX, currentY)
+	Mage(tw::Environment * environment, int teamId, int currentX, int currentY, tw::IMapKnowledge * map)
+		: BaseCharacterModel(environment, teamId, currentX, currentY, map)
 	{
 		initializeValues();
 		compt1 = 3;
