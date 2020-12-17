@@ -9,6 +9,7 @@
 #include <vector>
 #include <SFML\Graphics.hpp>
 #include <iostream>
+#include <SFML/Graphics/Shader.hpp>
 
 namespace tw
 {
@@ -37,6 +38,8 @@ namespace tw
 		sf::Sprite spriteTree;
 
 		sf::Vector2i screenCoordinatesToIsoGridCoordinates(int screenX, int screenY);
+
+		sf::Shader shader;
 
 	public:
 		IsometricRenderer(sf::RenderWindow * window);
