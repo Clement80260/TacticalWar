@@ -256,13 +256,12 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			sf::Color toApplycheveux = sf::Color(108, 70, 35);
 			sf::Color toApplypeau = sf::Color(202, 165, 150);
 
-			
-			sf::Shader::bind(&shader);
 			shader.setUniform("mask", *mask);
 			shader.setUniform("color1", sf::Glsl::Vec4(toApplyarmure));
 			shader.setUniform("color2", sf::Glsl::Vec4(toApplycheveux));
 			shader.setUniform("color3", sf::Glsl::Vec4(toApplypeau));
-			
+
+			sf::Shader::bind(&shader);
 			window->draw(*s);
 			sf::Shader::bind(NULL);
 
