@@ -512,7 +512,7 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 											}
 										}
 
-										for (int i = 0; i < team1.size(); i++)
+										for (int i = 0; i < team2.size(); i++)
 										{
 											if (team2[i]->getCharacter()->isAlive())
 											{
@@ -521,11 +521,13 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 											}
 										}
 
+										bool endOfBattle = false;
 										if (!aliveInTeam1)
 										{
 											str = "BE" + std::to_string(team2[0]->getTeamNumber()) + "\n";
 											sendToMatch(m, str);
 											m->setWinnerTeam(2);
+											endOfBattle = true;
 										}
 										
 										if (!aliveInTeam2)
@@ -533,6 +535,18 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 											str = "BE" + std::to_string(team1[0]->getTeamNumber()) + "\n";
 											sendToMatch(m, str);
 											m->setWinnerTeam(1);
+											endOfBattle = true;
+										}
+
+										if (endOfBattle)
+										{
+											std::vector<tw::Player*> players = m->getPlayers();
+											for (int i = 0; i < players.size(); i++)
+											{
+												tw::BaseCharacterModel * character = players[i]->getCharacter();
+												delete character;
+												players[i]->setCharacter(NULL);
+											}
 										}
 									}
 								}
