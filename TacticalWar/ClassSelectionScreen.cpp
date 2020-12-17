@@ -133,7 +133,7 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 
 	gui->add(m_matchListpanel);
 	gui->add(warriorpanel);
-	gui->add(statsPanel);
+//	gui->add(statsPanel);
 	gui->add(Icon, "classIcon");
 	gui->add(classCharacterView, "classCharacterView");	
 	gui->add(buttonSuivant, "buttonSuivant");
@@ -291,7 +291,7 @@ void ClassSelectionScreen::render(sf::RenderWindow * window)
 		convertedCharacterView->setCharacterView(characterView);
 		sf::FloatRect size = convertedCharacterView->getSize();
 		convertedCharacterView->setSize(size.width, size.height);
-		convertedCharacterView->setPosition(windowSize.x / 2. - 600, windowSize.y / 2. - convertedCharacterView->getSize().height / 2. + 80);
+		convertedCharacterView->setPosition(windowSize.x / 2. - 450, windowSize.y / 2. - convertedCharacterView->getSize().height / 2. + 205);
 	}
 }
 
