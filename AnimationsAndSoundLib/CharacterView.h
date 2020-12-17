@@ -20,6 +20,7 @@ namespace tw
 		Orientation orientation;
 		Animation animation;
 		std::map<Orientation, std::map<Animation, std::vector<sf::Sprite*> > > animationsMap;
+		std::map<Orientation, std::map<Animation, sf::Texture * > > animationsMaskMap;
 
 		sf::Font font;
 		sf::Text pseudoTxt;
@@ -32,12 +33,16 @@ namespace tw
 		
 		double elsetime = 0;
 		
-		std::vector<sf::Sprite*> loadAnimation(std::string filename, bool flip = false);
+		std::vector<sf::Sprite*> loadAnimation(std::string filename, bool flip = false, bool mask = false);
+		sf::Texture * loadTexture(std::string filename);
 
 	public:
 		CharacterView(BaseCharacterModel * model);
 		virtual ~CharacterView();
 		virtual sf::Sprite * getImageToDraw();
+
+		virtual sf::Texture * getMaskToDraw();
+
 		sf::Text * getPseudoText()
 		{
 			return &pseudoTxt;

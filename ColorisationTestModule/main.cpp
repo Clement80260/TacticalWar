@@ -14,16 +14,20 @@ int main(int argc, char** argv)
 
 	sf::Texture Source;
 	sf::Texture Assets;
-	if (!Source.loadFromFile("assets/Warrior/bottomright-die-sheet.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
-	if (!Assets.loadFromFile("assets/Warrior/mask/bottomright-die-sheet.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
+	if (!Source.loadFromFile("assets/Mage/bottomright-die-sheet.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
+	if (!Assets.loadFromFile("assets/Mage/mask/bottomright-die-sheet.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
 	sf::Sprite perso;
+	sf::Sprite mask;
 	sf::Uint8  *pixels = new sf::Uint8[800 * 600 * 4];
 
 	// Passage en image pour accéder aux pixels :
 	sf::Image src = Source.copyToImage(); 
 	sf::Image img = Assets.copyToImage();
 
+	mask.setTexture(Assets);
+	mask.setTextureRect(sf::IntRect(0, 0, 281, 268));
 	perso.setTexture(Source);
+	perso.setTextureRect(sf::IntRect(0, 0, 281, 268));
 	Source.setSmooth(true);
 	 
 	// Couleur que l'on souhaite appliquer :
@@ -105,7 +109,7 @@ int main(int argc, char** argv)
 		
 		window.clear();
 
-		shader.setUniform("mask", Assets);
+		shader.setUniform("mask", mask.getTexture());
 		shader.setUniform("color1", sf::Glsl::Vec4(toApplyarmure));
 		shader.setUniform("color2", sf::Glsl::Vec4(toApplycheveux));
 		shader.setUniform("color3", sf::Glsl::Vec4(toApplypeau));

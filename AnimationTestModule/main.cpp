@@ -82,6 +82,7 @@ int main(int argc, char** argv)
 	//AnimationManager::getInstance()->addAnimation(new CharacterDieAction(screen, 1));
 	Spell->loadAnimation("./assets/spellsprites/ballbig1_red");
 	Spell->getImageToDraw();
+
 	//AnimationManager::getInstance()->addAnimation();
 	while (window.isOpen())
 	{
