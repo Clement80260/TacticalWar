@@ -254,7 +254,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(x, y, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(x, y, obstacles) == 2) {
+					else if (this->isObstacle(x, y, obstacles) == 2 && x == targetX && y == targetY) {
 						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
@@ -268,7 +268,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(x, y, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(x, y, obstacles) == 2) {
+					else if (this->isObstacle(x, y, obstacles) == 2 && x == targetX && y == targetY) {
 						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
@@ -278,7 +278,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(x, y1, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(x, y, obstacles) == 2) {
+					else if (this->isObstacle(x, y1, obstacles) == 2 && x == targetX && y1 == targetY) {
 						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
@@ -295,7 +295,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(x, y, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(x, y, obstacles) == 2) {
+					else if (this->isObstacle(x, y, obstacles) == 2 && x == targetX && y == targetY) {
 						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
@@ -309,7 +309,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(x, y, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(x, y, obstacles) == 2) {
+					else if (this->isObstacle(x, y, obstacles) == 2 && x == targetX && y == targetY) {
 						targettableCells.push_back(Point2D(x, y));
 						break;
 					}
@@ -319,7 +319,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(x, y1, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(x, y1, obstacles) == 2) {
+					else if (this->isObstacle(x, y1, obstacles) == 2 && x == targetX && y1 == targetY) {
 						targettableCells.push_back(Point2D(x, y1));
 						break;
 					}
@@ -335,7 +335,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(targetX, y, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(targetX, y, obstacles) == 2) {
+					else if (this->isObstacle(targetX, y, obstacles) == 2 && y == targetY) {
 						targettableCells.push_back(Point2D(targetX, y));
 						break;
 					}
@@ -349,7 +349,7 @@ std::vector<Point2D> ZoneAndSightCalculator::processLineOfSight(int launcherX, i
 					if (this->isObstacle(targetX, y, obstacles) == 1) {
 						break;
 					}
-					else if (this->isObstacle(targetX, y, obstacles) == 2) {
+					else if (this->isObstacle(targetX, y, obstacles) == 2 && y == targetY) {
 						targettableCells.push_back(Point2D(targetX, y));
 						break;
 					}
