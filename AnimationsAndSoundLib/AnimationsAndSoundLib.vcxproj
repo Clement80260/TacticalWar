@@ -171,6 +171,8 @@
     <ClInclude Include="NoDurationAction.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SpellView.h" />
+    <ClInclude Include="SynchroPAAction.h" />
+    <ClInclude Include="SynchroPMAction.h" />
     <ClInclude Include="TakeDamage.h" />
     <ClInclude Include="TeleportAction.h" />
   </ItemGroup>
@@ -195,6 +197,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SpellView.cpp" />
+    <ClCompile Include="SynchroPAAction.cpp" />
+    <ClCompile Include="SynchroPMAction.cpp" />
     <ClCompile Include="TakeDamage.cpp" />
     <ClCompile Include="TeleportAction.cpp" />
   </ItemGroup>

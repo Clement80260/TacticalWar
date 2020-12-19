@@ -21,7 +21,7 @@ namespace tw
 		virtual void onMatchStatusChanged(Match * match, MatchStatus oldStatus, MatchStatus newStatus) = 0;
 	};
 
-	class Match
+	class Match : public IMapKnowledge
 	{
 	private:
 		//-------------------------------------------------------
@@ -89,7 +89,7 @@ namespace tw
 			this->id = id;
 		}
 
-		inline void setWinnerTeam(int winnerTeam)
+		inline void serializationSetWinnerTeam(int winnerTeam)
 		{
 			this->winnerTeam = winnerTeam;
 		}
@@ -184,6 +184,12 @@ namespace tw
 			}
 
 			return NULL;
+		}
+
+		void setWinnerTeam(int winnerTeam)
+		{
+			this->winnerTeam = winnerTeam;
+			setMatchStatus(MatchStatus::FINISHED);
 		}
 
 		void * getBattlePayload()
@@ -409,7 +415,7 @@ namespace tw
 			result = new Match(matchName);
 			result->setMatchStatus(status);
 			result->setId(matchId);
-			result->setWinnerTeam(winnerTeam);
+			result->serializationSetWinnerTeam(winnerTeam);
 
 			result->clientSetTeam1(team1);
 			result->clientSetTeam2(team2);
@@ -450,6 +456,32 @@ namespace tw
 
 				result.push_back(Player(playerData[1], "", std::atoi(playerData[0].c_str())));
 				result.back().setHasJoinBattle(std::atoi(playerData[2].c_str()));
+			}
+
+			return result;
+		}
+
+		// IMapKnowledge
+		virtual std::vector<tw::BaseCharacterModel*> getAliveCharactersInZone(std::vector<tw::Point2D> zone)
+		{
+			std::vector<tw::BaseCharacterModel*> result;
+
+			std::vector<tw::Player*> players = getPlayers();
+
+			for (int i = 0; i < players.size(); i++)
+			{
+				tw::Player * p = players[i];
+				if (p->getCharacter() != NULL && p->getCharacter()->isAlive())
+				{
+					for (int j = 0; j < zone.size(); j++)
+					{
+						if (p->getCharacter()->getCurrentX() == zone[j].getX() && p->getCharacter()->getCurrentY() == zone[j].getY())
+						{
+							result.push_back(p->getCharacter());
+							break;
+						}
+					}
+				}
 			}
 
 			return result;

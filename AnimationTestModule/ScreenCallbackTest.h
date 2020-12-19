@@ -19,8 +19,8 @@ public:
 	ScreenCallbackTest(tw::Environment * environment)
 	{
 		this->environment = environment;
-		c1 = new Mage(environment, 1, 9, 9);
-		c2 = new Mage(environment, 2, 11, 11);
+		c1 = new Mage(environment, 1, 9, 9, NULL);
+		c2 = new Mage(environment, 2, 11, 11, NULL);
 
 		p1 = new tw::Player("Peon 1", "", 1);
 		p1->setCharacter(c1);
@@ -29,7 +29,7 @@ public:
 		p2->setCharacter(c2);
 	}
 
-	virtual void applyEndOfBattle()
+	virtual void applyEndOfBattle(int winnerTeam)
 	{
 		cout << "applyEndOfBattle()" << endl;
 	}
@@ -52,20 +52,20 @@ public:
 		cout << "applyCharacterLaunchSpell()" << endl;
 	}
 
-	virtual tw::Player* getCharacter(int persoId)
+	virtual tw::BaseCharacterModel* getCharacter(int persoId)
 	{
 		if (persoId == 1)
-			return p1;
+			return p1->getCharacter();
 		else if (persoId == 2)
-			return p2;
+			return p2->getCharacter();
 
 		return NULL;
 	}
 
-	virtual std::vector <tw::Player*> getAliveCharacters() {
-		std::vector<tw::Player*> players;
-		players.push_back(p1);
-		players.push_back(p2);
+	virtual std::vector <tw::BaseCharacterModel*> getAliveCharacters() {
+		std::vector<tw::BaseCharacterModel*> players;
+		players.push_back(p1->getCharacter());
+		players.push_back(p2->getCharacter());
 		return players;
 	}
 
@@ -128,6 +128,21 @@ public:
 	virtual void applyDieAnimation()
 	{
 		cout << "applyDieAnimation()" << endl;
+	}
+
+	virtual void applyTeleport(int playerId, int cellX, int cellY)
+	{
+
+	}
+
+	virtual void applySynchroPA(int playerId, int pa)
+	{
+
+	}
+
+	virtual void applySynchroPM(int playerId, int pm)
+	{
+
 	}
 };
 

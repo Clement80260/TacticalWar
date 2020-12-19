@@ -26,11 +26,9 @@ sf::Texture * SpellView::getCachedTexture(std::string path)
 	return texture;
 }
 
-SpellView::SpellView()
+SpellView::SpellView(int x, int y)
+	: AbstractSpellView<sf::Sprite*>(x, y)
 {
-
-
-
 }
 
 SpellView::~SpellView()
@@ -78,6 +76,7 @@ std::vector<sf::Sprite*> SpellView::loadAnimation(std::string filename)
 	}
 	for (int i = 0; i < positionView.size(); i++)
 		NbImg++;
+	;
 	for (int i = 0; i < positionView.size(); i++)
 		std::cout << positionView[i] << std::endl;
 	
@@ -98,17 +97,19 @@ std::vector<sf::Sprite*> SpellView::loadAnimation(std::string filename)
 		anim.push_back(s);
 		result.clear();
 	}
-
+	animationsMap = anim;
 	return anim;
 
 }
-sf::Sprite * SpellView::getImageToDraw()
+
+sf::Sprite* SpellView::getImageToDraw()
 {
 	double p = 0.5, time = elsetime;
 	int nbImg = animationsMap.size();
 	p /= nbImg;
 	int index;
 	index = fmod(time / p, nbImg);
+	std::cout << index << std::endl;
 	return animationsMap[index];
 }
 

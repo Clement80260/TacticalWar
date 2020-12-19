@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <SpellView.h>
 #include <IsometricRenderer.h>
 #include "EditorEventListener.h"
 #include <BaseCharacterModel.h>
@@ -8,6 +9,7 @@
 #include <vector>
 #include <EnvironmentManager.h>
 #include <Windows.h>
+#include <AbstractSpellView.h>
 #include "SelectablePanel.h"
 #include "EnvironmentEditorColorator.h"
 
@@ -359,7 +361,7 @@ namespace EnvironmentEditor {
 
 	private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
 		window->clear();
-		renderer->render(environment, *characters, 0);
+		renderer->render(environment, *characters, std::vector<tw::AbstractSpellView<sf::Sprite*>*>(), 0);
 		window->display();
 	}
 	private: System::Void sfmlRenderingSurface_Resize(System::Object^  sender, System::EventArgs^  e) {

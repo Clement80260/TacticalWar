@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include <SFML/Graphics.hpp>
 #include "CharacterView.h"
 #include <iostream>
 #include <string>
@@ -47,7 +48,18 @@ CharacterView::CharacterView(BaseCharacterModel * model)
 	animationsMap[Orientation::BOTTOM_RIGHT][Animation::TAKE_DAMAGE] = loadAnimation(model->getGraphicsPath() + "bottomright-take_damage-sheet");
 	animationsMap[Orientation::BOTTOM_LEFT][Animation::TAKE_DAMAGE] = loadAnimation(model->getGraphicsPath() + "bottomright-take_damage-sheet", true);
 
-
+	animationsMaskMap[Orientation::BOTTOM_RIGHT][Animation::RUN] = loadTexture(model->getGraphicsPath() + "mask/bottomright-sheet");
+	animationsMaskMap[Orientation::BOTTOM_LEFT][Animation::RUN] = loadTexture(model->getGraphicsPath() + "mask/bottomright-sheet");
+	animationsMaskMap[Orientation::BOTTOM_RIGHT][Animation::IDLE] = loadTexture(model->getGraphicsPath() + "mask/bottomright-static-sheet");
+	animationsMaskMap[Orientation::BOTTOM_LEFT][Animation::IDLE] = loadTexture(model->getGraphicsPath() + "mask/bottomright-static-sheet");
+	animationsMaskMap[Orientation::BOTTOM_RIGHT][Animation::DIE] = loadTexture(model->getGraphicsPath() + "mask/bottomright-die-sheet");
+	animationsMaskMap[Orientation::BOTTOM_LEFT][Animation::DIE] = loadTexture(model->getGraphicsPath() + "mask/bottomright-die-sheet");
+	animationsMaskMap[Orientation::BOTTOM_RIGHT][Animation::ATTACK1] = loadTexture(model->getGraphicsPath() + "mask/bottomright-magical_attack-sheet");
+	animationsMaskMap[Orientation::BOTTOM_LEFT][Animation::ATTACK1] = loadTexture(model->getGraphicsPath() + "mask/bottomright-magical_attack-sheet");
+	animationsMaskMap[Orientation::BOTTOM_RIGHT][Animation::ATTACK2] = loadTexture(model->getGraphicsPath() + "mask/bottomright-physical_attack-sheet");
+	animationsMaskMap[Orientation::BOTTOM_LEFT][Animation::ATTACK2] = loadTexture(model->getGraphicsPath() + "mask/bottomright-physical_attack-sheet");
+	animationsMaskMap[Orientation::BOTTOM_RIGHT][Animation::TAKE_DAMAGE] = loadTexture(model->getGraphicsPath() + "mask/bottomright-take_damage-sheet");
+	animationsMaskMap[Orientation::BOTTOM_LEFT][Animation::TAKE_DAMAGE] = loadTexture(model->getGraphicsPath() + "mask/bottomright-take_damage-sheet");
 
 	animationsMap[Orientation::TOP_RIGHT][Animation::RUN] = loadAnimation(model->getGraphicsPath() + "topright-sheet");
 	animationsMap[Orientation::TOP_LEFT][Animation::RUN] = loadAnimation(model->getGraphicsPath() + "topright-sheet", true);
@@ -61,11 +73,51 @@ CharacterView::CharacterView(BaseCharacterModel * model)
 	animationsMap[Orientation::TOP_LEFT][Animation::ATTACK2] = loadAnimation(model->getGraphicsPath() + "topright-physical_attack-sheet", true);
 	animationsMap[Orientation::TOP_RIGHT][Animation::TAKE_DAMAGE] = loadAnimation(model->getGraphicsPath() + "topright-take_damage-sheet");
 	animationsMap[Orientation::TOP_LEFT][Animation::TAKE_DAMAGE] = loadAnimation(model->getGraphicsPath() + "topright-take_damage-sheet", true);
+
+	animationsMaskMap[Orientation::TOP_RIGHT][Animation::RUN] = loadTexture(model->getGraphicsPath() + "mask/topright-sheet");
+	animationsMaskMap[Orientation::TOP_LEFT][Animation::RUN] = loadTexture(model->getGraphicsPath() + "mask/topright-sheet");
+	animationsMaskMap[Orientation::TOP_RIGHT][Animation::IDLE] = loadTexture(model->getGraphicsPath() + "mask/topright-static-sheet");
+	animationsMaskMap[Orientation::TOP_LEFT][Animation::IDLE] = loadTexture(model->getGraphicsPath() + "mask/topright-static-sheet");
+	animationsMaskMap[Orientation::TOP_RIGHT][Animation::DIE] = loadTexture(model->getGraphicsPath() + "mask/topright-die-sheet");
+	animationsMaskMap[Orientation::TOP_LEFT][Animation::DIE] = loadTexture(model->getGraphicsPath() + "mask/topright-die-sheet");
+	animationsMaskMap[Orientation::TOP_RIGHT][Animation::ATTACK1] = loadTexture(model->getGraphicsPath() + "mask/topright-magical_attack-sheet");
+	animationsMaskMap[Orientation::TOP_LEFT][Animation::ATTACK1] = loadTexture(model->getGraphicsPath() + "mask/topright-magical_attack-sheet");
+	animationsMaskMap[Orientation::TOP_RIGHT][Animation::ATTACK2] = loadTexture(model->getGraphicsPath() + "mask/topright-physical_attack-sheet");
+	animationsMaskMap[Orientation::TOP_LEFT][Animation::ATTACK2] = loadTexture(model->getGraphicsPath() + "mask/topright-physical_attack-sheet");
+	animationsMaskMap[Orientation::TOP_RIGHT][Animation::TAKE_DAMAGE] = loadTexture(model->getGraphicsPath() + "mask/topright-take_damage-sheet");
+	animationsMaskMap[Orientation::TOP_LEFT][Animation::TAKE_DAMAGE] = loadTexture(model->getGraphicsPath() + "mask/topright-take_damage-sheet");
+	
+	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
+	pseudoTxt.setFont(font);
+	pseudoTxt.setString(model->getPseudo());
+
+	lifeTxt.setFont(font);
+	paTxt.setFont(font);
+	pmTxt.setFont(font);
+
+	sf::Texture * lifeTexture = getCachedTexture("./assets/ui/characterdata/life_bg.png");
+	sf::Texture * paTexture = getCachedTexture("./assets/ui/characterdata/pa_bg.png");
+	sf::Texture * pmTexture = getCachedTexture("./assets/ui/characterdata/pm_bg.png");
+	lifeTexture->setSmooth(true);
+	paTexture->setSmooth(true);
+	pmTexture->setSmooth(true);
+
+	lifeBg.setTexture(*lifeTexture, true);
+	paBg.setTexture(*paTexture, true);
+	pmBg.setTexture(*pmTexture, true);
 }
 
-std::vector<sf::Sprite*> CharacterView::loadAnimation(std::string filename, bool flip)
+sf::Texture * CharacterView::loadTexture(std::string filename)
 {
+	sf::Texture *testCharacterTexture = getCachedTexture(filename + ".png");
+	return testCharacterTexture;
+}
+
+std::vector<sf::Sprite*> CharacterView::loadAnimation(std::string filename, bool flip, bool mask)
+{
+	
 	std::vector<sf::Sprite *> anim;
+
 	sf::Texture *testCharacterTexture = getCachedTexture(filename + ".png");
 	sf::FileInputStream stream;
 	string str;
@@ -149,6 +201,11 @@ sf::Sprite* CharacterView::getImageToDraw()
 	int index;
 	index = fmod(time / p, nbImg);
 	return animationsMap[orientation][animation][index];
+}
+
+sf::Texture* CharacterView::getMaskToDraw()
+{
+	return animationsMaskMap[orientation][animation];
 }
 
 void CharacterView::update(float deltatime)

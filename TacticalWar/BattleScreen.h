@@ -7,10 +7,12 @@
 #include "TWColorator.h"
 #include "LinkToServer.h"
 #include <Obstacle.h>
+#include <IScreenActionCallback.h>
+#include <IMapKnowledge.h>
 
 namespace tw
 {
-	class BattleScreen : public Screen, RendererEventListener, CharacterEventListener, ServerMessageListener
+	class BattleScreen : public Screen, RendererEventListener, CharacterEventListener, ServerMessageListener, IScreenActionCallback, IMapKnowledge
 	{
 	private:
 		IsometricRenderer * renderer;
@@ -39,6 +41,35 @@ namespace tw
 
 		int turnToken;
 
+		bool hasInitSpellBar;
+
+		void calculateAndSetSpellZone();
+		void clearSpellZone()
+		{
+			colorator->setSpellLaunchZone(std::vector<tw::Point2D>());
+		}
+
+		void calculateAndSetSpellImpactZone(int targetX, int targetY);
+
+		int selectedSpell = -1;
+		void setSelectedSpell(int spellNumber)
+		{
+			selectedSpell = -1;
+			if (activeCharacter != NULL)
+			{
+				if (spellNumber > 0 && spellNumber <= 4 && activeCharacter->canDoAttack(spellNumber))
+				{
+					selectedSpell = spellNumber;
+					calculateAndSetSpellZone();
+				}
+			}
+
+			if (selectedSpell == -1)
+			{
+				clearSpellZone();
+			}
+		}
+
 	public:
 		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();
@@ -61,6 +92,27 @@ namespace tw
 		// ServerMessageListener :
 		virtual void onMessageReceived(std::string msg);
 		virtual void onDisconnected();
+
+		// IScreenActionCallback :
+		virtual void applyEndOfBattle(int winnerTeam);
+		virtual void applyChangeTurn(float remaining, int idPerso, std::string message);
+		virtual void applyCharacterDie(int idPerso);
+		virtual void applyCharacterLaunchSpell(int persoId, int x, int y, int spellId);
+		virtual tw::BaseCharacterModel* getCharacter(int persoId);
+		virtual std::vector <tw::BaseCharacterModel*> getAliveCharacters();
+		virtual void addAnimationToDisplay(sf::Sprite * s);
+		virtual void applyCharacterMove(int persoId, std::vector<tw::Point2D> path, MoveActionAnimationEventListener * callback);
+		virtual void applyCharacterDisconnected(int persoId);
+		virtual void applyCharacterConnected(int persoId);
+		virtual void applyTakeDamage(int persoId);
+		virtual void applyCharacterPosition(int persoId, int x, int y);
+		virtual void applyEnterBattlePhase();
+		virtual void applyTeleport(int playerId, int cellX, int cellY);
+		virtual void applySynchroPA(int playerId, int pa);
+		virtual void applySynchroPM(int playerId, int pm);
+
+		// IMapKnowledge
+		virtual std::vector<tw::BaseCharacterModel*> getAliveCharactersInZone(std::vector<tw::Point2D> zone);
 	};
 }
 

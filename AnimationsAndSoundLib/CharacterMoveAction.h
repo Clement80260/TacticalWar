@@ -35,6 +35,7 @@ public:
 	{
 		moveAnimationFinished = true;
 		notifyAnimationFinished(0);
+		delete this;
 	}
 };
 

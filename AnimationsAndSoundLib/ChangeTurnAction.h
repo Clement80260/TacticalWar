@@ -2,41 +2,28 @@
 #include <MoveActionAnimationEventListener.h>
 #include "BattleActionToAnimation.h"
 #include "IScreenActionCallback.h"
-class ChangeTurnAction : public BattleActionToAnimation, MoveActionAnimationEventListener
+#include "NoDurationAction.h"
+
+class ChangeTurnAction : public NoDurationAction
 {
 private:
 	int persoId;
 	float Remaining;
-	bool moveAnimationFinished;
 	std::string message;
 	IScreenActionCallback * screen;
-	bool firstUpdate;
+
 public:
-	ChangeTurnAction(IScreenActionCallback * screen, int persoId,std::string message, float Remaining)
+	ChangeTurnAction(IScreenActionCallback * screen, int persoId, std::string message, float Remaining)
 	{
 		this->persoId = persoId;
 		this->screen = screen;
 		this->message = message;
 		this->Remaining = Remaining;
-		moveAnimationFinished = false;
-		firstUpdate = true;
 	}
 
-	virtual void update(float deltatime)
+	virtual void update()
 	{
-		if (firstUpdate)
-		{
-			//screen->getCharacter(persoId)->getCharacter()->DECREMENT_COOLDOWN();
-			screen->applyChangeTurn(Remaining,persoId,message);
-			firstUpdate = false;
-		}
+		screen->applyChangeTurn(Remaining,persoId,message);
 	}
-
-	virtual void onMoveFinished()
-	{
-		moveAnimationFinished = true;
-		notifyAnimationFinished(0);
-	}
-
 };
 

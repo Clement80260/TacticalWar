@@ -1,6 +1,7 @@
 #pragma once
 
 #include <AbstractRenderer.h>
+#include <AbstractSpellView.h>
 #include <Environment.h>
 #include <BaseCharacterModel.h>
 #include "CellColorator.h"
@@ -8,12 +9,13 @@
 #include <vector>
 #include <SFML\Graphics.hpp>
 #include <iostream>
+#include <SFML/Graphics/Shader.hpp>
 
 namespace tw
 {
 	class CharacterView;
 
-	class IsometricRenderer : public AbstractRenderer
+	class IsometricRenderer : public AbstractRenderer<sf::Sprite>
 	{
 		bool hasFocus;
 		bool forcedFocus;
@@ -30,12 +32,19 @@ namespace tw
 		sf::Texture textureStone;
 		sf::Texture textureTree;
 
+		sf::Sprite spriteGrass;
+		sf::Sprite spriteStone;
+		sf::Sprite spriteWater;
+		sf::Sprite spriteTree;
+
 		sf::Vector2i screenCoordinatesToIsoGridCoordinates(int screenX, int screenY);
+
+		sf::Shader shader;
 
 	public:
 		IsometricRenderer(sf::RenderWindow * window);
 		inline void modifyWindow(sf::RenderWindow * newWindow) { this->window = newWindow; }
-		virtual void render(Environment* environment, std::vector<BaseCharacterModel*> & characters, float deltatime);
+		virtual void render(Environment* environment, std::vector<BaseCharacterModel*> & characters, std::vector<AbstractSpellView<sf::Sprite*> *> spells, float deltatime);
 
 		void setColorator(CellColorator * colorator)
 		{

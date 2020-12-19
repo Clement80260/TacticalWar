@@ -7,6 +7,7 @@
 #include <Match.h>
 #include <CharacterFactory.h>
 #include <EnvironmentManager.h>
+#include <Pathfinder.h>
 
 
 TWParser::TWParser()
@@ -306,8 +307,9 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 
 								if (cell.getX() != -1 && cell.getY() != -1)
 								{
-									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY()));
-									
+									p->setCharacter(CharacterFactory::getInstance()->constructCharacter(m->getEnvironment(), classId, (isTeam1 ? 1 : 2), cell.getX(), cell.getY(), m));
+									p->getCharacter()->setPseudo(p->getPseudo());
+
 									notifyClassChoiceLocked(client);
 									
 									// Si tout le monde est prêt : démarrage du combat.
@@ -401,6 +403,179 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 				}
 			}
 		}
+		else if (StringUtils::startsWith(toParse, "Cm"))	// Demande de déplacement (mouvement)
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && p->getCharacter()->isPlayerReady() && !p->getCharacter()->isMoving())
+				{
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						Battle * b = (Battle*)m->getBattlePayload();
+						if (b != NULL && !b->isPreparationPhase())
+						{
+							// Si c'est le tour du joueur :
+							if (b->getActivePlayer() == p)
+							{
+								std::string data = toParse.substr(2);
+								std::vector<tw::Point2D> path = tw::Pathfinder::deserializePath(data);
+								
+								// Si le personnage a assez de PM :
+								if (p->getCharacter()->hasEnoughPM(path.size()))
+								{
+									p->getCharacter()->serverSetPath(path);
+
+									std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
+									sendToMatch(m, str);
+
+									// Si plus d'actions possibles, passage du tour automatique :
+									if (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0)
+									{
+										b->changeTurn();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (StringUtils::startsWith(toParse, "Ct"))	// Le client indique qu'il a terminé son tour
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && p->getCharacter()->isPlayerReady())
+				{
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						Battle * b = (Battle*)m->getBattlePayload();
+						if (b != NULL && !b->isPreparationPhase())
+						{
+							// Si c'est le tour du joueur :
+							if (b->getActivePlayer() == p)
+							{
+								b->changeTurn();
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (StringUtils::startsWith(toParse, "CL"))	// Le client indique qu'il veut lancer un sort
+		{
+			if (client->getPseudo().size() > 0)
+			{
+				tw::Player * p = getPlayerFromClientState(client);
+				if (p != NULL && p->getHasJoinBattle() && p->getCharacter() != NULL && p->getCharacter()->isPlayerReady() && !p->getCharacter()->isMoving())
+				{
+					tw::Match * m = tw::PlayerManager::getCurrentOrNextMatchForPlayer(p);
+					if (m != NULL)
+					{
+						Battle * b = (Battle*)m->getBattlePayload();
+						if (b != NULL && !b->isPreparationPhase())
+						{
+							// Si c'est le tour du joueur :
+							if (b->getActivePlayer() == p)
+							{
+								std::string data = toParse.substr(2);
+								std::vector<std::string> spellData = StringUtils::explode(data, ';');
+								int spellId = std::atoi(spellData[0].c_str());
+								int cellX = std::atoi(spellData[1].c_str());
+								int cellY = std::atoi(spellData[2].c_str());
+
+								if (p->getCharacter()->canDoAttack(spellId))
+								{
+									int attackPA = -1;
+									attackPA = p->getCharacter()->getAttackPACost(spellId);
+
+									// Si le personnage a assez de PA :
+									if (attackPA != -1 && p->getCharacter()->hasEnoughPA(attackPA))
+									{
+										std::vector<tw::AttackDamageResult> impactedEntities = p->getCharacter()->doAttack(spellId, cellX, cellY);
+										for (int i = 0; i < impactedEntities.size(); i++)
+										{
+											impactedEntities[i].getCharacter()->modifyCurrentLife(-impactedEntities[i].getDamage());
+										}
+										
+										std::string str = "CL" + std::to_string(b->getIdForPlayer(p)) + ";" + std::to_string(spellId) + ";" + std::to_string(cellX) + ";" + std::to_string(cellY) + "\n";
+										sendToMatch(m, str);
+
+										// Si le personnage est mort pendant son tour ou qu'il n'y a plus d'action possible :
+										if (!p->getCharacter()->isAlive() || (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0))
+										{
+											// Passage automatique du tour ...
+											b->changeTurn();
+										}
+
+										checkBattleEnd(m);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void TWParser::checkBattleEnd(tw::Match * m)
+{
+	std::string str = "";
+	std::vector<tw::Player*> team1 = m->getTeam1();
+	std::vector<tw::Player*> team2 = m->getTeam2();
+
+	bool aliveInTeam1 = false;
+	bool aliveInTeam2 = false;
+
+	for (int i = 0; i < team1.size(); i++)
+	{
+		if (team1[i]->getCharacter()->isAlive())
+		{
+			aliveInTeam1 = true;
+			break;
+		}
+	}
+
+	for (int i = 0; i < team2.size(); i++)
+	{
+		if (team2[i]->getCharacter()->isAlive())
+		{
+			aliveInTeam2 = true;
+			break;
+		}
+	}
+
+	bool endOfBattle = false;
+	if (!aliveInTeam1)
+	{
+		str = "BE" + std::to_string(team2[0]->getTeamNumber()) + "\n";
+		sendToMatch(m, str);
+		m->setWinnerTeam(2);
+		endOfBattle = true;
+	}
+
+	if (!aliveInTeam2)
+	{
+		str = "BE" + std::to_string(team1[0]->getTeamNumber()) + "\n";
+		sendToMatch(m, str);
+		m->setWinnerTeam(1);
+		endOfBattle = true;
+	}
+
+	if (endOfBattle)
+	{
+		std::vector<tw::Player*> players = m->getPlayers();
+		for (int i = 0; i < players.size(); i++)
+		{
+			tw::BaseCharacterModel * character = players[i]->getCharacter();
+			delete character;
+			players[i]->setCharacter(NULL);
+		}
 	}
 }
 
@@ -465,7 +640,15 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 												+ std::to_string(model->getClassId()) + ";" 
 												+ std::to_string(model->getTeamId()) + ";"
 												+ std::to_string(model->getCurrentX()) + ";"
-												+ std::to_string(model->getCurrentY())
+												+ std::to_string(model->getCurrentY()) + ";"
+												+ std::to_string(model->getCurrentLife()) + ";"
+												+ std::to_string(model->getCurrentPA()) + ";"
+												+ std::to_string(model->getCurrentPM()) + ";"
+												+ std::to_string(model->getAttackCooldown(1)) + ";"
+												+ std::to_string(model->getAttackCooldown(2)) + ";"
+												+ std::to_string(model->getAttackCooldown(3)) + ";"
+												+ std::to_string(model->getAttackCooldown(4)) + ";"
+												+ model->getPseudo()
 												+ "\n";
 				TcpServer<TWParser, ClientState>::Send(c, (char*)addPlayerStr.c_str(), addPlayerStr.size());
 
@@ -480,7 +663,49 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 			}
 
 			notifyBattleState(c, b);
+
+			if (b->getBattleState() == BattleState::BATTLE_PHASE)
+			{
+				notifyPlayerTurnToken(b, c);
+
+				notifyActivePlayerPANumber(b, c);
+				notifyActivePlayerPMNumber(b, c);
+			}
 		}
+	}
+}
+
+void TWParser::notifyActivePlayerPANumber(Battle * b, ClientState * c)
+{
+	tw::Player * activePlayer = b->getActivePlayer();
+	int playerId = b->getIdForPlayer(activePlayer);
+	int currentPA = activePlayer->getCharacter()->getCurrentPA();
+
+	std::string str = "Ca" + std::to_string(playerId) + ";" + std::to_string(currentPA) + "\n";
+	TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());
+}
+
+void TWParser::notifyActivePlayerPMNumber(Battle * b, ClientState * c)
+{
+	tw::Player * activePlayer = b->getActivePlayer();
+	int playerId = b->getIdForPlayer(activePlayer);
+	int currentPM = activePlayer->getCharacter()->getCurrentPM();
+
+	std::string str = "Cp" + std::to_string(playerId) + ";" + std::to_string(currentPM) +"\n";
+	TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());
+}
+
+void TWParser::notifyPlayerTurnToken(Battle * b, ClientState * c = NULL)
+{
+	std::string str = "Ct" + std::to_string(b->getIdForPlayer(b->getActivePlayer())) + "\n";
+
+	if (c != NULL)
+	{
+		TcpServer<TWParser, ClientState>::Send(c, (char*)str.c_str(), str.size());	
+	}
+	else
+	{
+		sendToMatch(b->getMatch(), str);
 	}
 }
 
@@ -750,8 +975,7 @@ void TWParser::onPlayerTurnStart(tw::Match * match, tw::Player * player)
 	{
 		if (match->playerIsInThisMatch(player))
 		{
-			std::string str = "Ct" + std::to_string((int)b->getIdForPlayer(player)) + "\n";
-			sendToMatch(match, str);
+			notifyPlayerTurnToken(b);
 		}
 	}
 }

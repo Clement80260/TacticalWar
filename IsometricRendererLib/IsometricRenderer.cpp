@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "IsometricRenderer.h"
 #include <CharacterView.h>
+#include <SpellView.h>
 #include <math.h>
 #include <iostream>
 
@@ -8,17 +9,23 @@ using namespace tw;
 
 IsometricRenderer::IsometricRenderer(sf::RenderWindow * window)
 {
+	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/fragment.frag");
 	hasFocus = true;
 	forcedFocus = false;
-	if (!textureGrass.loadFromFile("assets/tiles/Grass_01.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
-	if (!textureWater.loadFromFile("assets/tiles/Water_01.png")) { std::cout << "Impossible de charger Water texture" << std::endl; }
-	if (!textureStone.loadFromFile("assets/tiles/Stone_02.png")) { std::cout << "Impossible de charger Stone texture" << std::endl; }
-	if (!textureTree.loadFromFile("assets/tiles/Tree_01.png")) { std::cout << "Impossible de charger Tree texture" << std::endl; }
+	if (!textureGrass.loadFromFile("assets/tiles/resized/Grass_01.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
+	if (!textureWater.loadFromFile("assets/tiles/resized/Water_01.png")) { std::cout << "Impossible de charger Water texture" << std::endl; }
+	if (!textureStone.loadFromFile("assets/tiles/resized/Stone_02.png")) { std::cout << "Impossible de charger Stone texture" << std::endl; }
+	if (!textureTree.loadFromFile("assets/tiles/resized/Tree_01.png")) { std::cout << "Impossible de charger Tree texture" << std::endl; }
 
 	textureGrass.setSmooth(true);
 	textureWater.setSmooth(true);
 	textureStone.setSmooth(true);
 	textureTree.setSmooth(true);
+
+	spriteGrass.setTexture(textureGrass);
+	spriteWater.setTexture(textureWater);
+	spriteStone.setTexture(textureStone);
+	spriteTree.setTexture(textureTree);
 
 	this->window = window;
 	this->colorator = NULL;
@@ -142,7 +149,7 @@ sf::Vector2i IsometricRenderer::screenCoordinatesToIsoGridCoordinates(int screen
 	return sf::Vector2i(calcX, calcY);
 }
 
-void IsometricRenderer::render(Environment* environment, std::vector<BaseCharacterModel*> & characters, float deltatime)
+void IsometricRenderer::render(Environment* environment, std::vector<BaseCharacterModel*> & characters, std::vector<AbstractSpellView<sf::Sprite*> *> spells, float deltatime)
 {
 	manageEvents(environment, characters);
 
@@ -154,19 +161,10 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 	view.setCenter(viewCenterX + 60.0, viewCenterY + 30.0);
 	window->setView(view);
 
-	sf::Sprite spriteGrass;
-	sf::Sprite spriteStone;
-	sf::Sprite spriteWater;
-	sf::Sprite spriteTree;
-	sf::Sprite spriteToDraw;
+	sf::Sprite * spriteToDraw;
 
-	spriteGrass.setTexture(textureGrass);
-	spriteWater.setTexture(textureWater);
-	spriteStone.setTexture(textureStone);
-	spriteTree.setTexture(textureTree);
-	
-	spriteGrass.setPosition(-127*0.05, -309 * 0.05);
-	spriteGrass.setScale(0.05, 0.05);
+	//spriteGrass.setPosition(-127*0.05, -309 * 0.05);
+	//spriteGrass.setScale(0.05, 0.05);
 
 	int borderX;
 	int borderY;
@@ -178,13 +176,13 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			CellData * cell = environment->getMapData(i, j);
 			if (cell->getIsObstacle())
 			{
-				spriteToDraw = spriteStone;
+				spriteToDraw = &spriteStone;
 				borderY = -590 * 0.05;
 				borderX = -202 * 0.05;
 			}
 			else if (cell->getIsWalkable())
 			{
-				spriteToDraw = spriteGrass;
+				spriteToDraw = &spriteGrass;
 				borderX = -128 * 0.05;
 				borderY = -310 * 0.05;
 			}
@@ -192,7 +190,7 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			{
 				borderX = -194 * 0.05;
 				borderY = -260 * 0.05;
-				spriteToDraw = spriteWater;
+				spriteToDraw = &spriteWater;
 				borderY += 10;
 			}
 
@@ -205,32 +203,91 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 				toApply = colorator->getColorForCell(cell);
 			}
 
-			spriteToDraw.setColor(toApply);
-			spriteToDraw.setScale(0.05, 0.05);
-			spriteToDraw.setPosition(borderX+isoX, borderY+isoY); 
-			window->draw(spriteToDraw);
+			spriteToDraw->setColor(toApply);
+			//spriteToDraw.setScale(0.05, 0.05);
+			spriteToDraw->setPosition(borderX+isoX, borderY+isoY); 
+			window->draw(*spriteToDraw);
 		}
 	}
 	
 	for (int i = 0; i < characters.size(); i++)
 	{
 		BaseCharacterModel * m = characters[i];
-		CharacterView & v = getCharacterView(m);
-		v.update(deltatime);
-		sf::Sprite * s = v.getImageToDraw();
 
-		int isoX = (m->getInterpolatedX() * 120 - m->getInterpolatedY() * 120) / 2;
-		int isoY = (m->getInterpolatedX() * 60 + m->getInterpolatedY() * 60) / 2;
+		if (m->isAlive())	// On dessine pas les morts !
+		{
+			CharacterView & v = getCharacterView(m);
+			v.update(deltatime);
+			sf::Sprite * s = v.getImageToDraw();
+			sf::Texture * mask = v.getMaskToDraw();
+			sf::Text * pseudoTxt = v.getPseudoText();
+			sf::Text * paTxt = v.getPaText();
+			sf::Text * pmTxt = v.getPmText();
+			sf::Text * lifeTxt = v.getLifeText();
 
-		s->setPosition(isoX + 60, isoY + 30);
-	
+			sf::Sprite * lifeBg = v.getLifeBackground();
+			sf::Sprite * paBg = v.getPaBackground();
+			sf::Sprite * pmBg = v.getPmBackground();
 
-		sf::IntRect rect = s->getTextureRect();
-		bool flipped = s->getScale().x < 0;
-		float scaleX = 0.4;
-		float scaleY = 0.4;
-		s->setScale(flipped ? -scaleX : scaleX, scaleY);
-		window->draw(*s);
+			int fontSize = 16;
+			pseudoTxt->setCharacterSize(fontSize);
+			paTxt->setCharacterSize(12);
+			pmTxt->setCharacterSize(12);
+			lifeTxt->setCharacterSize(12);
+
+			int isoX = (m->getInterpolatedX() * 120 - m->getInterpolatedY() * 120) / 2;
+			int isoY = (m->getInterpolatedX() * 60 + m->getInterpolatedY() * 60) / 2;
+
+			s->setPosition(isoX + 60, isoY + 30);
+			float height = v.getHeight();
+			if (pseudoTxt->getString().getSize() > 0)
+			{
+				pseudoTxt->setPosition(isoX + 60 - (pseudoTxt->getGlobalBounds().width / 2.0), isoY + 30 - height + 5);
+				pseudoTxt->setOutlineColor(sf::Color::Black);
+				pseudoTxt->setOutlineThickness(1);
+			}
+			sf::IntRect rect = s->getTextureRect();
+			bool flipped = s->getScale().x < 0;
+			float scaleX = 0.4;
+			float scaleY = 0.4;
+			s->setScale(flipped ? -scaleX : scaleX, scaleY);
+
+			sf::Color toApplyarmure = sf::Color(120, 17, 17);
+			sf::Color toApplycheveux = sf::Color(108, 70, 35);
+			sf::Color toApplypeau = sf::Color(202, 165, 150);
+
+			shader.setUniform("mask", *mask);
+			shader.setUniform("color1", sf::Glsl::Vec4(toApplyarmure));
+			shader.setUniform("color2", sf::Glsl::Vec4(toApplycheveux));
+			shader.setUniform("color3", sf::Glsl::Vec4(toApplypeau));
+
+			sf::Shader::bind(&shader);
+			window->draw(*s);
+			sf::Shader::bind(NULL);
+
+			if (pseudoTxt->getString().getSize() > 0)
+			{
+				float lifeBgY = isoY + 30 - height - pseudoTxt->getGlobalBounds().height - lifeBg->getGlobalBounds().height + 20;
+				lifeBg->setPosition(isoX + 60 - (lifeBg->getGlobalBounds().width / 2.0), lifeBgY);
+				lifeTxt->setPosition(isoX + 60 - (lifeTxt->getGlobalBounds().width / 2.0), lifeBgY + lifeBg->getGlobalBounds().height / 2.0 - lifeTxt->getGlobalBounds().height / 2.0 - 8);
+				window->draw(*lifeBg);
+				window->draw(*lifeTxt);
+
+				paBg->setScale(0.75, 0.75);
+				paBg->setPosition(isoX + 60 - (lifeBg->getGlobalBounds().width / 2.0) - (paBg->getGlobalBounds().width / 2.0) + 2, lifeBgY - 5 + (paBg->getGlobalBounds().height / 2.0));
+				paTxt->setPosition(isoX + 60 - (lifeBg->getGlobalBounds().width / 2.0) - (paTxt->getGlobalBounds().width / 2.0) + 2, lifeBgY - 5 + (paBg->getGlobalBounds().height / 2.0) + (paBg->getGlobalBounds().height / 2.0) - (paTxt->getGlobalBounds().height / 2.0));
+				window->draw(*paBg);
+				window->draw(*paTxt);
+
+				pmBg->setScale(0.75, 0.75);
+				pmBg->setPosition(isoX + 60 + (lifeBg->getGlobalBounds().width / 2.0) - (pmBg->getGlobalBounds().width / 2.0), lifeBgY + (pmBg->getGlobalBounds().height / 2.0));
+				pmTxt->setPosition(isoX + 60 + (lifeBg->getGlobalBounds().width / 2.0) - (pmTxt->getGlobalBounds().width / 2.0), lifeBgY - 5 + (pmBg->getGlobalBounds().height / 2.0) + (pmBg->getGlobalBounds().height / 2.0) - (pmTxt->getGlobalBounds().height / 2.0));
+				window->draw(*pmBg);
+				window->draw(*pmTxt);
+
+				window->draw(*pseudoTxt);
+			}
+		}
 	}
 }
 
