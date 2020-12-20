@@ -51,6 +51,10 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEvent
 
 	void checkBattleEnd(tw::Match * m);
 
+
+	std::vector<tw::Point2D> calculateSpellZone(tw::BaseCharacterModel * character, int selectedSpell, tw::Match * match, tw::Environment * environment);
+
+
 	bool initRandom;
 
 

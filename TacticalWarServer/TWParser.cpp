@@ -8,6 +8,7 @@
 #include <CharacterFactory.h>
 #include <EnvironmentManager.h>
 #include <Pathfinder.h>
+#include <ZoneAndSightCalculator.h>
 
 
 TWParser::TWParser()
@@ -425,15 +426,30 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 								// Si le personnage a assez de PM :
 								if (p->getCharacter()->hasEnoughPM(path.size()))
 								{
-									p->getCharacter()->serverSetPath(path);
-
-									std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
-									sendToMatch(m, str);
-
-									// Si plus d'actions possibles, passage du tour automatique :
-									if (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0)
+									// Check si la cellule de début du chemin est adjacente à la celle où se trouve le personnage :
+									tw::Point2D firstCell = path.back();
+									int characterX = p->getCharacter()->getCurrentX();
+									int characterY = p->getCharacter()->getCurrentY();
+									if ((firstCell.getX() == characterX && firstCell.getY() == characterY + 1)
+										||
+										(firstCell.getX() == characterX && firstCell.getY() == characterY - 1)
+										||
+										(firstCell.getX() == characterX + 1 && firstCell.getY() == characterY)
+										||
+										(firstCell.getX() == characterX - 1 && firstCell.getY() == characterY)
+										)
 									{
-										b->changeTurn();
+										// Le déplacement demandé est valide :
+										p->getCharacter()->serverSetPath(path);
+
+										std::string str = "Cm" + std::to_string(b->getIdForPlayer(p)) + ";" + data + "\n";
+										sendToMatch(m, str);
+
+										// Si plus d'actions possibles, passage du tour automatique :
+										if (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0)
+										{
+											b->changeTurn();
+										}
 									}
 								}
 							}
@@ -495,23 +511,40 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 									// Si le personnage a assez de PA :
 									if (attackPA != -1 && p->getCharacter()->hasEnoughPA(attackPA))
 									{
-										std::vector<tw::AttackDamageResult> impactedEntities = p->getCharacter()->doAttack(spellId, cellX, cellY);
-										for (int i = 0; i < impactedEntities.size(); i++)
+										// Check si la cellule ciblée est dans les cellules ciblables :
+										std::vector<tw::Point2D> targettable = calculateSpellZone(p->getCharacter(), spellId, m, m->getEnvironment());
+										bool isTargettable = false;
+										for (int i = 0; i < targettable.size(); i++)
 										{
-											impactedEntities[i].getCharacter()->modifyCurrentLife(-impactedEntities[i].getDamage());
-										}
-										
-										std::string str = "CL" + std::to_string(b->getIdForPlayer(p)) + ";" + std::to_string(spellId) + ";" + std::to_string(cellX) + ";" + std::to_string(cellY) + "\n";
-										sendToMatch(m, str);
-
-										// Si le personnage est mort pendant son tour ou qu'il n'y a plus d'action possible :
-										if (!p->getCharacter()->isAlive() || (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0))
-										{
-											// Passage automatique du tour ...
-											b->changeTurn();
+											tw::Point2D targettableCell = targettable[i];
+											if (targettableCell.getX() == cellX && targettableCell.getY() == cellY)
+											{
+												isTargettable = true;
+												break;
+											}
 										}
 
-										checkBattleEnd(m);
+										// Si la cellule est bien ciblable, lance le sort :
+										if (isTargettable)
+										{
+											std::vector<tw::AttackDamageResult> impactedEntities = p->getCharacter()->doAttack(spellId, cellX, cellY);
+											for (int i = 0; i < impactedEntities.size(); i++)
+											{
+												impactedEntities[i].getCharacter()->modifyCurrentLife(-impactedEntities[i].getDamage());
+											}
+
+											std::string str = "CL" + std::to_string(b->getIdForPlayer(p)) + ";" + std::to_string(spellId) + ";" + std::to_string(cellX) + ";" + std::to_string(cellY) + "\n";
+											sendToMatch(m, str);
+
+											// Si le personnage est mort pendant son tour ou qu'il n'y a plus d'action possible :
+											if (!p->getCharacter()->isAlive() || (p->getCharacter()->getCurrentPA() == 0 && p->getCharacter()->getCurrentPM() == 0))
+											{
+												// Passage automatique du tour ...
+												b->changeTurn();
+											}
+
+											checkBattleEnd(m);
+										}
 									}
 								}
 							}
@@ -521,6 +554,79 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 			}
 		}
 	}
+}
+
+std::vector<tw::Point2D> TWParser::calculateSpellZone(tw::BaseCharacterModel * character, int selectedSpell, tw::Match * match, tw::Environment * environment)
+{
+	int spellMinPO = -1;
+	int spellMaxPO = -1;
+	TypeZoneLaunch zoneType = TypeZoneLaunch::NORMAL;
+	std::vector<tw::Point2D> targettable;
+
+	if (character != NULL)
+	{
+		switch (selectedSpell)
+		{
+		case 1:
+			spellMinPO = character->getSpell1MinPO();
+			spellMaxPO = character->getSpell1MaxPO();
+			zoneType = character->getSpell1LaunchZoneType();
+			break;
+
+		case 2:
+			spellMinPO = character->getSpell2MinPO();
+			spellMaxPO = character->getSpell2MaxPO();
+			zoneType = character->getSpell2LaunchZoneType();
+			break;
+
+		case 3:
+			spellMinPO = character->getSpell3MinPO();
+			spellMaxPO = character->getSpell3MaxPO();
+			zoneType = character->getSpell3LaunchZoneType();
+			break;
+
+		case 4:
+			spellMinPO = character->getSpell4MinPO();
+			spellMaxPO = character->getSpell4MaxPO();
+			zoneType = character->getSpell4LaunchZoneType();
+			break;
+		}
+	}
+
+	if (character != NULL && selectedSpell != -1)
+	{
+		std::vector<tw::Point2D> targetZone = tw::ZoneAndSightCalculator::getInstance()->generateZone(
+			character->getCurrentX(),
+			character->getCurrentY(),
+			spellMinPO,
+			spellMaxPO,
+			zoneType);
+
+		std::vector<tw::Obstacle> obstacles;
+		std::vector<tw::Obstacle> environmentObstacles = environment->getObstacles();
+		std::vector<tw::Obstacle> dynamicsObstacles;
+		std::vector<tw::Player*> players = match->getPlayers();
+		for (int i = 0; i < players.size(); i++)
+		{
+			tw::BaseCharacterModel * target = players[i]->getCharacter();
+			if (target != character && target->isAlive())
+			{
+				dynamicsObstacles.push_back(tw::Obstacle(target));
+			}
+		}
+
+		obstacles.insert(obstacles.end(), environmentObstacles.begin(), environmentObstacles.end());
+		obstacles.insert(obstacles.end(), dynamicsObstacles.begin(), dynamicsObstacles.end());
+
+		targettable = tw::ZoneAndSightCalculator::getInstance()->processLineOfSight(
+			character->getCurrentX(),
+			character->getCurrentY(),
+			targetZone,
+			obstacles
+		);
+	}
+
+	return targettable;
 }
 
 void TWParser::checkBattleEnd(tw::Match * m)
