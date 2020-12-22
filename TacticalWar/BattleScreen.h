@@ -70,6 +70,8 @@ namespace tw
 			}
 		}
 
+		bool redirectToBattlePreparation;
+
 	public:
 		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();

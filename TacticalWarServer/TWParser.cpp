@@ -681,6 +681,7 @@ void TWParser::checkBattleEnd(tw::Match * m)
 			tw::BaseCharacterModel * character = players[i]->getCharacter();
 			delete character;
 			players[i]->setCharacter(NULL);
+			players[i]->setHasJoinBattle(false);
 		}
 	}
 }

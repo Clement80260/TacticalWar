@@ -21,6 +21,8 @@
 #include <SynchroPMAction.h>
 #include <LaunchSpellAction.h>
 #include <BattleEndAction.h>
+#include "ClassSelectionScreen.h"
+#include "WaitMatchScreen.h"
 
 
 using namespace tw;
@@ -28,6 +30,7 @@ using namespace tw;
 
 BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 {
+	redirectToBattlePreparation = false;
 	hasInitSpellBar = false;
 	turnToken = -1;
 	readyToValidatePosition = false;
@@ -241,8 +244,19 @@ void BattleScreen::update(float deltatime)
 
 	AnimationManager::getInstance()->update(deltatime);
 
-
-	LinkToServer::getInstance()->UpdateReceivedData();
+	if (redirectToBattlePreparation)
+	{
+		AnimationManager::getInstance()->clear();
+		gui->removeAllWidgets();
+		window->setView(window->getDefaultView());
+		tw::ScreenManager::getInstance()->setCurrentScreen(new WaitMatchScreen(gui));
+		redirectToBattlePreparation = false;
+		delete this;
+	}
+	else
+	{
+		LinkToServer::getInstance()->UpdateReceivedData();
+	}
 }
 
 void BattleScreen::render(sf::RenderWindow * window)
@@ -738,6 +752,14 @@ void BattleScreen::onMessageReceived(std::string msg)
 
 		AnimationManager::getInstance()->addAnimation(new BattleEndAction(this, winnerTeamId));
 	}
+	else if (str.substring(0, 2) == "HC")
+	{
+		AnimationManager::getInstance()->clear();
+		gui->removeAllWidgets();
+		window->setView(window->getDefaultView());
+		tw::ScreenManager::getInstance()->setCurrentScreen(new ClassSelectionScreen(gui));
+		delete this;
+	}
 }
 
 void tw::BattleScreen::onDisconnected()
@@ -782,11 +804,22 @@ void tw::BattleScreen::applyEndOfBattle(int winnerTeam)
 	tgui::Label::Ptr endLabel = tgui::Label::create(msg);
 	endLabel->setInheritedFont(font);
 	endLabel->setTextSize(30);
-	endLabel->getRenderer()->setTextColor(tgui::Color::Red);
+	endLabel->getRenderer()->setTextColor(tgui::Color::Green);
 	endLabel->getRenderer()->setTextOutlineColor(tgui::Color::Black);
 	endLabel->getRenderer()->setTextOutlineThickness(1.0);
 	endLabel->setPosition(window->getSize().x / 2.0 - endLabel->getSize().x / 2.0, window->getSize().y / 2.0 - endLabel->getSize().y / 2.0);
 	gui->add(endLabel, "endLabel");
+
+	PlayerStatusView::getInstance()->setVisible(false);
+
+	// Return to wait screen button
+	tgui::Button::Ptr backButton = tgui::Button::create("Fermer");
+	backButton->setInheritedFont(font);
+	backButton->setPosition(window->getSize().x / 2.0 - backButton->getSize().x / 2.0, window->getSize().y / 2.0 - backButton->getSize().y / 2.0 + endLabel->getSize().y + 10);
+	backButton->connect("pressed", [&]() {
+		redirectToBattlePreparation = true;
+	});
+	gui->add(backButton, "backButton");
 
 	colorator->setBattleState(BattleState::END_PHASE);
 }
