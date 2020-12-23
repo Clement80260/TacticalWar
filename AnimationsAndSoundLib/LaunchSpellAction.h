@@ -2,6 +2,7 @@
 #include <MoveActionAnimationEventListener.h>
 #include "BattleActionToAnimation.h"
 #include "IScreenActionCallback.h"
+#include <SFML/Audio.hpp>
 
 class LaunchSpellAction : public BattleActionToAnimation, MoveActionAnimationEventListener
 {
@@ -13,6 +14,8 @@ private:
 	IScreenActionCallback * screen;
 	bool firstUpdate;
 	std::vector<tw::AttackDamageResult> impactedEntities;
+
+	SpellView * spellView;
 
 	bool hasResetAttackAnimation;
 	bool hasResetTakeDamageAnimation;
@@ -28,6 +31,20 @@ public:
 		firstUpdate = true;
 		hasResetAttackAnimation = false;
 		hasResetTakeDamageAnimation = false;
+
+		spellView = NULL;
+		std::string animPath = screen->getCharacter(persoId)->getSpellAnimationPath(spellId);
+		if (animPath.size() > 0)
+		{
+			spellView = new SpellView(x, y);
+			spellView->loadAnimation(animPath);
+		}
+	}
+
+	~LaunchSpellAction()
+	{
+		if(spellView != NULL)
+			delete spellView;
 	}
 
 	virtual void update(float deltatime)
@@ -44,10 +61,21 @@ public:
 			firstUpdate = false;
 		}
 
+		if (getEllapsedTime() <= 1000)
+		{
+			if (spellView != NULL)
+			{
+				spellView->update(deltatime / 1000.0);
+				screen->addAnimationToDisplay(spellView);
+			}
+		}
+
 		if (getEllapsedTime() > 1000 && !hasResetAttackAnimation)
 		{
 			spellLauncher->resetAnimation();
 			hasResetAttackAnimation = true;
+
+			screen->playTakeDamageSound();
 
 			for (int i = 0; i < impactedEntities.size(); i++)
 			{

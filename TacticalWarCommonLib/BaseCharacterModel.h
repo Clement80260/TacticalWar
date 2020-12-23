@@ -393,6 +393,11 @@ namespace tw
 		virtual int getSpell2ImpactZoneMaxPO() = 0;
 		virtual int getSpell3ImpactZoneMaxPO() = 0;
 		virtual int getSpell4ImpactZoneMaxPO() = 0;
+
+		virtual std::string getSpell1AnimationPath() = 0;
+		virtual std::string getSpell2AnimationPath() = 0;
+		virtual std::string getSpell3AnimationPath() = 0;
+		virtual std::string getSpell4AnimationPath() = 0;
 		//----------------------------------------------------------
 
 		// Retourne la valeur du maximum de point de vie de base (sans altération d'effet). C'est une caractéristique de base de la classe.
@@ -722,6 +727,28 @@ namespace tw
 			}
 
 			return std::vector<AttackDamageResult>();
+		}
+
+		std::string getSpellAnimationPath(int spellId)
+		{
+			if (spellId == 1)
+			{
+				return getSpell1AnimationPath();
+			}
+			else if (spellId == 2)
+			{
+				return getSpell2AnimationPath();
+			}
+			else if (spellId == 3)
+			{
+				return getSpell3AnimationPath();
+			}
+			else if (spellId == 4)
+			{
+				return getSpell4AnimationPath();
+			}
+
+			return "";
 		}
 	};
 }

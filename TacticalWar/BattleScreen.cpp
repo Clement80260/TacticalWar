@@ -250,6 +250,7 @@ void BattleScreen::update(float deltatime)
 		gui->removeAllWidgets();
 		window->setView(window->getDefaultView());
 		tw::ScreenManager::getInstance()->setCurrentScreen(new WaitMatchScreen(gui));
+		MusicManager::getInstance()->setMenuMusic();
 		redirectToBattlePreparation = false;
 		delete this;
 	}
@@ -269,8 +270,10 @@ void BattleScreen::render(sf::RenderWindow * window)
 		aliveCharacters.push_back((*it).second);
 	}
 
-	renderer->render(environment, aliveCharacters, std::vector<AbstractSpellView<sf::Sprite*>*>(), getDeltatime());
+	renderer->render(environment, aliveCharacters, animationsToDisplay, getDeltatime());
 	window->draw(FPS);
+
+	animationsToDisplay.clear();
 }
 
 void BattleScreen::invalidatePathZone()
@@ -758,6 +761,7 @@ void BattleScreen::onMessageReceived(std::string msg)
 		gui->removeAllWidgets();
 		window->setView(window->getDefaultView());
 		tw::ScreenManager::getInstance()->setCurrentScreen(new ClassSelectionScreen(gui));
+		MusicManager::getInstance()->setMenuMusic();
 		delete this;
 	}
 }
@@ -874,9 +878,9 @@ std::vector<tw::BaseCharacterModel*> tw::BattleScreen::getAliveCharacters()
 	return aliveCharacters;
 }
 
-void tw::BattleScreen::addAnimationToDisplay(sf::Sprite * s)
+void tw::BattleScreen::addAnimationToDisplay(SpellView * s)
 {
-
+	animationsToDisplay.push_back(s);
 }
 
 void tw::BattleScreen::applyCharacterMove(int persoId, std::vector<tw::Point2D> path, MoveActionAnimationEventListener * callback)
@@ -929,6 +933,11 @@ void tw::BattleScreen::applySynchroPM(int playerId, int pm)
 	{
 		onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
 	}
+}
+
+void tw::BattleScreen::playTakeDamageSound()
+{
+	MusicManager::getInstance()->playTakeDamageSound();
 }
 //----------------------------------------------------------
 

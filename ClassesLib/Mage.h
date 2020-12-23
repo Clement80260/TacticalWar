@@ -449,6 +449,29 @@ public:
 		return 0;
 	}
 
+	//------------------------------------
+
+	virtual std::string getSpell1AnimationPath()
+	{
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	virtual std::string getSpell2AnimationPath()
+	{
+		
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	virtual std::string getSpell3AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
+	virtual std::string getSpell4AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
 	//--------------------------------------------------------------------
 };
 

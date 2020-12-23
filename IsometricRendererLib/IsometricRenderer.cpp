@@ -289,6 +289,18 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			}
 		}
 	}
+
+
+	for (int i = 0; i < spells.size(); i++)
+	{
+		SpellView * view = dynamic_cast<SpellView*>(spells[i]);
+		sf::Sprite * spellSprite = view->getImageToDraw();
+		int isoX = (view->getX() * 120 - view->getY() * 120) / 2;
+		int isoY = (view->getX() * 60 + view->getY() * 60) / 2;
+		spellSprite->setPosition(isoX + 60 - (spellSprite->getGlobalBounds().width / 2.0), isoY + 30 - (spellSprite->getGlobalBounds().height / 2.0));
+
+		window->draw(*spellSprite);
+	}
 }
 
 
