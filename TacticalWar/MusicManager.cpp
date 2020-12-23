@@ -22,6 +22,9 @@ MusicManager::MusicManager()
 
 	menuMusic.setLoop(true);
 	battleMusic.setLoop(true);
+
+	menuMusic.setVolume(50.0);
+	battleMusic.setVolume(50.0);
 }
 
 void MusicManager::setMenuMusic()

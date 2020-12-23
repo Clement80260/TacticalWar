@@ -105,6 +105,8 @@ CharacterView::CharacterView(BaseCharacterModel * model)
 	lifeBg.setTexture(*lifeTexture, true);
 	paBg.setTexture(*paTexture, true);
 	pmBg.setTexture(*pmTexture, true);
+
+	getModel()->addEventListener(this);
 }
 
 sf::Texture * CharacterView::loadTexture(std::string filename)
@@ -165,6 +167,7 @@ std::vector<sf::Sprite*> CharacterView::loadAnimation(std::string filename, bool
 
 CharacterView::~CharacterView()
 {
+	getModel()->removeEventListener(this);
 	//delete testCharacterTexture;
 }
 

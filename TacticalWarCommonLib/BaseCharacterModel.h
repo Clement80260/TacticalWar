@@ -11,6 +11,11 @@
 #include <chrono>
 #include <iostream>
 #include <ctime>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
+#endif
 
 namespace tw
 {
@@ -30,6 +35,7 @@ namespace tw
 	{
 	public:
 		virtual void onPositionChanged(BaseCharacterModel * c, int newPositionX, int newPositionY) = 0;
+		virtual void onLookAt(int targetX, int targetY) {}
 	};
 
 	class AttackDamageResult
@@ -398,6 +404,16 @@ namespace tw
 		virtual std::string getSpell2AnimationPath() = 0;
 		virtual std::string getSpell3AnimationPath() = 0;
 		virtual std::string getSpell4AnimationPath() = 0;
+
+		virtual std::string getSpell1SoundPath() = 0;
+		virtual std::string getSpell2SoundPath() = 0;
+		virtual std::string getSpell3SoundPath() = 0;
+		virtual std::string getSpell4SoundPath() = 0;
+
+		virtual Animation getSpell1AttackerAnimation() = 0;
+		virtual Animation getSpell2AttackerAnimation() = 0;
+		virtual Animation getSpell3AttackerAnimation() = 0;
+		virtual Animation getSpell4AttackerAnimation() = 0;
 		//----------------------------------------------------------
 
 		// Retourne la valeur du maximum de point de vie de base (sans altération d'effet). C'est une caractéristique de base de la classe.
@@ -644,6 +660,13 @@ namespace tw
 			reinitViewTime = true;
 		}
 
+		void startAttack2Animation(float duration)
+		{
+			neededAnimation = Animation::ATTACK2;
+			animationDuration = duration;
+			reinitViewTime = true;
+		}
+
 		void resetAnimation()
 		{
 			neededAnimation = Animation::IDLE;
@@ -749,6 +772,58 @@ namespace tw
 			}
 
 			return "";
+		}
+
+		std::string getSpellSoundPath(int spellId)
+		{
+			if (spellId == 1)
+			{
+				return getSpell1SoundPath();
+			}
+			else if (spellId == 2)
+			{
+				return getSpell2SoundPath();
+			}
+			else if (spellId == 3)
+			{
+				return getSpell3SoundPath();
+			}
+			else if (spellId == 4)
+			{
+				return getSpell4SoundPath();
+			}
+
+			return "";
+		}
+
+		Animation getSpellAttackerAnimation(int spellId)
+		{
+			if (spellId == 1)
+			{
+				return getSpell1AttackerAnimation();
+			}
+			else if (spellId == 2)
+			{
+				return getSpell2AttackerAnimation();
+			}
+			else if (spellId == 3)
+			{
+				return getSpell3AttackerAnimation();
+			}
+			else if (spellId == 4)
+			{
+				return getSpell4AttackerAnimation();
+			}
+
+			return Animation::ATTACK1;
+		}
+
+		void setOrientationToLookAt(int targetX, int targetY)
+		{
+			for (int i = 0; i < listeners.size(); i++)
+			{
+				listeners[i]->onLookAt(targetX, targetY);
+			}
 		}
 	};
 }
