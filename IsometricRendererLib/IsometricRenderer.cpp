@@ -10,6 +10,8 @@ using namespace tw;
 IsometricRenderer::IsometricRenderer(sf::RenderWindow * window)
 {
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/fragment.frag");
+	waterShader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/water-animation.glsl");
+
 	hasFocus = true;
 	forcedFocus = false;
 	if (!textureGrass.loadFromFile("assets/tiles/resized/Grass_01.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
@@ -29,6 +31,7 @@ IsometricRenderer::IsometricRenderer(sf::RenderWindow * window)
 
 	this->window = window;
 	this->colorator = NULL;
+	this->ellapsedTime = 0;
 }
 
 void IsometricRenderer::manageEvents(Environment * environment, std::vector<BaseCharacterModel*> & characters)
@@ -192,6 +195,12 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 				borderY = -260 * 0.05;
 				spriteToDraw = &spriteWater;
 				borderY += 10;
+
+
+				waterShader.setUniform("u_time", ellapsedTime);
+				waterShader.setUniform("u_widthFactor", (float)1.0);
+				waterShader.setUniform("u_textureHeight", (float)90.0);
+				sf::Shader::bind(&waterShader);
 			}
 
 			int isoX = (i*120 - j*120)/2; // Cordonnées
@@ -207,6 +216,8 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			//spriteToDraw.setScale(0.05, 0.05);
 			spriteToDraw->setPosition(borderX+isoX, borderY+isoY); 
 			window->draw(*spriteToDraw);
+
+			sf::Shader::bind(NULL);
 		}
 	}
 	

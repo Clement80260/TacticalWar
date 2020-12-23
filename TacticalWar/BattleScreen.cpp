@@ -226,6 +226,8 @@ void BattleScreen::update(float deltatime)
 		characters[i]->update(deltatime);
 	}
 
+	renderer->ellapseTime(deltatime);	// Update renderer (water animation)
+
 	double fps = 1.0 / deltatime;
 	FPS.setString(std::to_string((int)fps));
 	FPS.setFillColor(sf::Color::Red);

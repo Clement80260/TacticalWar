@@ -40,6 +40,9 @@ namespace tw
 		sf::Vector2i screenCoordinatesToIsoGridCoordinates(int screenX, int screenY);
 
 		sf::Shader shader;
+		sf::Shader waterShader;
+
+		float ellapsedTime;
 
 	public:
 		IsometricRenderer(sf::RenderWindow * window);
@@ -63,6 +66,11 @@ namespace tw
 			forcedFocus = true;
 			hasFocus = false;
 			std::cout << "Force lost focus" << std::endl;
+		}
+
+		void ellapseTime(float deltatime)
+		{
+			ellapsedTime += deltatime;
 		}
 	};
 }

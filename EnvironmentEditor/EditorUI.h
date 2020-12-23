@@ -361,6 +361,7 @@ namespace EnvironmentEditor {
 
 	private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
 		window->clear();
+		renderer->ellapseTime((float)timer1->Interval / 1000.0);
 		renderer->render(environment, *characters, std::vector<tw::AbstractSpellView<sf::Sprite*>*>(), 0);
 		window->display();
 	}
