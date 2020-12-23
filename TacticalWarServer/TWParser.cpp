@@ -131,6 +131,7 @@ void TWParser::parse(ClientState * client, std::vector<unsigned char> & received
 						admin = client;
 						TcpServer<TWParser, ClientState>::Send(client, (char*)"AD\n", 3);
 						notifyPlanifiedAndPlayingMatch(admin);
+						notifyFinishedMatch(admin);
 						notifyTeamList(admin);
 					}
 					else if (playersMap.find(pseudo) != playersMap.end())
@@ -890,6 +891,7 @@ void TWParser::notifyMatchCreated(tw::Match * m)
 {
 	notifyPlayingMatchList();
 	notifyPlanifiedAndPlayingMatch(admin);
+	notifyFinishedMatch(admin);
 	
 	// Switch the connected player to the class selection screen :
 	notifySwitchToClassSelectionToConnectedPlayer(m->getTeam1());
@@ -929,6 +931,29 @@ void TWParser::notifyPlanifiedAndPlayingMatch(ClientState * c)
 	}
 
 	matchData = "MC" + matchData + '\n';
+
+	// Si envoi à un client spécifique, envoi uniquement au client passé en paramètre
+	if (c != NULL)
+	{
+		TcpServer<TWParser, ClientState>::Send(c, (char*)matchData.c_str(), matchData.size());
+	}
+}
+
+void TWParser::notifyFinishedMatch(ClientState * c)
+{
+	// Envoi de la liste des matchs en cours
+	std::vector<tw::Match*> playingMatch = tw::PlayerManager::getFinishedMatchs();
+
+	std::string matchData = "";
+
+	for (int i = 0; i < playingMatch.size(); i++)
+	{
+		if (i != 0)
+			matchData += ';';
+		matchData += playingMatch[i]->serialize();
+	}
+
+	matchData = "MF" + matchData + '\n';
 
 	// Si envoi à un client spécifique, envoi uniquement au client passé en paramètre
 	if (c != NULL)
@@ -1061,6 +1086,7 @@ void TWParser::onMatchStatusChanged(tw::Match * match, tw::MatchStatus oldStatus
 
 	// Notify admin
 	notifyPlanifiedAndPlayingMatch(admin);
+	notifyFinishedMatch(admin);
 }
 
 void TWParser::onBattleStateChanged(tw::Match * m, BattleState state)

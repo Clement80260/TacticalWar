@@ -246,6 +246,32 @@ void AdminScreen::onMessageReceived(std::string msg)
 
 		m_matchListCreate->getRenderer()->setScrollbarWidth(10);
 	}
+	// Finished matchs list
+	else if (m.substring(0, 2) == "MF")
+	{
+		std::vector<tw::Match*> matchs;
+		std::vector<std::string> str = StringUtils::explode(m.substring(2), ';');
+
+		for (int i = 0; i < str.size(); i++)
+		{
+			matchs.push_back(tw::Match::deserialize(str[i]));
+		}
+
+		m_matchListEnd->removeAllWidgets();
+
+		// Afficher les matchs
+		for (int i = 0; i < matchs.size(); i++)
+		{
+			std::shared_ptr<MatchView> m = std::make_shared<MatchView>(*matchs[i], false);
+			m->setSize(tgui::Layout("97%"), 120);
+			m->setPosition(tgui::Layout("1.5%"), 10 * (i + 1) + (120 * i));
+			m->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255, 200));
+
+			m_matchListEnd->add(m);
+		}
+
+		m_matchListEnd->getRenderer()->setScrollbarWidth(10);
+	}
 	// Team list
 	else if (m.substring(0, 2) == "TL")
 	{

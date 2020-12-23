@@ -33,6 +33,7 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEvent
 	void notifyMatchCreated(tw::Match * m);
 	void notifySwitchToClassSelectionToConnectedPlayer(std::vector<tw::Player*> team);
 	void notifyPlanifiedAndPlayingMatch(ClientState * c);
+	void notifyFinishedMatch(ClientState * c);
 
 	void notifyClassChoiceLocked(ClientState * c);
 

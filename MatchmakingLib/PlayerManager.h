@@ -19,6 +19,7 @@ namespace tw
 		static Match * getCurrentOrNextMatchForPlayer(Player * p);
 		static std::vector<Match*> getCurrentlyPlayingMatchs();
 		static std::vector<Match*> getPlanifiedAndPlayingMatchs();
+		static std::vector<Match*> getFinishedMatchs();
 
 
 		//static void subscribeToAllMatchEvent(MatchEventListener * l);

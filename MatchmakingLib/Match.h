@@ -186,6 +186,11 @@ namespace tw
 			return NULL;
 		}
 
+		int getWinnerTeamId()
+		{
+			return winnerTeam;
+		}
+
 		void setWinnerTeam(int winnerTeam)
 		{
 			this->winnerTeam = winnerTeam;
