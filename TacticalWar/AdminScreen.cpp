@@ -46,6 +46,11 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	m_matchListCreate->setInheritedFont(font);
 	m_matchListCreate->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
 
+	m_matchListEnd = tgui::ScrollablePanel::create();
+	m_matchListEnd->setSize(300, 600);
+	m_matchListEnd->setInheritedFont(font);
+	m_matchListEnd->getRenderer()->setBackgroundColor(sf::Color(128, 128, 128, 128));
+
 	listTeam1 = tgui::ListBox::create();
 	listTeam1->setSize(200, 150);
 	listTeam1->setInheritedFont(font);
@@ -86,6 +91,12 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	matchCreate->getRenderer()->setTextColor(sf::Color::Yellow);
 	matchCreate->setText("Matchs créés :");
 
+	matchEnd = tgui::Label::create();
+	matchEnd->setInheritedFont(font);
+	matchEnd->setTextSize(20);
+	matchEnd->getRenderer()->setTextColor(sf::Color::Yellow);
+	matchEnd->setText("Matchs terminés :");
+
 	createMatch = tgui::Button::create();
 	createMatch->setSize(150, 75);
 	createMatch->setInheritedFont(font);
@@ -108,6 +119,7 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	gui->add(matchPanelTitle);
 	gui->add(m_matchListpanel);
 	gui->add(m_matchListCreate);
+	gui->add(m_matchListEnd);
 	gui->add(listTeam1);
 	gui->add(listTeam2);
 	gui->add(versus);
@@ -117,6 +129,7 @@ AdminScreen::AdminScreen(tgui::Gui * gui)
 	gui->add(matchCreate);
 	gui->add(team1Choice);
 	gui->add(team2Choice);
+	gui->add(matchEnd);
 
 	LinkToServer::getInstance()->addListener(this);
 
@@ -135,6 +148,7 @@ void AdminScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 	matchPanelTitle->setPosition(window->getSize().x / 2.0 - m_matchListpanel->getSize().x / 2.0, 270);
 	m_matchListpanel->setPosition(window->getSize().x / 2.0 - m_matchListpanel->getSize().x / 2.0, 300);
 	m_matchListCreate->setPosition(window->getSize().x / 2.0 + 700 - m_matchListCreate->getSize().x / 2.0, 300);
+	m_matchListEnd->setPosition(window->getSize().x / 2.0 - 700 - m_matchListCreate->getSize().x / 2.0, 300);
 	listTeam1->setPosition(window->getSize().x / 2.0 - 350 - listTeam1->getSize().x / 2.0, 450);
 	listTeam2->setPosition(window->getSize().x / 2.0 + 350 - listTeam2->getSize().x / 2.0, 450);
 	versus->setPosition(window->getSize().x / 2.0 - versus->getSize().x / 2.0, 500);
@@ -144,6 +158,7 @@ void AdminScreen::handleEvents(sf::RenderWindow * window, tgui::Gui * gui)
 	matchCreate->setPosition(window->getSize().x / 2.0 + 650 - matchCreate->getSize().x / 2.0, 270);
 	team1Choice->setPosition(window->getSize().x / 2.0 - 350 - team1Choice->getSize().x / 2.0, 425);
 	team2Choice->setPosition(window->getSize().x / 2.0 + 350 - team2Choice->getSize().x / 2.0, 425);
+	matchEnd->setPosition(window->getSize().x / 2.0 - 750 - matchCreate->getSize().x / 2.0, 270);
 
 	sf::Event event;
 	while (window->pollEvent(event))
