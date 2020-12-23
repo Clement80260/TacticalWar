@@ -755,6 +755,7 @@ void TWParser::synchronizeBattleState(tw::Match * m, ClientState * c)
 												+ std::to_string(model->getAttackCooldown(2)) + ";"
 												+ std::to_string(model->getAttackCooldown(3)) + ";"
 												+ std::to_string(model->getAttackCooldown(4)) + ";"
+												+ (m->playerIsInTeam1(player) ? "1" : "2") + ";"	// Color in match
 												+ model->getPseudo()
 												+ "\n";
 				TcpServer<TWParser, ClientState>::Send(c, (char*)addPlayerStr.c_str(), addPlayerStr.size());

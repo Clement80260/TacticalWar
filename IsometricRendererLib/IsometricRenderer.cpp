@@ -252,12 +252,13 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			float scaleY = 0.4;
 			s->setScale(flipped ? -scaleX : scaleX, scaleY);
 
-			sf::Color toApplyarmure = sf::Color(120, 17, 17);
+			sf::Color toApplyarmure1 = sf::Color(0, 166, 214);
+			sf::Color toApplyarmure2 = sf::Color(120, 17, 17);
 			sf::Color toApplycheveux = sf::Color(108, 70, 35);
 			sf::Color toApplypeau = sf::Color(202, 165, 150);
 
 			shader.setUniform("mask", *mask);
-			shader.setUniform("color1", sf::Glsl::Vec4(toApplyarmure));
+			shader.setUniform("color1", sf::Glsl::Vec4(((m->getColorNumber() == 1) ? toApplyarmure1 : toApplyarmure2)));
 			shader.setUniform("color2", sf::Glsl::Vec4(toApplycheveux));
 			shader.setUniform("color3", sf::Glsl::Vec4(toApplypeau));
 

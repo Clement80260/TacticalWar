@@ -40,9 +40,6 @@ BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 	gui->removeAllWidgets();
 	
 	renderer = new IsometricRenderer(NULL);
-	//environment = new Environment(15, 15, 0);
-	//environment->getMapData(2, 2)->setIsObstacle(true);
-	//environment->getMapData(1, 1)->setIsWalkable(false);
 	environment = EnvironmentManager::getInstance()->loadEnvironment(environmentId);
 
 	
@@ -632,6 +629,7 @@ void BattleScreen::onMessageReceived(std::string msg)
 		int cooldown2 = std::atoi(splitedData[i++].c_str());
 		int cooldown3 = std::atoi(splitedData[i++].c_str());
 		int cooldown4 = std::atoi(splitedData[i++].c_str());
+		int colorNumber = std::atoi(splitedData[i++].c_str());
 		std::string pseudo = splitedData[i++];
 
 		BaseCharacterModel * c = CharacterFactory::getInstance()->constructCharacter(environment, classId, teamId, currentX, currentY, this);
@@ -643,6 +641,7 @@ void BattleScreen::onMessageReceived(std::string msg)
 		c->setAttackCooldown(2, cooldown2);
 		c->setAttackCooldown(3, cooldown3);
 		c->setAttackCooldown(4, cooldown4);
+		c->setColorNumber(colorNumber);
 		c->setPseudo(pseudo);
 		c->addEventListener(this);
 

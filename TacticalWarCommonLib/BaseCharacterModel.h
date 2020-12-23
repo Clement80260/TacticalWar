@@ -82,6 +82,8 @@ namespace tw
 		int currentX;
 		int currentY;
 
+		int colorNumber;	// Colorisation
+
 		//---------------------------------
 		// Pour gérer le déplacement :
 		float interpolatedX;
@@ -224,6 +226,8 @@ namespace tw
 			this->environment = environment;
 			this->currentX = currentX;
 			this->currentY = currentY;
+
+			this->colorNumber = 1;
 
 			setNoTargetPosition();
 			lastMoveEndTime = 0;
@@ -824,6 +828,16 @@ namespace tw
 			{
 				listeners[i]->onLookAt(targetX, targetY);
 			}
+		}
+
+		int getColorNumber()
+		{
+			return colorNumber;
+		}
+
+		void setColorNumber(int colorNumber)
+		{
+			this->colorNumber = colorNumber;
 		}
 	};
 }
