@@ -33,7 +33,12 @@ void AnimationManager::onAnimationFinished(float remainingTime)
 	if (animations.size() > 0)
 		animations[0]->start();
 }
+
 void AnimationManager::clear()
 {
+	for (int i = 0; i < animations.size(); i++)
+	{
+		delete animations[i];
+	}
 	animations.clear();
 }

@@ -69,7 +69,7 @@ public:
 		return players;
 	}
 
-	virtual void addAnimationToDisplay(sf::Sprite * s)
+	virtual void addAnimationToDisplay(SpellView * s)
 	{
 		cout << "addAnimationToDisplay()" << endl;
 	}
@@ -141,6 +141,11 @@ public:
 	}
 
 	virtual void applySynchroPM(int playerId, int pm)
+	{
+
+	}
+
+	virtual void playTakeDamageSound()
 	{
 
 	}

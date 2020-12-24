@@ -70,6 +70,9 @@ namespace tw
 			}
 		}
 
+		bool redirectToBattlePreparation;
+		std::vector<AbstractSpellView<sf::Sprite*>*> animationsToDisplay;
+
 	public:
 		BattleScreen(tgui::Gui * gui, int environmentId);
 		~BattleScreen();
@@ -100,7 +103,7 @@ namespace tw
 		virtual void applyCharacterLaunchSpell(int persoId, int x, int y, int spellId);
 		virtual tw::BaseCharacterModel* getCharacter(int persoId);
 		virtual std::vector <tw::BaseCharacterModel*> getAliveCharacters();
-		virtual void addAnimationToDisplay(sf::Sprite * s);
+		virtual void addAnimationToDisplay(SpellView * s);
 		virtual void applyCharacterMove(int persoId, std::vector<tw::Point2D> path, MoveActionAnimationEventListener * callback);
 		virtual void applyCharacterDisconnected(int persoId);
 		virtual void applyCharacterConnected(int persoId);
@@ -110,6 +113,7 @@ namespace tw
 		virtual void applyTeleport(int playerId, int cellX, int cellY);
 		virtual void applySynchroPA(int playerId, int pa);
 		virtual void applySynchroPM(int playerId, int pm);
+		virtual void playTakeDamageSound();
 
 		// IMapKnowledge
 		virtual std::vector<tw::BaseCharacterModel*> getAliveCharactersInZone(std::vector<tw::Point2D> zone);

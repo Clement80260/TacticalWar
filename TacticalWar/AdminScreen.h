@@ -22,8 +22,10 @@ private:
 	tgui::Label::Ptr team1Choice;
 	tgui::Label::Ptr team2Choice;
 	tgui::Label::Ptr matchCreate;
+	tgui::Label::Ptr matchEnd;
 	tgui::ScrollablePanel::Ptr m_matchListpanel;
 	tgui::ScrollablePanel::Ptr m_matchListCreate;
+	tgui::ScrollablePanel::Ptr m_matchListEnd;
 	tgui::ListBox::Ptr listTeam1;
 	tgui::ListBox::Ptr listTeam2;
 	tgui::ListBox::Ptr listMatchCreate;

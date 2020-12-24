@@ -10,6 +10,8 @@ using namespace tw;
 IsometricRenderer::IsometricRenderer(sf::RenderWindow * window)
 {
 	shader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/fragment.frag");
+	waterShader.loadFromFile("./assets/shaders/vertex.vert", "./assets/shaders/water-animation.glsl");
+
 	hasFocus = true;
 	forcedFocus = false;
 	if (!textureGrass.loadFromFile("assets/tiles/resized/Grass_01.png")) { std::cout << "Impossible de charger Grass texture" << std::endl; }
@@ -29,6 +31,7 @@ IsometricRenderer::IsometricRenderer(sf::RenderWindow * window)
 
 	this->window = window;
 	this->colorator = NULL;
+	this->ellapsedTime = 0;
 }
 
 void IsometricRenderer::manageEvents(Environment * environment, std::vector<BaseCharacterModel*> & characters)
@@ -192,6 +195,12 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 				borderY = -260 * 0.05;
 				spriteToDraw = &spriteWater;
 				borderY += 10;
+
+
+				waterShader.setUniform("u_time", ellapsedTime);
+				waterShader.setUniform("u_widthFactor", (float)1.0);
+				waterShader.setUniform("u_textureHeight", (float)90.0);
+				sf::Shader::bind(&waterShader);
 			}
 
 			int isoX = (i*120 - j*120)/2; // Cordonnées
@@ -207,6 +216,8 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			//spriteToDraw.setScale(0.05, 0.05);
 			spriteToDraw->setPosition(borderX+isoX, borderY+isoY); 
 			window->draw(*spriteToDraw);
+
+			sf::Shader::bind(NULL);
 		}
 	}
 	
@@ -252,12 +263,13 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 			float scaleY = 0.4;
 			s->setScale(flipped ? -scaleX : scaleX, scaleY);
 
-			sf::Color toApplyarmure = sf::Color(120, 17, 17);
+			sf::Color toApplyarmure1 = sf::Color(0, 166, 214);
+			sf::Color toApplyarmure2 = sf::Color(120, 17, 17);
 			sf::Color toApplycheveux = sf::Color(108, 70, 35);
 			sf::Color toApplypeau = sf::Color(202, 165, 150);
 
 			shader.setUniform("mask", *mask);
-			shader.setUniform("color1", sf::Glsl::Vec4(toApplyarmure));
+			shader.setUniform("color1", sf::Glsl::Vec4(((m->getColorNumber() == 1) ? toApplyarmure1 : toApplyarmure2)));
 			shader.setUniform("color2", sf::Glsl::Vec4(toApplycheveux));
 			shader.setUniform("color3", sf::Glsl::Vec4(toApplypeau));
 
@@ -288,6 +300,18 @@ void IsometricRenderer::render(Environment* environment, std::vector<BaseCharact
 				window->draw(*pseudoTxt);
 			}
 		}
+	}
+
+
+	for (int i = 0; i < spells.size(); i++)
+	{
+		SpellView * view = dynamic_cast<SpellView*>(spells[i]);
+		sf::Sprite * spellSprite = view->getImageToDraw();
+		int isoX = (view->getX() * 120 - view->getY() * 120) / 2;
+		int isoY = (view->getX() * 60 + view->getY() * 60) / 2;
+		spellSprite->setPosition(isoX + 60 - (spellSprite->getGlobalBounds().width / 2.0), isoY + 30 - (spellSprite->getGlobalBounds().height / 2.0));
+
+		window->draw(*spellSprite);
 	}
 }
 

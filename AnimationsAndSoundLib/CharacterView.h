@@ -11,7 +11,11 @@
 
 namespace tw
 {
-	class CharacterView : public AbstractCharacterView<sf::Sprite*>
+	template <typename T> int getSign(T val) {
+		return (T(0) < val) - (val < T(0));
+	}
+
+	class CharacterView : public AbstractCharacterView<sf::Sprite*>, CharacterEventListener
 	{
 	private:
 		static std::map<std::string, sf::Texture*> * textureCache;
@@ -94,6 +98,50 @@ namespace tw
 		{
 			float height = animationsMap[Orientation::BOTTOM_RIGHT][Animation::IDLE][0]->getGlobalBounds().height + 10;
 			return height;
+		}
+
+		// CharacterEventListener
+		virtual void onPositionChanged(BaseCharacterModel * c, int newPositionX, int newPositionY) {}
+
+		virtual void onLookAt(int targetX, int targetY)
+		{
+			int diffX = targetX - getModel()->getCurrentX();
+			int diffY = targetY - getModel()->getCurrentY();
+
+			// Vecteur nord = [1;-1];
+
+			if (diffX != 0 || diffY != 0) {  // Si c'est pas un lancer sur soi-même
+				double normeVecteur = sqrt((diffX * diffX) + (diffY * diffY));
+				double normeNorth = sqrt(2.0);
+				double scalaire = (diffX * 1) + (diffY * -1);
+				double cosTeta = scalaire / (normeVecteur * normeNorth);
+				double s = (1 * diffY) - (-1 * diffX); // Permet de trouver le signe de l'angle
+				double sign = (double)getSign(s);
+				double radAngle = (sign != 0 ? sign : 1) * acos(cosTeta);
+
+				double pi2 = M_PI / 2;
+
+				// Regarde vers le nord :
+				if (radAngle >= 0 && radAngle < pi2) {
+					std::cout << "Look at -- Nord" << std::endl;
+					setOrientation(Orientation::BOTTOM_RIGHT);
+				}
+				// Regarde vers l'est
+				else if (radAngle >= pi2 && radAngle <= M_PI) {
+					std::cout << "Look at -- Est" << std::endl;
+					setOrientation(Orientation::BOTTOM_LEFT);
+				}
+				// Regarde vers le sud
+				else if (radAngle <= -pi2 && radAngle > -M_PI) {
+					std::cout << "Look at -- Sud" << std::endl;
+					setOrientation(Orientation::TOP_LEFT);
+				}
+				// Regarde vers l'ouest
+				else {
+					std::cout << "Look at -- Ouest" << std::endl;
+					setOrientation(Orientation::TOP_RIGHT);
+				}
+			}
 		}
 	};
 }

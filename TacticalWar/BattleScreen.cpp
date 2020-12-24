@@ -21,6 +21,8 @@
 #include <SynchroPMAction.h>
 #include <LaunchSpellAction.h>
 #include <BattleEndAction.h>
+#include "ClassSelectionScreen.h"
+#include "WaitMatchScreen.h"
 
 
 using namespace tw;
@@ -28,6 +30,7 @@ using namespace tw;
 
 BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 {
+	redirectToBattlePreparation = false;
 	hasInitSpellBar = false;
 	turnToken = -1;
 	readyToValidatePosition = false;
@@ -37,9 +40,6 @@ BattleScreen::BattleScreen(tgui::Gui * gui, int environmentId)
 	gui->removeAllWidgets();
 	
 	renderer = new IsometricRenderer(NULL);
-	//environment = new Environment(15, 15, 0);
-	//environment->getMapData(2, 2)->setIsObstacle(true);
-	//environment->getMapData(1, 1)->setIsWalkable(false);
 	environment = EnvironmentManager::getInstance()->loadEnvironment(environmentId);
 
 	
@@ -226,6 +226,8 @@ void BattleScreen::update(float deltatime)
 		characters[i]->update(deltatime);
 	}
 
+	renderer->ellapseTime(deltatime);	// Update renderer (water animation)
+
 	double fps = 1.0 / deltatime;
 	FPS.setString(std::to_string((int)fps));
 	FPS.setFillColor(sf::Color::Red);
@@ -241,8 +243,20 @@ void BattleScreen::update(float deltatime)
 
 	AnimationManager::getInstance()->update(deltatime);
 
-
-	LinkToServer::getInstance()->UpdateReceivedData();
+	if (redirectToBattlePreparation)
+	{
+		AnimationManager::getInstance()->clear();
+		gui->removeAllWidgets();
+		window->setView(window->getDefaultView());
+		tw::ScreenManager::getInstance()->setCurrentScreen(new WaitMatchScreen(gui));
+		MusicManager::getInstance()->setMenuMusic();
+		redirectToBattlePreparation = false;
+		delete this;
+	}
+	else
+	{
+		LinkToServer::getInstance()->UpdateReceivedData();
+	}
 }
 
 void BattleScreen::render(sf::RenderWindow * window)
@@ -255,8 +269,10 @@ void BattleScreen::render(sf::RenderWindow * window)
 		aliveCharacters.push_back((*it).second);
 	}
 
-	renderer->render(environment, aliveCharacters, std::vector<AbstractSpellView<sf::Sprite*>*>(), getDeltatime());
+	renderer->render(environment, aliveCharacters, animationsToDisplay, getDeltatime());
 	window->draw(FPS);
+
+	animationsToDisplay.clear();
 }
 
 void BattleScreen::invalidatePathZone()
@@ -615,6 +631,7 @@ void BattleScreen::onMessageReceived(std::string msg)
 		int cooldown2 = std::atoi(splitedData[i++].c_str());
 		int cooldown3 = std::atoi(splitedData[i++].c_str());
 		int cooldown4 = std::atoi(splitedData[i++].c_str());
+		int colorNumber = std::atoi(splitedData[i++].c_str());
 		std::string pseudo = splitedData[i++];
 
 		BaseCharacterModel * c = CharacterFactory::getInstance()->constructCharacter(environment, classId, teamId, currentX, currentY, this);
@@ -626,6 +643,7 @@ void BattleScreen::onMessageReceived(std::string msg)
 		c->setAttackCooldown(2, cooldown2);
 		c->setAttackCooldown(3, cooldown3);
 		c->setAttackCooldown(4, cooldown4);
+		c->setColorNumber(colorNumber);
 		c->setPseudo(pseudo);
 		c->addEventListener(this);
 
@@ -738,6 +756,15 @@ void BattleScreen::onMessageReceived(std::string msg)
 
 		AnimationManager::getInstance()->addAnimation(new BattleEndAction(this, winnerTeamId));
 	}
+	else if (str.substring(0, 2) == "HC")
+	{
+		AnimationManager::getInstance()->clear();
+		gui->removeAllWidgets();
+		window->setView(window->getDefaultView());
+		tw::ScreenManager::getInstance()->setCurrentScreen(new ClassSelectionScreen(gui));
+		MusicManager::getInstance()->setMenuMusic();
+		delete this;
+	}
 }
 
 void tw::BattleScreen::onDisconnected()
@@ -782,11 +809,22 @@ void tw::BattleScreen::applyEndOfBattle(int winnerTeam)
 	tgui::Label::Ptr endLabel = tgui::Label::create(msg);
 	endLabel->setInheritedFont(font);
 	endLabel->setTextSize(30);
-	endLabel->getRenderer()->setTextColor(tgui::Color::Red);
+	endLabel->getRenderer()->setTextColor(tgui::Color::Green);
 	endLabel->getRenderer()->setTextOutlineColor(tgui::Color::Black);
 	endLabel->getRenderer()->setTextOutlineThickness(1.0);
 	endLabel->setPosition(window->getSize().x / 2.0 - endLabel->getSize().x / 2.0, window->getSize().y / 2.0 - endLabel->getSize().y / 2.0);
 	gui->add(endLabel, "endLabel");
+
+	PlayerStatusView::getInstance()->setVisible(false);
+
+	// Return to wait screen button
+	tgui::Button::Ptr backButton = tgui::Button::create("Fermer");
+	backButton->setInheritedFont(font);
+	backButton->setPosition(window->getSize().x / 2.0 - backButton->getSize().x / 2.0, window->getSize().y / 2.0 - backButton->getSize().y / 2.0 + endLabel->getSize().y + 10);
+	backButton->connect("pressed", [&]() {
+		redirectToBattlePreparation = true;
+	});
+	gui->add(backButton, "backButton");
 
 	colorator->setBattleState(BattleState::END_PHASE);
 }
@@ -841,9 +879,9 @@ std::vector<tw::BaseCharacterModel*> tw::BattleScreen::getAliveCharacters()
 	return aliveCharacters;
 }
 
-void tw::BattleScreen::addAnimationToDisplay(sf::Sprite * s)
+void tw::BattleScreen::addAnimationToDisplay(SpellView * s)
 {
-
+	animationsToDisplay.push_back(s);
 }
 
 void tw::BattleScreen::applyCharacterMove(int persoId, std::vector<tw::Point2D> path, MoveActionAnimationEventListener * callback)
@@ -896,6 +934,11 @@ void tw::BattleScreen::applySynchroPM(int playerId, int pm)
 	{
 		onPositionChanged(activeCharacter, activeCharacter->getCurrentX(), activeCharacter->getCurrentY());
 	}
+}
+
+void tw::BattleScreen::playTakeDamageSound()
+{
+	MusicManager::getInstance()->playTakeDamageSound();
 }
 //----------------------------------------------------------
 

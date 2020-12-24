@@ -447,6 +447,72 @@ public:
 		return 0;
 	}
 
+	//------------------------------------
+
+	virtual std::string getSpell1AnimationPath()
+	{
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	virtual std::string getSpell2AnimationPath()
+	{
+
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	virtual std::string getSpell3AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
+	virtual std::string getSpell4AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
+	//------------------------------------
+
+	virtual std::string getSpell1SoundPath()
+	{
+		return "./assets/sound/explosion1.wav";
+	}
+
+	virtual std::string getSpell2SoundPath()
+	{
+		return "./assets/sound/explosion1.wav";
+	}
+
+	virtual std::string getSpell3SoundPath()
+	{
+		return "./assets/sound/punch3.wav";
+	}
+
+	virtual std::string getSpell4SoundPath()
+	{
+		return "./assets/sound/punch3.wav";
+	}
+
+	//------------------------------------
+
+	virtual tw::Animation getSpell1AttackerAnimation()
+	{
+		return tw::Animation::ATTACK2;
+	}
+
+	virtual tw::Animation getSpell2AttackerAnimation()
+	{
+		return tw::Animation::ATTACK2;
+	}
+
+	virtual tw::Animation getSpell3AttackerAnimation()
+	{
+		return tw::Animation::ATTACK1;
+	}
+
+	virtual tw::Animation getSpell4AttackerAnimation()
+	{
+		return tw::Animation::ATTACK1;
+	}
 	//--------------------------------------------------------------------
 };
 

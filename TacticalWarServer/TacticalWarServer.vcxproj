@@ -115,7 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\PathfindingLib;..\ClassesLib;..\UtilsLib;..\EnvironmentPersistanceLib;..\TacticalWarCommonLib;..\TacticalWarBattleLib;..\MatchmakingLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ZoneAndSightLib;..\PathfindingLib;..\ClassesLib;..\UtilsLib;..\EnvironmentPersistanceLib;..\TacticalWarCommonLib;..\TacticalWarBattleLib;..\MatchmakingLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\PathfindingLib;..\ClassesLib;..\UtilsLib;..\EnvironmentPersistanceLib;..\TacticalWarCommonLib;..\TacticalWarBattleLib;..\MatchmakingLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ZoneAndSightLib;..\PathfindingLib;..\ClassesLib;..\UtilsLib;..\EnvironmentPersistanceLib;..\TacticalWarCommonLib;..\TacticalWarBattleLib;..\MatchmakingLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -185,6 +185,9 @@
     </ProjectReference>
     <ProjectReference Include="..\UtilsLib\UtilsLib.vcxproj">
       <Project>{1d67c839-b5d5-4a87-8fdb-0ff8f2aed605}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ZoneAndSightLib\ZoneAndSightLib.vcxproj">
+      <Project>{92a13653-9a4d-478b-96d5-414c0133b381}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

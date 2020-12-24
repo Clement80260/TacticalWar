@@ -136,6 +136,23 @@ std::vector<tw::Match*> tw::PlayerManager::getPlanifiedAndPlayingMatchs()
 	return result;
 }
 
+std::vector<tw::Match*> tw::PlayerManager::getFinishedMatchs()
+{
+	std::vector<tw::Match*> result;
+
+	// Construire la liste des matchs terminés :
+	for (int i = 0; i < matchList.size(); i++)
+	{
+		Match * match = matchList[i];
+		if (match->getStatus() == MatchStatus::FINISHED)
+		{
+			result.push_back(match);
+		}
+	}
+
+	return result;
+}
+
 /*
 void tw::PlayerManager::subscribeToAllMatchEvent(MatchEventListener * l)
 {
