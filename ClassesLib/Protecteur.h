@@ -189,12 +189,17 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description protecteur ...";
+		return "Qui vise à protéger, à sauvegarder : Société protectrice des animaux. Qui marque un désir de protection condescendante : Prendre un ton protecteur. Se dit d'un système qui, par des prohibitions, des taxes à l'entrée sur les produits étrangers, favorise l'industrie nationale.";
 	}
 
 	virtual std::string getClassIconPath()
 	{
 		return "./assets/classicons/Priest.png";
+	}
+
+	virtual std::string getClassPreviewPath()
+	{
+		return "./assets/classpreview/Protecteur.png";
 	}
 
 
@@ -224,22 +229,22 @@ public:
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
-		return "Protecteur, description sort 1 ...";
+		return "Protecteur, description sort 1 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Protecteur, description sort 2 ...";
+		return "Protecteur, description sort 2 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Protecteur, description sort 3 ...";
+		return "Protecteur, description sort 3 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Protecteur, description sort 4 ...";
+		return "Protecteur, description sort 4 .................................................................................................................................";
 	}
 
 

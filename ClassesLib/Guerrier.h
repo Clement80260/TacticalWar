@@ -187,12 +187,17 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description guerrier ...";
+		return "Un guerrier est une personne spécialisée dans le combat ou la guerre, en particulier dans le contexte d'une société de culture guerrière tribale ou basée sur le clan qui reconnaît une classe ou une caste de guerriers distincte.";
 	}
 
 	virtual std::string getClassIconPath()
 	{
 		return "./assets/classicons/Barbare.png";
+	}
+
+	virtual std::string getClassPreviewPath()
+	{
+		return "./assets/classpreview/Guerrier.png";
 	}
 
 
@@ -222,22 +227,22 @@ public:
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
-		return "Guerrier, description sort 1 ...";
+		return "Guerrier, description sort 1 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Guerrier, description sort 2 ...";
+		return "Guerrier, description sort 2 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Guerrier, description sort 3 ...";
+		return "Guerrier, description sort 3 ..............................................................................................................................";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Guerrier, description sort 4 ...";
+		return "Guerrier, description sort 4 ..............................................................................................................................";
 	}
 
 
