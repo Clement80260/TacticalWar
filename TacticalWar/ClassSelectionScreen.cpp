@@ -173,10 +173,15 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	tgui::Label::Ptr spell4description = tgui::Label::create();
 	spell4description->setInheritedFont(font2);
 
-	//gui->add(m_matchListpanel);
+
 	gui->add(statsPanel);
 	gui->add(descriptionPanel);
 	gui->add(card, "classPreview");
+/*
+	gui->add(m_matchListpanel);
+	gui->add(warriorpanel);
+	gui->add(statsPanel);
+	*/
 	gui->add(Icon, "classIcon");
 	gui->add(classCharacterView, "classCharacterView");	
 	gui->add(buttonSuivant, "buttonSuivant");
