@@ -74,6 +74,8 @@ namespace tw
 
 		}
 
+		virtual std::string getClassPreviewPath() { return ""; }
+
 		virtual void turnStart() {}
 
 		// Méthodes rajoutées :
