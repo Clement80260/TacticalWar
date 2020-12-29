@@ -8,14 +8,17 @@ class ClassSelectionScreen : public tw::Screen, ServerMessageListener
 {
 private:
 	sf::Font font;
+	sf::Font font2;
 	sf::Text title;
 	sf::Text subtitle;
 	sf::Text subsubtitle;
+	sf::Text stats;
 
 	tgui::Label::Ptr matchPanelTitle;
 	tgui::ScrollablePanel::Ptr m_matchListpanel;
 	tgui::ScrollablePanel::Ptr warriorpanel;
 	tgui::ScrollablePanel::Ptr statsPanel;
+	tgui::ScrollablePanel::Ptr descriptionPanel;
 	//static void scrollPanel(tgui::Panel::Ptr panel, int value);
 	//static int previousScrollbarValue;
 
@@ -26,16 +29,26 @@ private:
 	std::vector<tw::BaseCharacterModel*> classesInstances;
 	tw::CharacterView * characterView;
 	int indexClass;
+
+	tgui::Label::HorizontalAlignment Horizontale_AlignementRight = tgui::Label::HorizontalAlignment::Right;
 	
+	int frontsize2 = 20;
 	int PositionOfPanelX = 230;
 	int PositionOfPanelY = 250;
 	int SizeOfPanelX = 1500;
 	int SizeOfPanelY = 700;
 
 	int PositionOfCardX = 800;
-	int PositionOfCardY = 380;
+	int PositionOfCardY = 300;
 	int SizeOfCardX = 400;
 	int SizeOfCardY = 450;
+
+	int DescriptionX = PositionOfCardX + 500;
+	int DescriptionY = PositionOfCardY + 290;
+
+	int sizeTextX = 450;
+	int sizeTextY = 25;
+
 	void setClassView();
 
 	sf::Vector2u windowSize;

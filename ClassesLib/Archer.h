@@ -190,7 +190,7 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description archer ...";
+		return "Lors de la bataille d'Azincourt en 1415, les archers, à l'abri de positions fortifiées, harcèlent le corps de bataille français qui tente de répondre par un assaut frontal. Embourbée et désorganisée, l'armée française subit de lourdes pertes.";
 	}
 
 	virtual std::string getClassIconPath()
@@ -198,6 +198,10 @@ public:
 		return "./assets/classicons/Chasseur.png";
 	}
 
+	virtual std::string getClassPreviewPath()
+	{
+		return "./assets/classpreview/Archer.png";
+	}
 
 	//------------------------------------
 
@@ -225,22 +229,22 @@ public:
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
-		return "Archer, description sort 1 ...";
+		return "Archer, description sort 1 ..............................................................................................................................";
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Archer, description sort 2 ...";
+		return "Archer, description sort 2 ..............................................................................................................................";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Archer, description sort 3 ...";
+		return "Archer, description sort 3 ..............................................................................................................................";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Archer, description sort 4 ...";
+		return "Archer, description sort 4 ..............................................................................................................................";
 	}
 
 

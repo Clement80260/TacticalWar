@@ -347,6 +347,9 @@ namespace tw
 		virtual std::string getClassName() = 0;
 		virtual std::string getClassDescription() = 0;
 		virtual std::string getClassIconPath() = 0;
+		virtual std::string getClassPreviewPath() = 0;
+
+
 
 
 		virtual std::string getSpell1Name() = 0;

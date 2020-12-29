@@ -191,12 +191,17 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description mage ...";
+		return "Prêtres officiels perses. À l'époque achéménide, Darius Ier renverse le mage mède Gaumâta, qui vient de se proclamer roi de l'empire perse. Les mages exercent le monopole sacerdotal. Selon Xénophon, c'est Cyrus II le Grand qui installa officiellement les mages de Perse.";
 	}
 
 	virtual std::string getClassIconPath()
 	{
 		return "./assets/classicons/Mage.png";
+	}
+
+	virtual std::string getClassPreviewPath()
+	{
+		return "./assets/classpreview/Mage.png";
 	}
 
 
@@ -226,22 +231,22 @@ public:
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
-		return "Mage, description sort 1 ...";
+		return "Mage, description sort 1 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Mage, description sort 2 ...";
+		return "Mage, description sort 2 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Mage, description sort 3 ...";
+		return "Mage, description sort 3 ..............................................................................................................................";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Mage, description sort 4 ...";
+		return "Mage, description sort 4 .................................................................................................................................";
 	}
 
 
