@@ -1,5 +1,7 @@
 #include "SpellSlot.h"
 
+std::map<std::string, sf::Texture> SpellSlot::textureCache;
+
 SpellSlot::SpellSlot(tw::BaseCharacterModel * model, int attackNumber, std::string spellIconPath)
 	: tgui::Picture()
 {
@@ -8,17 +10,10 @@ SpellSlot::SpellSlot(tw::BaseCharacterModel * model, int attackNumber, std::stri
 	font.loadFromFile("./assets/font/neuropol_x_rg.ttf");
 
 	this->attackNumber = attackNumber;
-	sf::Texture texture;
-	texture.loadFromFile("./assets/ui/slot/ActionBar_MainSlot_Background.png");
-	texture.setSmooth(true);
-	this->getRenderer()->setTexture(texture);
+	this->getRenderer()->setTexture(*getCachedTexture("./assets/ui/slot/ActionBar_MainSlot_Background.png"));
 
-	sf::Texture spellTexture;
-	spellTexture.loadFromFile(spellIconPath);
-	spellTexture.setSmooth(true);
-	spellPicture = tgui::Picture::create(spellTexture);
-	spellPicture->setSize(getSize().x - 4, getSize().y - 4);
-	setPosition(getPosition());
+	spellPicture = tgui::Picture::create();
+	updateSpellPicture();
 
 	spellCooldownTxt = tgui::Label::create();
 	spellCooldownTxt->setInheritedFont(font);

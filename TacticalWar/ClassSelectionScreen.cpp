@@ -8,6 +8,7 @@
 #include <CharacterFactory.h>
 #include "PictureCharacterView.h"
 #include "BattleScreen.h"
+#include "SpellSlot.h"
 
 
 
@@ -76,10 +77,10 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	
 	
 	tgui::Picture::Ptr Icon = tgui::Picture::create();	
-	tgui::Picture::Ptr spell1 = tgui::Picture::create();
-	tgui::Picture::Ptr spell2 = tgui::Picture::create();
-	tgui::Picture::Ptr spell3 = tgui::Picture::create();
-	tgui::Picture::Ptr spell4 = tgui::Picture::create();
+	std::shared_ptr<SpellSlot> spell1 = std::make_shared<SpellSlot>(classesInstances[0], 1, "");
+	std::shared_ptr<SpellSlot> spell2 = std::make_shared<SpellSlot>(classesInstances[0], 2, "");
+	std::shared_ptr<SpellSlot> spell3 = std::make_shared<SpellSlot>(classesInstances[0], 3, "");
+	std::shared_ptr<SpellSlot> spell4 = std::make_shared<SpellSlot>(classesInstances[0], 4, "");
 	tgui::Picture::Ptr card = tgui::Picture::create();
 	std::shared_ptr<PictureCharacterView> classCharacterView = std::make_shared<PictureCharacterView>();
 
@@ -197,9 +198,13 @@ ClassSelectionScreen::ClassSelectionScreen(tgui::Gui * gui)
 	gui->add(defLabel, "defLabel");
 	gui->add(description, "description");
 	gui->add(spell1, "spell1");
+	gui->add(spell1->getSpellPicture(), "spell1Picture");
 	gui->add(spell2, "spell2");
+	gui->add(spell2->getSpellPicture(), "spell2Picture");
 	gui->add(spell3, "spell3");
+	gui->add(spell3->getSpellPicture(), "spell3Picture");
 	gui->add(spell4, "spell4");
+	gui->add(spell4->getSpellPicture(), "spell4Picture");
 
 	gui->add(spell1description, "spell1Description");
 	gui->add(spell2description, "spell2Description");
@@ -221,6 +226,7 @@ void ClassSelectionScreen::setClassView()
 	std::string pathClassPreview = model->getClassPreviewPath();
 	sf::Texture TextureClassPreview;
 	TextureClassPreview.loadFromFile(pathClassPreview);
+	TextureClassPreview.setSmooth(true);
 	tgui::Picture::Ptr previewClass = gui->get<tgui::Picture>("classPreview");
 	previewClass->setPosition(PositionOfCardX, PositionOfCardY);
 	previewClass->getRenderer()->setTexture(TextureClassPreview);
@@ -228,6 +234,7 @@ void ClassSelectionScreen::setClassView()
 	std::string path = model->getClassIconPath();
 	sf::Texture TextureIconClass;
 	TextureIconClass.loadFromFile(path);
+	TextureIconClass.setSmooth(true);
 	tgui::Picture::Ptr IconClass = gui->get<tgui::Picture>("classIcon");
 	IconClass->getRenderer()->setTexture(TextureIconClass);
 	IconClass->setSize(70, 75);
@@ -284,61 +291,70 @@ void ClassSelectionScreen::setClassView()
 	descriptionLabel->setTextSize(18);
 
 
-	std::string pathSpell1 = model->getSpell1IconPath();
-	sf::Texture TextureSpell1;
-	TextureSpell1.loadFromFile(pathSpell1);
-	tgui::Picture::Ptr spell1 = gui->get<tgui::Picture>("spell1");
-	spell1->getRenderer()->setTexture(TextureSpell1);
-	spell1->setSize(70, 75);
+	std::shared_ptr<tgui::Picture> baseSpell1 = gui->get<tgui::Picture>("spell1");
+	std::shared_ptr<SpellSlot> spell1 = std::dynamic_pointer_cast<SpellSlot>(baseSpell1);
+	spell1->setModel(model);
+	spell1->setSize(tgui::Layout2d(100, 100));
 
 	
-	std::string pathSpell2 = model->getSpell2IconPath();
-	sf::Texture TextureSpell2;
-	TextureSpell2.loadFromFile(pathSpell2);
-	tgui::Picture::Ptr spell2 = gui->get<tgui::Picture>("spell2");
-	spell2->getRenderer()->setTexture(TextureSpell2);
-	spell2->setSize(70, 75);
+	std::shared_ptr<tgui::Picture> baseSpell2 = gui->get<tgui::Picture>("spell2");
+	std::shared_ptr<SpellSlot> spell2 = std::dynamic_pointer_cast<SpellSlot>(baseSpell2);
+	spell2->setModel(model);
+	spell2->setSize(tgui::Layout2d(100, 100));
 
-	
-	std::string pathSpell3 = model->getSpell3IconPath();
-	sf::Texture TextureSpell3;
-	TextureSpell3.loadFromFile(pathSpell3);
-	tgui::Picture::Ptr spell3 = gui->get<tgui::Picture>("spell3");
-	spell3->getRenderer()->setTexture(TextureSpell3);
-	spell3->setSize(70, 75);
+	std::shared_ptr<tgui::Picture> baseSpell3 = gui->get<tgui::Picture>("spell3");
+	std::shared_ptr<SpellSlot> spell3 = std::dynamic_pointer_cast<SpellSlot>(baseSpell3);
+	spell3->setModel(model);
+	spell3->setSize(tgui::Layout2d(100, 100));
 
-
-	std::string pathSpell4 = model->getSpell4IconPath();
-	sf::Texture TextureSpell4;
-	TextureSpell4.loadFromFile(pathSpell4);
-	tgui::Picture::Ptr spell4 = gui->get<tgui::Picture>("spell4");
-	spell4->getRenderer()->setTexture(TextureSpell4);
-	spell4->setSize(70, 75);
+	std::shared_ptr<tgui::Picture> baseSpell4 = gui->get<tgui::Picture>("spell4");
+	std::shared_ptr<SpellSlot> spell4 = std::dynamic_pointer_cast<SpellSlot>(baseSpell4);
+	spell4->setModel(model);
+	spell4->setSize(tgui::Layout2d(100, 100));
 
 
+	tgui::Color outlineColor = tgui::Color::White;
+	float outlineWidth = 1;
+
+	std::string spell1Name = model->getSpell1Name();
 	std::string spell1Description = model->getSpell1Description();
 	tgui::Label::Ptr labelSpell1Description = gui->get<tgui::Label>("spell1Description");
-	labelSpell1Description->setText(spell1Description);
-	labelSpell1Description->setSize(sizeTextX, sizeTextY);
+	labelSpell1Description->setText(spell1Name + "\n" + spell1Description);
+	labelSpell1Description->setSize(sizeTextX, sizeTextY * 2 + 10);
 	labelSpell1Description->setTextSize(18);
+	labelSpell1Description->getRenderer()->setTextStyle(sf::Text::Bold);
+	labelSpell1Description->getRenderer()->setTextOutlineColor(outlineColor);
+	labelSpell1Description->getRenderer()->setTextOutlineThickness(outlineWidth);
 
+	std::string spell2Name = model->getSpell2Name();
 	std::string spell2Description = model->getSpell2Description();
 	tgui::Label::Ptr labelSpell2Description = gui->get<tgui::Label>("spell2Description");
-	labelSpell2Description->setText(spell2Description);
-	labelSpell2Description->setSize(sizeTextX, sizeTextY);
+	labelSpell2Description->setText(spell2Name + "\n" + spell2Description);
+	labelSpell2Description->setSize(sizeTextX, sizeTextY * 2 + 10);
 	labelSpell2Description->setTextSize(18);
+	labelSpell2Description->getRenderer()->setTextStyle(sf::Text::Bold);
+	labelSpell2Description->getRenderer()->setTextOutlineColor(outlineColor);
+	labelSpell2Description->getRenderer()->setTextOutlineThickness(outlineWidth);
 
+	std::string spell3Name = model->getSpell3Name();
 	std::string spell3Description = model->getSpell3Description();
 	tgui::Label::Ptr labelSpell3Description = gui->get<tgui::Label>("spell3Description");
-	labelSpell3Description->setText(spell3Description);
-	labelSpell3Description->setSize(sizeTextX, sizeTextY);
+	labelSpell3Description->setText(spell3Name + "\n" + spell3Description);
+	labelSpell3Description->setSize(sizeTextX, sizeTextY * 2 + 10);
 	labelSpell3Description->setTextSize(18);
+	labelSpell3Description->getRenderer()->setTextStyle(sf::Text::Bold);
+	labelSpell3Description->getRenderer()->setTextOutlineColor(outlineColor);
+	labelSpell3Description->getRenderer()->setTextOutlineThickness(outlineWidth);
 
+	std::string spell4Name = model->getSpell4Name();
 	std::string spell4Description = model->getSpell4Description();
 	tgui::Label::Ptr labelSpell4Description = gui->get<tgui::Label>("spell4Description");
-	labelSpell4Description->setText(spell4Description);
-	labelSpell4Description->setSize(sizeTextX, sizeTextY);
+	labelSpell4Description->setText(spell4Name + "\n" + spell4Description);
+	labelSpell4Description->setSize(sizeTextX, sizeTextY * 2 + 10);
 	labelSpell4Description->setTextSize(18);
+	labelSpell4Description->getRenderer()->setTextStyle(sf::Text::Bold);
+	labelSpell4Description->getRenderer()->setTextOutlineColor(outlineColor);
+	labelSpell4Description->getRenderer()->setTextOutlineThickness(outlineWidth);
 	
 	atkLabel->setPosition(PositionOfCardX + 510, PositionOfCardY +100);
 	pmLabel->setPosition(PositionOfCardX + 510, PositionOfCardY + 130);
@@ -346,14 +362,14 @@ void ClassSelectionScreen::setClassView()
 	paLabel->setPosition(PositionOfCardX + 510, PositionOfCardY + 190);
 	defLabel->setPosition(PositionOfCardX + 510, PositionOfCardY + 220);
 	descriptionLabel->setPosition(DescriptionX, DescriptionY+100);
-	spell1->setPosition(230, 300);
-	spell2->setPosition(230, 400);
-	spell3->setPosition(230, 500);
-	spell4->setPosition(230, 600);
-	labelSpell1Description->setPosition(310, 310);
-	labelSpell2Description->setPosition(310, 410);
-	labelSpell3Description->setPosition(310, 510);
-	labelSpell4Description->setPosition(310, 610);
+	spell1->setPosition(tgui::Layout2d(215, 300));
+	spell2->setPosition(tgui::Layout2d(215, 400));
+	spell3->setPosition(tgui::Layout2d(215, 500));
+	spell4->setPosition(tgui::Layout2d(215, 600));
+	labelSpell1Description->setPosition(310, 315);
+	labelSpell2Description->setPosition(310, 415);
+	labelSpell3Description->setPosition(310, 515);
+	labelSpell4Description->setPosition(310, 615);
 
 
 	std::shared_ptr<tgui::Picture> classCharacterView = gui->get<tgui::Picture>("classCharacterView");

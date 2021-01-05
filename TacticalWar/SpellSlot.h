@@ -2,6 +2,7 @@
 
 #include <TGUI/TGUI.hpp>
 #include <BaseCharacterModel.h>
+#include <map>
 
 #define BORDER_OFFSET 20
 #define BORDER_OFFDIV (BORDER_OFFSET / 2)
@@ -14,8 +15,20 @@ class SpellSlot : public tgui::Picture
 	tw::BaseCharacterModel * model;
 	sf::Font font;
 
+	static std::map<std::string, sf::Texture> textureCache;
+	static sf::Texture * getCachedTexture(std::string path)
+	{
+		if (textureCache.find(path) == textureCache.end())
+		{
+			textureCache[path].loadFromFile(path);
+			textureCache[path].setSmooth(true);
+		}
+
+		return &textureCache[path];
+	}
+
 public:
-	SpellSlot(tw::BaseCharacterModel * model, int attackNumber, std::string spellIconPath);
+	SpellSlot(tw::BaseCharacterModel * model = NULL, int attackNumber = 0, std::string spellIconPath = "");
 	tgui::Picture::Ptr getSpellPicture() {
 		return spellPicture;
 	}
@@ -23,6 +36,23 @@ public:
 	tgui::Label::Ptr getSpellCooldownTxt()
 	{
 		return spellCooldownTxt;
+	}
+
+	void setModel(tw::BaseCharacterModel * m)
+	{
+		this->model = m;
+		updateSpellPicture();
+	}
+
+	void updateSpellPicture()
+	{
+		if (model != NULL)
+		{
+			sf::Texture * spellTexture = getCachedTexture(model->getSpellIconPath(attackNumber));
+			spellPicture->getRenderer()->setTexture(*spellTexture);
+			spellPicture->setSize(getSize().x - 4, getSize().y - 4);
+			setPosition(getPosition());
+		}
 	}
 
 	virtual void setPosition(const tgui::Layout2d & position)

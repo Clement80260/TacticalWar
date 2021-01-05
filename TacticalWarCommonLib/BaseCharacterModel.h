@@ -825,6 +825,30 @@ namespace tw
 			return Animation::ATTACK1;
 		}
 
+		std::string getSpellIconPath(int spellId)
+		{
+			switch (spellId)
+			{
+			case 1:
+				return getSpell1IconPath();
+				break;
+
+			case 2:
+				return getSpell2IconPath();
+				break;
+
+			case 3:
+				return getSpell3IconPath();
+				break;
+
+			case 4:
+				return getSpell4IconPath();
+				break;
+			}
+
+			return "";
+		}
+
 		void setOrientationToLookAt(int targetX, int targetY)
 		{
 			for (int i = 0; i < listeners.size(); i++)
