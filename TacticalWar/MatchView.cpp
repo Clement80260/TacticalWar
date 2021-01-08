@@ -1,4 +1,5 @@
 #include "MatchView.h"
+#include <string>
 
 MatchView::MatchView(tw::Match m, bool isSpectator)
 {
@@ -15,7 +16,7 @@ MatchView::MatchView(tw::Match m, bool isSpectator)
 		break;
 
 	case tw::MatchStatus::FINISHED:
-		statusStr += "Terminé";
+		statusStr += "Eq. " + std::to_string(m.getWinnerTeamId()) + " gagnante";
 		break;
 	}
 	statusStr += ")";

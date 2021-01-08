@@ -10,7 +10,8 @@ enum BattleState {
 	WAITING_PLAYER_PHASE,
 	PREPARATION_PHASE,
 	BATTLE_PHASE,
-	BATTLE_PHASE_ACTIVE_PLAYER_TURN	 //For client side
+	BATTLE_PHASE_ACTIVE_PLAYER_TURN,	 //For client side
+	END_PHASE
 };
 
 class Battle;
@@ -162,12 +163,16 @@ public:
 
 	void changeTurn()
 	{
-		turnToken++;
-		if (turnToken >= timeline.size())
-			turnToken = 0;
+		do
+		{
+			turnToken++;
+			if (turnToken >= timeline.size())
+				turnToken = 0;
+
+		} while (!getActivePlayer()->getCharacter()->isAlive());
 
 		tw::Player * p = getActivePlayer();
-		
+		playerStartTurn(p);
 	}
 
 	void addEventListener(BattleEventListener * l)

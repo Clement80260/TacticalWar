@@ -69,46 +69,113 @@ public:
 		return compt3;
 	}
 
+	virtual bool canDoAttack(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1 <= 0;
+		}
+		else if (spellId == 2)
+		{
+			return compt2 <= 0;
+		}
+		else if (spellId == 3)
+		{
+			return compt3 <= 0;
+		}
+
+		return true;
+	}
+
+	virtual int getAttackCooldown(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1;
+		}
+		else if (spellId == 2)
+		{
+			return compt2;
+		}
+		else if (spellId == 3)
+		{
+			return compt3;
+		}
+
+		return 0;
+	}
+
+	virtual void setAttackCooldown(int spellId, int value)
+	{
+		if (spellId == 1)
+		{
+			compt1 = value;
+		}
+		else if (spellId == 2)
+		{
+			compt2 = value;
+		}
+		else if (spellId == 3)
+		{
+			compt3 = value;
+		}
+	}
+
 	virtual void turnStart()
 	{
+		BaseCharacterModel::turnStart();
+
 		// Décrémentation des cooldowns :
 		if (compt1 > 0)
 			compt1--;
 	}
 
 	//Passif : -50% d'HP -> +15% de dégâts ; -35% d'HP -> +25% de dégâts
-	virtual bool doAttack1(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack1(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 1 : Charge (Mana : 3 / Sort en ligne 4x1 / DPS : 10 / Cd : 3t)
-	virtual bool doAttack2(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack2(int targetX, int targetY)
 	{
-
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
 	//Sort 2 : Rempart (Mana : 4 / Zone 3x3 autour + Soi-même / DPS : 0 / Cd : 4t) : -30% de dégâts reçus sur soi-même / -15% de dégâts reçus sur les alliés
-	virtual bool doAttack3(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack3(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
+<<<<<<< HEAD
 	//Sort 3 : Frappe bouclier (Mana : 2 / Zone autour du joueur / DPS : 8 / Cd : 2t)
 	virtual bool doAttack4(int targetX, int targetY)
+=======
+	//Sort 3 : Frappe bouclier (Mana : 2 / Zone 3x3 autour du joueur / DPS : 8 / Cd : 2t)
+	virtual std::vector<tw::AttackDamageResult> doAttack4(int targetX, int targetY)
+>>>>>>> 2f55d20d4e3657a28375df34d6e14836e5c0b17d
 	{
-		return true;
+		std::vector<tw::AttackDamageResult> result;
+		std::vector<tw::Point2D> impactZone = getImpactZoneForSpell(4, targetX, targetY);
+		std::vector<tw::BaseCharacterModel*> impactedEntities = getMapKnowledge()->getAliveCharactersInZone(impactZone);
+
+		for (int i = 0; i < impactedEntities.size(); i++)
+		{
+			result.push_back(tw::AttackDamageResult(impactedEntities[i], 7));
+		}
+
+		return result;
 	}
 
 	//Auto attaque (Mana : 0 / Corps à corps / DPS : 5 / Cd : 0t)
-	virtual bool doAttack5(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack5(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
-	Guerrier(tw::Environment * environment, int teamId, int currentX, int currentY)
-		: BaseCharacterModel(environment, teamId, currentX, currentY)
+	Guerrier(tw::Environment * environment, int teamId, int currentX, int currentY, tw::IMapKnowledge * map)
+		: BaseCharacterModel(environment, teamId, currentX, currentY, map)
 	{
 		initializeValues();
 		compt1 = 3;
@@ -125,12 +192,21 @@ public:
 
 	virtual std::string getClassDescription()
 	{
+<<<<<<< HEAD
 		return " Personnage de combat rapproché avec des boost de résistance et d'attaque";
+=======
+		return "Un guerrier est une personne spécialisée dans le combat ou la guerre, en particulier dans le contexte d'une société de culture guerrière tribale ou basée sur le clan qui reconnaît une classe ou une caste de guerriers distincte.";
+>>>>>>> 2f55d20d4e3657a28375df34d6e14836e5c0b17d
 	}
 
 	virtual std::string getClassIconPath()
 	{
 		return "./assets/classicons/Barbare.png";
+	}
+
+	virtual std::string getClassPreviewPath()
+	{
+		return "./assets/classpreview/Guerrier.png";
 	}
 
 
@@ -160,22 +236,26 @@ public:
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
+<<<<<<< HEAD
 		return "Charge pour infliger";
+=======
+		return "Guerrier, description sort 1 .................................................................................................................................";
+>>>>>>> 2f55d20d4e3657a28375df34d6e14836e5c0b17d
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Guerrier, description sort 2 ...";
+		return "Guerrier, description sort 2 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Guerrier, description sort 3 ...";
+		return "Guerrier, description sort 3 ..............................................................................................................................";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Guerrier, description sort 4 ...";
+		return "Guerrier, description sort 4 ..............................................................................................................................";
 	}
 
 
@@ -383,6 +463,71 @@ public:
 		return 0;
 	}
 
+	//------------------------------------
+
+	virtual std::string getSpell1AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
+	virtual std::string getSpell2AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
+	virtual std::string getSpell3AnimationPath()
+	{
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	virtual std::string getSpell4AnimationPath()
+	{
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	//------------------------------------
+
+	virtual std::string getSpell1SoundPath()
+	{
+		return "./assets/sound/punch3.wav";
+	}
+
+	virtual std::string getSpell2SoundPath()
+	{
+		return "./assets/sound/punch3.wav";
+	}
+
+	virtual std::string getSpell3SoundPath()
+	{
+		return "./assets/sound/explosion1.wav";
+	}
+
+	virtual std::string getSpell4SoundPath()
+	{
+		return "./assets/sound/explosion1.wav";
+	}
+
+	//------------------------------------
+
+	virtual tw::Animation getSpell1AttackerAnimation()
+	{
+		return tw::Animation::ATTACK1;
+	}
+
+	virtual tw::Animation getSpell2AttackerAnimation()
+	{
+		return tw::Animation::ATTACK1;
+	}
+
+	virtual tw::Animation getSpell3AttackerAnimation()
+	{
+		return tw::Animation::ATTACK2;
+	}
+
+	virtual tw::Animation getSpell4AttackerAnimation()
+	{
+		return tw::Animation::ATTACK2;
+	}
 	//--------------------------------------------------------------------
 };
 

@@ -73,45 +73,122 @@ public:
 		return compt3;
 	}
 
+	virtual bool canDoAttack(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1 <= 0;
+		}
+		else if (spellId == 2)
+		{
+			return compt2 <= 0;
+		}
+		else if (spellId == 3)
+		{
+			return compt3 <= 0;
+		}
+
+		return true;
+	}
+
+	virtual int getAttackCooldown(int spellId)
+	{
+		if (spellId == 1)
+		{
+			return compt1;
+		}
+		else if (spellId == 2)
+		{
+			return compt2;
+		}
+		else if (spellId == 3)
+		{
+			return compt3;
+		}
+
+		return 0;
+	}
+
+	virtual void setAttackCooldown(int spellId, int value)
+	{
+		if (spellId == 1)
+		{
+			compt1 = value;
+		}
+		else if (spellId == 2)
+		{
+			compt2 = value;
+		}
+		else if (spellId == 3)
+		{
+			compt3 = value;
+		}
+	}
+
 	virtual void turnStart()
 	{
+		BaseCharacterModel::turnStart();
+
 		// Décrémentation des cooldowns :
 		if (compt1 > 0)
 			compt1--;
 	}
 
 	//Passif : Réduction de mana pour les alliés dans la zone 3x3
-	virtual bool doAttack1(int targetX, int targetY) // appel class  effet
+	virtual std::vector<tw::AttackDamageResult> doAttack1(int targetX, int targetY) // appel class  effet
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
+<<<<<<< HEAD
 	//Sort 1 : Boule de feu (Mana : 4 / ligne(3) puis Zone étoile / DPS : 15-10(45%-25% de brûlure / Cd : 3t)
 	virtual bool doAttack2(int targetX, int targetY)
+=======
+	//Sort 1 : Boule de feu (Mana : 4 / Zone étoile / DPS : 15-10(45%-25% de brûlure / Cd : 3t)
+	virtual std::vector<tw::AttackDamageResult> doAttack2(int targetX, int targetY)
+>>>>>>> 2f55d20d4e3657a28375df34d6e14836e5c0b17d
 	{
 		
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
+<<<<<<< HEAD
 	//Sort 2 : Eclair (Mana : 2 / ciblage (zone 3x3) / DPS : 6 / Cd : 1t)
 	virtual bool doAttack3(int targetX, int targetY)
+=======
+	//Sort 2 : Eclair (Mana : 2 / Zone unique / DPS : 6 / Cd : 1t)
+	virtual std::vector<tw::AttackDamageResult> doAttack3(int targetX, int targetY)
+>>>>>>> 2f55d20d4e3657a28375df34d6e14836e5c0b17d
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
+<<<<<<< HEAD
 	//Sort 3 : Blizzard (Mana : 3 / zone 3x3 autour du joueur / DPS : )
 	virtual bool doAttack4(int targetX, int targetY)
+=======
+	//Sort 3 : Blizzard (Mana : 3 / Joueur au centre : carré de 3x3 autour du joueur / DPS : )
+	virtual std::vector<tw::AttackDamageResult> doAttack4(int targetX, int targetY)
+>>>>>>> 2f55d20d4e3657a28375df34d6e14836e5c0b17d
 	{
-		return true;
+		std::vector<tw::AttackDamageResult> result;
+		std::vector<tw::Point2D> impactZone = getImpactZoneForSpell(4, targetX, targetY);
+		std::vector<tw::BaseCharacterModel*> impactedEntities = getMapKnowledge()->getAliveCharactersInZone(impactZone);
+
+		for (int i = 0; i < impactedEntities.size(); i++)
+		{
+			result.push_back(tw::AttackDamageResult(impactedEntities[i], 7));
+		}
+		return result;
 	}
 
-	virtual bool doAttack5(int targetX, int targetY)
+	virtual std::vector<tw::AttackDamageResult> doAttack5(int targetX, int targetY)
 	{
-		return true;
+		return std::vector<tw::AttackDamageResult>();
 	}
 
-	Mage(tw::Environment * environment, int teamId, int currentX, int currentY)
-		: BaseCharacterModel(environment, teamId, currentX, currentY)
+	Mage(tw::Environment * environment, int teamId, int currentX, int currentY, tw::IMapKnowledge * map)
+		: BaseCharacterModel(environment, teamId, currentX, currentY, map)
 	{
 		initializeValues();
 		compt1 = 3;
@@ -129,12 +206,17 @@ public:
 
 	virtual std::string getClassDescription()
 	{
-		return "Description mage ...";
+		return "Prêtres officiels perses. À l'époque achéménide, Darius Ier renverse le mage mède Gaumâta, qui vient de se proclamer roi de l'empire perse. Les mages exercent le monopole sacerdotal. Selon Xénophon, c'est Cyrus II le Grand qui installa officiellement les mages de Perse.";
 	}
 
 	virtual std::string getClassIconPath()
 	{
 		return "./assets/classicons/Mage.png";
+	}
+
+	virtual std::string getClassPreviewPath()
+	{
+		return "./assets/classpreview/Mage.png";
 	}
 
 
@@ -164,22 +246,22 @@ public:
 	//------------------------------------
 	virtual std::string getSpell1Description()
 	{
-		return "Mage, description sort 1 ...";
+		return "Mage, description sort 1 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell2Description()
 	{
-		return "Mage, description sort 2 ...";
+		return "Mage, description sort 2 .................................................................................................................................";
 	}
 
 	virtual std::string getSpell3Description()
 	{
-		return "Mage, description sort 3 ...";
+		return "Mage, description sort 3 ..............................................................................................................................";
 	}
 
 	virtual std::string getSpell4Description()
 	{
-		return "Mage, description sort 4 ...";
+		return "Mage, description sort 4 .................................................................................................................................";
 	}
 
 
@@ -387,6 +469,72 @@ public:
 		return 0;
 	}
 
+	//------------------------------------
+
+	virtual std::string getSpell1AnimationPath()
+	{
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	virtual std::string getSpell2AnimationPath()
+	{
+		
+		return "./assets/spellsprites/ballbig1_red";
+	}
+
+	virtual std::string getSpell3AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
+	virtual std::string getSpell4AnimationPath()
+	{
+		return "./assets/spellsprites/claw1_red";
+	}
+
+	//------------------------------------
+
+	virtual std::string getSpell1SoundPath()
+	{
+		return "./assets/sound/explosion1.wav";
+	}
+
+	virtual std::string getSpell2SoundPath()
+	{
+		return "./assets/sound/explosion1.wav";
+	}
+
+	virtual std::string getSpell3SoundPath()
+	{
+		return "./assets/sound/punch3.wav";
+	}
+
+	virtual std::string getSpell4SoundPath()
+	{
+		return "./assets/sound/punch3.wav";
+	}
+
+	//------------------------------------
+
+	virtual tw::Animation getSpell1AttackerAnimation()
+	{
+		return tw::Animation::ATTACK2;
+	}
+
+	virtual tw::Animation getSpell2AttackerAnimation()
+	{
+		return tw::Animation::ATTACK2;
+	}
+
+	virtual tw::Animation getSpell3AttackerAnimation()
+	{
+		return tw::Animation::ATTACK1;
+	}
+
+	virtual tw::Animation getSpell4AttackerAnimation()
+	{
+		return tw::Animation::ATTACK1;
+	}
 	//--------------------------------------------------------------------
 };
 

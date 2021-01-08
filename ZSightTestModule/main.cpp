@@ -13,7 +13,7 @@ using namespace tw;
 int main(int argc, char** argv)
 {
 	int *textureLoad = 0;
-	sf::RenderWindow window(sf::VideoMode(800, 600), "SightTestModule test module");
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SightTestModule test module");
 	sf::Clock deltaClock;
 
 	IsometricRenderer renderer(&window);
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 		*/
 
 		window.clear();
-		renderer.render(&environment, characters, deltatime);
+		renderer.render(&environment, characters, std::vector<AbstractSpellView<sf::Sprite*>*>(), deltatime);
 		window.display();
 	}
 

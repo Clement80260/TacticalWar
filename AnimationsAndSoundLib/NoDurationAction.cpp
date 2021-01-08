@@ -5,4 +5,5 @@ void NoDurationAction::update(float deltatime)
 {
 	update();
 	notifyAnimationFinished(deltatime);
+	delete this;
 }

@@ -64,6 +64,7 @@ void PlayerStatusView::onMessageReceived(std::string msg)
 
 		tgui::Label::Ptr playerLabel = get<tgui::Label>("playerLabel");
 		playerLabel->setText(toDisplay);
+		setVisible(true);
 	}
 }
 

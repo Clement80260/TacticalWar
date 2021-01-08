@@ -33,6 +33,7 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEvent
 	void notifyMatchCreated(tw::Match * m);
 	void notifySwitchToClassSelectionToConnectedPlayer(std::vector<tw::Player*> team);
 	void notifyPlanifiedAndPlayingMatch(ClientState * c);
+	void notifyFinishedMatch(ClientState * c);
 
 	void notifyClassChoiceLocked(ClientState * c);
 
@@ -45,6 +46,15 @@ class TWParser : public Parser<ClientState>, tw::MatchEventListener, BattleEvent
 	void notifyBattleState(ClientState * c, Battle * battle);
 	void notifyReadyState(ClientState * c, int playerId, tw::Player * p);
 	void notifyCharacterPositionChanged(ClientState * toNotify, int playerId, tw::Player * characterWhosePositionChanged);
+	void notifyPlayerTurnToken(Battle * b, ClientState * c);
+	void notifyActivePlayerPANumber(Battle * b, ClientState * c);
+	void notifyActivePlayerPMNumber(Battle * b, ClientState * c);
+
+	void checkBattleEnd(tw::Match * m);
+
+
+	std::vector<tw::Point2D> calculateSpellZone(tw::BaseCharacterModel * character, int selectedSpell, tw::Match * match, tw::Environment * environment);
+
 
 	bool initRandom;
 
